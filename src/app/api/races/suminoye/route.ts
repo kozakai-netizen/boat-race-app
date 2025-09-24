@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { RacesResponseSchema } from '@/lib/types'
 import { PLAYER_ICONS, EXH_LR_STRONG, EXH_OUTER_INNER_STRONG } from '@/lib/constants'
+import { MOCK_RACES_TODAY } from '@/lib/mockData'
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,6 +31,17 @@ export async function GET(request: NextRequest) {
     }
 
     if (!races || races.length === 0) {
+      // Return mock data for current date if no data found
+      const today = new Date().toISOString().split('T')[0]
+      if (date === today) {
+        return NextResponse.json({
+          venue: 'suminoe',
+          date,
+          grade: grade as 'normal' | 'major',
+          races: MOCK_RACES_TODAY,
+        })
+      }
+
       return NextResponse.json({
         venue: 'suminoe',
         date,

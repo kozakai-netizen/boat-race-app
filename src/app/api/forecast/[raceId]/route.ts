@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { ForecastSchema } from '@/lib/types'
 import { SUPER_EV_MIN, SUPER_PROB_MIN, PLAYER_ICONS } from '@/lib/constants'
-import { MOCK_FORECAST_DATA } from '@/lib/mockData'
+import { MOCK_FORECAST_DATA, MOCK_FORECAST_DATA_TODAY } from '@/lib/mockData'
 
 export async function GET(
   request: NextRequest,
@@ -25,6 +25,13 @@ export async function GET(
     // Check if mock data is available for testing
     if (raceId in MOCK_FORECAST_DATA) {
       const mockData = MOCK_FORECAST_DATA[raceId as keyof typeof MOCK_FORECAST_DATA]
+      const validatedResponse = ForecastSchema.parse(mockData)
+      return NextResponse.json(validatedResponse)
+    }
+
+    // Check if today's mock data is available
+    if (raceId in MOCK_FORECAST_DATA_TODAY) {
+      const mockData = MOCK_FORECAST_DATA_TODAY[raceId]
       const validatedResponse = ForecastSchema.parse(mockData)
       return NextResponse.json(validatedResponse)
     }
@@ -115,6 +122,15 @@ async function handleFixedFirstForecast(raceId: string, fixedLane: number) {
     // Check for mock data first
     if (raceId in MOCK_FORECAST_DATA) {
       const mockData = MOCK_FORECAST_DATA[raceId as keyof typeof MOCK_FORECAST_DATA]
+      allForecasts = mockData.triples.map(triple => ({
+        combo: triple.combo,
+        prob: triple.prob,
+        ev: triple.ev,
+        super: triple.super,
+        why: null
+      }))
+    } else if (raceId in MOCK_FORECAST_DATA_TODAY) {
+      const mockData = MOCK_FORECAST_DATA_TODAY[raceId]
       allForecasts = mockData.triples.map(triple => ({
         combo: triple.combo,
         prob: triple.prob,
