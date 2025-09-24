@@ -141,6 +141,18 @@ export const ResultsResponseSchema = z.object({
   results: z.array(ResultSchema),
 })
 
+// Feedback schema
+export const FeedbackSchema = z.object({
+  id: z.string().optional(),
+  created_at: z.string().optional(),
+  page: z.string(),
+  rating: z.number().min(1).max(5).optional(),
+  confusing: z.string().optional(),
+  request: z.string().optional(),
+  comment: z.string().optional(),
+  contact: z.string().optional(),
+})
+
 // Type exports
 export type Player = z.infer<typeof PlayerSchema>
 export type Race = z.infer<typeof RaceSchema>
@@ -155,3 +167,4 @@ export type RaceListItem = z.infer<typeof RaceListItemSchema>
 export type RacesResponse = z.infer<typeof RacesResponseSchema>
 export type Result = z.infer<typeof ResultSchema>
 export type ResultsResponse = z.infer<typeof ResultsResponseSchema>
+export type Feedback = z.infer<typeof FeedbackSchema>

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { VenueResponse } from '@/lib/types'
+import LegendModal, { useLegendModal } from '@/components/LegendModal'
+import { useFeedbackModal } from '@/components/FeedbackForm'
 
 export default function SuminoyeHome() {
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -12,6 +14,9 @@ export default function SuminoyeHome() {
   const [selectedGrade, setSelectedGrade] = useState<'normal' | 'major'>('normal')
   const [venueData, setVenueData] = useState<VenueResponse | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
+  const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal('/suminoye')
 
   useEffect(() => {
     fetchVenueData()
@@ -50,7 +55,21 @@ export default function SuminoyeHome() {
       <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="text-center">
+          <div className="text-center relative">
+            <div className="absolute top-0 right-0 flex items-center space-x-2">
+              <button
+                onClick={openLegend}
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm"
+              >
+                凡例
+              </button>
+              <button
+                onClick={openFeedback}
+                className="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-sm"
+              >
+                💬 フィードバック
+              </button>
+            </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">🚤 住之江ボートレース</h1>
             <p className="text-gray-600">AIによる競艇予想システム</p>
           </div>
@@ -186,6 +205,10 @@ export default function SuminoyeHome() {
           </div>
         )}
       </div>
+
+      {/* モーダル */}
+      <LegendModal isOpen={legendOpen} onClose={closeLegend} />
+      <FeedbackFormComponent />
     </div>
   )
 }

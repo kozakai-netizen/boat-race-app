@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { ForecastTriple } from '@/lib/types'
 import SortControls from './SortControls'
 
@@ -12,17 +12,41 @@ interface ForecastListProps {
     payout: number | null
     popularity: number | null
   }
+  urlSyncProps?: {
+    getStateFromUrl: () => {
+      fixedFirst?: number | null
+      sortBy?: 'ev' | 'probability' | 'odds'
+      sortOrder?: 'desc' | 'asc'
+      showLimit?: number
+    }
+    updateUrl: (state: {
+      fixedFirst?: number | null
+      sortBy?: 'ev' | 'probability' | 'odds'
+      sortOrder?: 'desc' | 'asc'
+      showLimit?: number
+    }) => void
+  }
 }
 
-export default function ForecastList({ triples, loading, raceResult }: ForecastListProps) {
+export default function ForecastList({ triples, loading, raceResult, urlSyncProps }: ForecastListProps) {
   const [showTooltip, setShowTooltip] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'ev' | 'probability' | 'odds'>('ev')
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
+  const [showLimit, setShowLimit] = useState(5)
+
+  // Initialize from URL if urlSyncProps is provided
+  useEffect(() => {
+    if (urlSyncProps) {
+      const urlState = urlSyncProps.getStateFromUrl()
+      if (urlState.sortBy) setSortBy(urlState.sortBy)
+      if (urlState.sortOrder) setSortOrder(urlState.sortOrder)
+      if (urlState.showLimit) setShowLimit(urlState.showLimit)
+    }
+  }, [urlSyncProps])
 
   const isWinningCombo = (combo: string) => {
     return raceResult && raceResult.triple === combo
   }
-  const [showLimit, setShowLimit] = useState(5)
 
   const sortedTriples = useMemo(() => {
     const sorted = [...triples].sort((a, b) => {
@@ -56,10 +80,21 @@ export default function ForecastList({ triples, loading, raceResult }: ForecastL
   const handleSortChange = (newSortBy: 'ev' | 'probability' | 'odds', newSortOrder: 'desc' | 'asc') => {
     setSortBy(newSortBy)
     setSortOrder(newSortOrder)
+    if (urlSyncProps) {
+      urlSyncProps.updateUrl({
+        sortBy: newSortBy,
+        sortOrder: newSortOrder,
+      })
+    }
   }
 
   const handleShowLimitChange = (limit: number) => {
     setShowLimit(limit)
+    if (urlSyncProps) {
+      urlSyncProps.updateUrl({
+        showLimit: limit,
+      })
+    }
   }
 
   const getProbabilityColor = (prob: number) => {

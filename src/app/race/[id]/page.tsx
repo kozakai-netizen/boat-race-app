@@ -7,6 +7,10 @@ import { parseRaceId, getVenueDisplayName, type RaceIdInfo } from '@/lib/raceId'
 import RaceHeader from '@/components/RaceHeader'
 import ForecastList from '@/components/ForecastList'
 import FixedFirstTabs from '@/components/FixedFirstTabs'
+import ShareButton from '@/components/ShareButton'
+import LegendModal, { useLegendModal } from '@/components/LegendModal'
+import { useFeedbackModal } from '@/components/FeedbackForm'
+import { useUrlSync } from '@/hooks/useUrlSync'
 
 interface RaceDetailProps {
   params: Promise<{ id: string }>
@@ -21,12 +25,24 @@ export default function RaceDetail({ params }: RaceDetailProps) {
   const [fixedLoading, setFixedLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const { getStateFromUrl, updateUrl } = useUrlSync()
+  const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
+  const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal(`/race/${raceId}`)
+
   // Handle async params
   useEffect(() => {
     params.then((resolvedParams) => {
       setRaceId(resolvedParams.id)
     })
   }, [params])
+
+  // Initialize state from URL on component mount
+  useEffect(() => {
+    const urlState = getStateFromUrl()
+    if (urlState.fixedFirst !== undefined) {
+      setFixedFirst(urlState.fixedFirst)
+    }
+  }, [getStateFromUrl])
 
   const fetchRaceData = useCallback(async () => {
     if (!raceId) return
@@ -96,6 +112,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
   const handleLaneSelect = (lane: number | null) => {
     setFixedFirst(lane)
+    updateUrl({ fixedFirst: lane })
     fetchFixedFirstForecast(lane)
   }
 
@@ -143,10 +160,24 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
       <div className="max-w-6xl mx-auto">
         {/* ナビゲーション */}
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <Link href="/suminoye" className="text-blue-600 hover:text-blue-800 text-sm">
             ← ホームに戻る
           </Link>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={openLegend}
+              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm"
+            >
+              凡例
+            </button>
+            <button
+              onClick={openFeedback}
+              className="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-sm"
+            >
+              💬 フィードバック
+            </button>
+          </div>
         </div>
 
         {/* レースヘッダー */}
@@ -171,12 +202,15 @@ export default function RaceDetail({ params }: RaceDetailProps) {
             <h2 className="text-xl font-semibold text-gray-800">
               {fixedFirst ? `${fixedFirst}号艇 固定予想` : 'AI予想結果'}
             </h2>
-            <button
-              onClick={fetchRaceData}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
-            >
-              🔄 更新
-            </button>
+            <div className="flex items-center space-x-2">
+              <ShareButton />
+              <button
+                onClick={fetchRaceData}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+              >
+                🔄 更新
+              </button>
+            </div>
           </div>
 
           <ForecastList
@@ -187,6 +221,10 @@ export default function RaceDetail({ params }: RaceDetailProps) {
               payout: raceResult.payout,
               popularity: raceResult.popularity
             } : undefined}
+            urlSyncProps={{
+              getStateFromUrl,
+              updateUrl,
+            }}
           />
         </div>
 
@@ -216,6 +254,10 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           </div>
         </div>
       </div>
+
+      {/* モーダル */}
+      <LegendModal isOpen={legendOpen} onClose={closeLegend} />
+      <FeedbackFormComponent />
     </div>
   )
 }
