@@ -31,9 +31,11 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
   // Handle async params
   useEffect(() => {
-    params.then((resolvedParams) => {
+    const initParams = async () => {
+      const resolvedParams = await params
       setRaceId(resolvedParams.id)
-    })
+    }
+    initParams()
   }, [params])
 
   // Initialize state from URL on component mount

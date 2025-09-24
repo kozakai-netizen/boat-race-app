@@ -108,6 +108,19 @@ export const VenueResponseSchema = z.object({
   next_close_at: z.string().nullable(),
 })
 
+// Simple race entry schema for mock data
+export const SimpleRaceEntrySchema = z.object({
+  race_id: z.string(),
+  lane: z.number(),
+  player_name: z.string(),
+  player_grade: z.string(),
+  st_time: z.number(),
+  exhibition_time: z.number(),
+  motor_rate: z.number(),
+  motor_condition: z.string(),
+  motor_description: z.string(),
+})
+
 export const RaceListItemSchema = z.object({
   race_id: z.string(),
   race_no: z.number(),
@@ -118,6 +131,7 @@ export const RaceListItemSchema = z.object({
     left_right_gap_max: z.number().nullable(),
     outer_inner_gap_min: z.number().nullable(),
   }).nullable(),
+  entries: z.array(SimpleRaceEntrySchema).optional(),
 })
 
 export const RacesResponseSchema = z.object({
@@ -162,6 +176,7 @@ export type Exhibition = z.infer<typeof ExhibitionSchema>
 export type ForecastTriple = z.infer<typeof ForecastTripleSchema>
 export type Forecast = z.infer<typeof ForecastSchema>
 export type RaceEntryPack = z.infer<typeof RaceEntryPackSchema>
+export type SimpleRaceEntry = z.infer<typeof SimpleRaceEntrySchema>
 export type VenueResponse = z.infer<typeof VenueResponseSchema>
 export type RaceListItem = z.infer<typeof RaceListItemSchema>
 export type RacesResponse = z.infer<typeof RacesResponseSchema>

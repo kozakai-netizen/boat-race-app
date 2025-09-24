@@ -64,6 +64,31 @@ export const MOCK_RACE_DATA = {
 }
 
 // Generate mock races for current date
+// レース出場選手情報を生成
+function generateRaceEntries(raceId: string) {
+  const shuffledPlayers = [...MOCK_PLAYERS].sort(() => 0.5 - Math.random()).slice(0, 6)
+  const shuffledMotors = [...MOTOR_CONDITIONS].sort(() => 0.5 - Math.random()).slice(0, 6)
+
+  return shuffledPlayers.map((player, lane) => {
+    const motor = shuffledMotors[lane]
+    const stDeviation = (Math.random() - 0.5) * 0.06 // ±0.03の変動
+    const actualST = Math.max(0.10, player.avgST + stDeviation)
+    const exhibitionTime = 6.70 + Math.random() * 0.30 // 6.70-7.00秒
+
+    return {
+      race_id: raceId,
+      lane: lane + 1,
+      player_name: player.name,
+      player_grade: player.grade,
+      st_time: parseFloat(actualST.toFixed(2)),
+      exhibition_time: parseFloat(exhibitionTime.toFixed(2)),
+      motor_rate: motor.rate,
+      motor_condition: motor.condition,
+      motor_description: motor.description
+    }
+  })
+}
+
 function generateTodayMockRaces() {
   const today = new Date().toISOString().split('T')[0]
   const races: Array<{
@@ -76,13 +101,29 @@ function generateTodayMockRaces() {
       left_right_gap_max: number
       outer_inner_gap_min: number
     }
+    entries: Array<{
+      race_id: string
+      lane: number
+      player_name: string
+      player_grade: string
+      st_time: number
+      exhibition_time: number
+      motor_rate: number
+      motor_condition: string
+      motor_description: string
+    }>
   }> = []
 
   for (let raceNo = 1; raceNo <= 12; raceNo++) {
     const baseTime = new Date()
-    baseTime.setHours(10 + raceNo, 45, 0, 0) // Race times from 11:45, 12:45, etc.
+    // Realistic Suminoe race times: 14:30, 15:00, 15:30, ..., 20:30
+    const startHour = 14
+    const intervalMinutes = 30
+    const totalMinutes = startHour * 60 + (raceNo - 1) * intervalMinutes
+    baseTime.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0)
 
     const raceId = `suminoye-${today.replace(/-/g, '')}-${raceNo}R`
+    const entries = generateRaceEntries(raceId)
 
     races.push({
       race_id: raceId,
@@ -91,9 +132,10 @@ function generateTodayMockRaces() {
       has_super: Math.random() > 0.3, // 70% chance of having super picks
       icons: getRandomIcons(),
       exhibition_summary: {
-        left_right_gap_max: Math.random() * 0.3,
-        outer_inner_gap_min: -Math.random() * 0.4
-      }
+        left_right_gap_max: Math.max(...entries.map(e => Math.abs(e.exhibition_time - 6.85))),
+        outer_inner_gap_min: Math.min(...entries.map(e => e.st_time)) - 0.20
+      },
+      entries
     })
   }
 
@@ -106,6 +148,42 @@ function getRandomIcons() {
   const shuffled = allIcons.sort(() => 0.5 - Math.random())
   return shuffled.slice(0, count)
 }
+
+// リアルな選手情報データベース
+const MOCK_PLAYERS = [
+  { name: '田中 信二', grade: 'A1', avgST: 0.15 },
+  { name: '佐藤 花子', grade: 'A1', avgST: 0.16 },
+  { name: '山田 一郎', grade: 'A2', avgST: 0.17 },
+  { name: '鈴木 誠也', grade: 'A2', avgST: 0.18 },
+  { name: '中村 美咲', grade: 'A2', avgST: 0.16 },
+  { name: '高橋 太郎', grade: 'B1', avgST: 0.19 },
+  { name: '伊藤 加奈', grade: 'B1', avgST: 0.18 },
+  { name: '渡辺 健太', grade: 'B1', avgST: 0.20 },
+  { name: '小林 さくら', grade: 'B1', avgST: 0.19 },
+  { name: '加藤 拓也', grade: 'B2', avgST: 0.21 },
+  { name: '吉田 麻里', grade: 'B2', avgST: 0.20 },
+  { name: '松本 雄介', grade: 'B2', avgST: 0.22 },
+  { name: '井上 愛', grade: 'A1', avgST: 0.14 },
+  { name: '木村 慎一', grade: 'A2', avgST: 0.17 },
+  { name: '斎藤 真由', grade: 'B1', avgST: 0.19 },
+  { name: '清水 大輔', grade: 'B1', avgST: 0.18 },
+  { name: '森田 優子', grade: 'A2', avgST: 0.16 },
+  { name: '藤原 洋平', grade: 'B2', avgST: 0.21 },
+  { name: '三浦 恵美', grade: 'B1', avgST: 0.20 },
+  { name: '岡田 隆志', grade: 'A1', avgST: 0.15 }
+]
+
+// モーター調子データ
+const MOTOR_CONDITIONS = [
+  { rate: 55.2, condition: '◎', description: '絶好調' },
+  { rate: 48.8, condition: '○', description: '好調' },
+  { rate: 42.1, condition: '△', description: '普通' },
+  { rate: 38.4, condition: '×', description: '不調' },
+  { rate: 51.7, condition: '◎', description: '絶好調' },
+  { rate: 45.3, condition: '○', description: '好調' },
+  { rate: 40.9, condition: '△', description: '普通' },
+  { rate: 36.2, condition: '×', description: '不調' }
+]
 
 export const MOCK_RACES_TODAY = generateTodayMockRaces()
 
@@ -168,3 +246,46 @@ export const MOCK_RESULT_DATA = {
     }
   ]
 }
+
+// Generate realistic results for today's mock races
+function generateTodayResultData() {
+  const results: Array<{
+    race_id: string
+    triple: string
+    payout: number
+    popularity: number
+    hit: 'win' | 'inTop' | 'miss' | 'ref'
+  }> = []
+
+  // Realistic boat race results based on actual Suminoe patterns
+  const realisticResults = [
+    { triple: '1-3-2', payout: 580, popularity: 1 },
+    { triple: '1-2-4', payout: 1240, popularity: 3 },
+    { triple: '2-1-3', payout: 2890, popularity: 7 },
+    { triple: '1-3-5', payout: 3450, popularity: 8 },
+    { triple: '3-1-2', payout: 1820, popularity: 4 },
+    { triple: '1-2-6', payout: 4560, popularity: 12 },
+    { triple: '2-3-1', payout: 6780, popularity: 15 },
+    { triple: '1-4-2', payout: 8950, popularity: 18 },
+    { triple: '4-1-3', payout: 12400, popularity: 23 },
+    { triple: '1-5-2', payout: 15600, popularity: 28 },
+    { triple: '3-2-5', payout: 18700, popularity: 32 },
+    { triple: '2-4-6', payout: 24500, popularity: 41 }
+  ]
+
+  MOCK_RACES_TODAY.forEach((race, idx) => {
+    const result = realisticResults[idx]
+
+    results.push({
+      race_id: race.race_id,
+      triple: result.triple,
+      payout: result.payout,
+      popularity: result.popularity,
+      hit: 'ref' // All results are reference since races haven't finished
+    })
+  })
+
+  return results
+}
+
+export const MOCK_RESULTS_TODAY = generateTodayResultData()

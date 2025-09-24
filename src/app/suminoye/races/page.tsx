@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { RacesResponse } from '@/lib/types'
+import RaceListItem from '@/components/RaceListItem'
 
 function RacesPageContent() {
   const searchParams = useSearchParams()
@@ -11,6 +12,7 @@ function RacesPageContent() {
   const [loading, setLoading] = useState(false)
   const [showSuperOnly, setShowSuperOnly] = useState(false)
   const [showOpenOnly, setShowOpenOnly] = useState(false)
+  const [expandedRaces, setExpandedRaces] = useState<Set<string>>(new Set())
 
   const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
   const grade = searchParams.get('grade') || 'normal'
@@ -38,18 +40,20 @@ function RacesPageContent() {
     }
   }
 
-  const formatCloseTime = (closeAt: string) => {
-    const date = new Date(closeAt)
-    return date.toLocaleTimeString('ja-JP', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
   const isRaceOpen = (closeAt: string) => {
     const now = new Date()
     const closeTime = new Date(closeAt)
     return now < closeTime
+  }
+
+  const toggleRaceExpansion = (raceId: string) => {
+    const newExpanded = new Set(expandedRaces)
+    if (newExpanded.has(raceId)) {
+      newExpanded.delete(raceId)
+    } else {
+      newExpanded.add(raceId)
+    }
+    setExpandedRaces(newExpanded)
   }
 
   const filteredRaces = racesData?.races.filter(race => {
@@ -115,87 +119,28 @@ function RacesPageContent() {
 
         {racesData && !loading && (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            {/* レース一覧ヘッダー */}
             <div className="bg-gray-50 px-6 py-4 border-b">
-              <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
-                <div className="col-span-1">R</div>
-                <div className="col-span-2">締切</div>
-                <div className="col-span-1">⭐</div>
-                <div className="col-span-3">特徴</div>
-                <div className="col-span-3">展示差</div>
-                <div className="col-span-2">アクション</div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  レース一覧 ({filteredRaces.length}R)
+                </h2>
+                <div className="text-sm text-gray-600">
+                  クリックで選手情報を表示
+                </div>
               </div>
             </div>
 
-            <div className="divide-y divide-gray-100">
-              {filteredRaces.map((race) => {
-                const isOpen = isRaceOpen(race.close_at)
-
-                return (
-                  <div key={race.race_id} className={`p-4 hover:bg-gray-50 ${!isOpen ? 'opacity-60' : ''}`}>
-                    <div className="grid grid-cols-12 gap-4 items-center">
-                      {/* Race Number */}
-                      <div className="col-span-1">
-                        <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center">
-                          {race.race_no}
-                        </div>
-                      </div>
-
-                      {/* Close Time */}
-                      <div className="col-span-2">
-                        <div className="text-sm font-medium text-gray-800">
-                          {formatCloseTime(race.close_at)}
-                        </div>
-                        <div className={`text-xs ${isOpen ? 'text-green-600' : 'text-red-600'}`}>
-                          {isOpen ? '発売中' : '締切済'}
-                        </div>
-                      </div>
-
-                      {/* Super Pick */}
-                      <div className="col-span-1">
-                        {race.has_super && (
-                          <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
-                            ⭐
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Icons */}
-                      <div className="col-span-3">
-                        <div className="flex items-center space-x-1">
-                          {race.icons.map((icon, idx) => (
-                            <span key={idx} className="text-lg">{icon}</span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Exhibition Summary */}
-                      <div className="col-span-3">
-                        <div className="text-xs text-gray-600">
-                          {race.exhibition_summary?.left_right_gap_max && (
-                            <div>左右差: {race.exhibition_summary.left_right_gap_max.toFixed(2)}s</div>
-                          )}
-                          {race.exhibition_summary?.outer_inner_gap_min && (
-                            <div>外内差: {race.exhibition_summary.outer_inner_gap_min.toFixed(2)}s</div>
-                          )}
-                          {!race.exhibition_summary?.left_right_gap_max && !race.exhibition_summary?.outer_inner_gap_min && (
-                            <div className="text-gray-400">展示データなし</div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="col-span-2">
-                        <Link
-                          href={`/race/${race.race_id}`}
-                          className="inline-block bg-blue-600 text-white px-3 py-2 rounded text-xs font-medium hover:bg-blue-700 transition"
-                        >
-                          詳細を見る
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
+            {/* レース一覧 */}
+            <div>
+              {filteredRaces.map((race) => (
+                <RaceListItem
+                  key={race.race_id}
+                  race={race}
+                  isOpen={expandedRaces.has(race.race_id)}
+                  onToggle={() => toggleRaceExpansion(race.race_id)}
+                />
+              ))}
             </div>
 
             {filteredRaces.length === 0 && (

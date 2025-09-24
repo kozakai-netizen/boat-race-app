@@ -16,6 +16,10 @@ export const PLAYER_ICONS = {
 
 // Hit type icons for results
 export const HIT_ICONS = {
+  WIN: '🎯',
+  IN_TOP: '⭕',
+  MISS: '❌',
+  REF: '△',
   win: '🎯',
   inTop: '⭕',
   miss: '❌',
