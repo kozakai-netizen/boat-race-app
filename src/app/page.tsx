@@ -1,103 +1,97 @@
-import Image from "next/image";
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // 自動的に住之江ボートレースページにリダイレクト
+  useEffect(() => {
+    // 3秒後にリダイレクト
+    const timer = setTimeout(() => {
+      router.push('/suminoye')
+    }, 3000)
+
+    return () => clearTimeout(timer)
+  }, [router])
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full text-center">
+        {/* ロゴ */}
+        <div className="mb-8">
+          <div className="w-24 h-24 mx-auto relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-pink-500 to-blue-500 rounded-full opacity-90"></div>
+            <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+              <span className="text-3xl">🚤</span>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* タイトル */}
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">住之江ボートレース</h1>
+        <h2 className="text-xl text-gray-600 mb-6">AI予想システム MVP</h2>
+
+        {/* 機能紹介 */}
+        <div className="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">主な機能</h3>
+          <ul className="text-sm text-gray-600 space-y-2 text-left">
+            <li>• 📋 レース一覧・出走情報表示</li>
+            <li>• 🎯 AI による 3連単予想（EV値ベース）</li>
+            <li>• ⭐ SUPER PICK 機能</li>
+            <li>• 🔧 1着固定予想モード</li>
+            <li>• 📊 レース結果・的中状況確認</li>
+            <li>• 🌤️ 天候・水面状況表示</li>
+          </ul>
+        </div>
+
+        {/* リダイレクト案内 */}
+        <div className="mb-6">
+          <div className="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full animate-spin mb-3">
+            ⏱️
+          </div>
+          <p className="text-gray-600 text-sm">
+            3秒後に自動的にメインページに移動します...
+          </p>
+        </div>
+
+        {/* 手動リンク */}
+        <div className="space-y-3">
+          <Link
+            href="/suminoye"
+            className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition font-medium"
+          >
+            🚤 住之江ボートレースを開く
+          </Link>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/suminoye/races"
+              className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition"
+            >
+              📋 レース一覧
+            </Link>
+            <Link
+              href="/suminoye/results"
+              className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition"
+            >
+              📊 結果確認
+            </Link>
+          </div>
+        </div>
+
+        {/* フッター */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-xs text-gray-500">
+            住之江競艇場公式データを利用したAI予想システム
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            データベース接続にはSupabaseの設定が必要です
+          </p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
