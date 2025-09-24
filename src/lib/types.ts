@@ -52,7 +52,7 @@ export const WhySchema = z.object({
   summary: z.string(),
   factors: z.array(z.string()).optional(),
   start_shape: z.string().optional(),
-  kimarite_mix: z.record(z.any()).optional(),
+  kimarite_mix: z.record(z.string(), z.unknown()).optional(),
 })
 
 // API Response schemas

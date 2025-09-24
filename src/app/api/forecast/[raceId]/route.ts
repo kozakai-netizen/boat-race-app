@@ -104,7 +104,13 @@ export async function GET(
 
 async function handleFixedFirstForecast(raceId: string, fixedLane: number) {
   try {
-    let allForecasts = null
+    let allForecasts: Array<{
+      combo: string
+      prob: number
+      ev: number
+      super: boolean
+      why: unknown
+    }> | null = null
 
     // Check for mock data first
     if (raceId in MOCK_FORECAST_DATA) {
@@ -241,7 +247,7 @@ function calculateHitType(forecastCombo: string, resultTriple: string | null): '
   return 'miss'
 }
 
-function parseWhyData(why: unknown): { icons: string[]; summary: string; factors?: string[]; start_shape?: string; kimarite_mix?: any } | undefined {
+function parseWhyData(why: unknown): { icons: string[]; summary: string; factors?: string[]; start_shape?: string; kimarite_mix?: Record<string, unknown> } | undefined {
   if (!why) return undefined
 
   try {

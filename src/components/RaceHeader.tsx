@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 
 interface RaceHeaderProps {
-  raceId: string
   venue: string
   date: string
   raceNo: string
@@ -17,7 +16,6 @@ interface RaceHeaderProps {
 }
 
 export default function RaceHeader({
-  raceId,
   venue,
   date,
   raceNo,

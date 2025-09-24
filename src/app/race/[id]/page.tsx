@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Forecast } from '@/lib/types'
-import { parseRaceId, getVenueDisplayName } from '@/lib/raceId'
+import { Forecast, Result } from '@/lib/types'
+import { parseRaceId, getVenueDisplayName, type RaceIdInfo } from '@/lib/raceId'
 import RaceHeader from '@/components/RaceHeader'
 import ForecastList from '@/components/ForecastList'
 import FixedFirstTabs from '@/components/FixedFirstTabs'
@@ -15,7 +15,7 @@ interface RaceDetailProps {
 export default function RaceDetail({ params }: RaceDetailProps) {
   const [raceId, setRaceId] = useState<string>('')
   const [forecast, setForecast] = useState<Forecast | null>(null)
-  const [raceResult, setRaceResult] = useState<any>(null)
+  const [raceResult, setRaceResult] = useState<Result | null>(null)
   const [fixedFirst, setFixedFirst] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [fixedLoading, setFixedLoading] = useState(false)
@@ -28,13 +28,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     })
   }, [params])
 
-  useEffect(() => {
-    if (raceId) {
-      fetchRaceData()
-    }
-  }, [raceId])
-
-  const fetchRaceData = async () => {
+  const fetchRaceData = useCallback(async () => {
     if (!raceId) return
 
     setLoading(true)
@@ -55,7 +49,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
         const resultResponse = await fetch(`/api/results/suminoye?date=${raceInfo.date}`)
         if (resultResponse.ok) {
           const resultData = await resultResponse.json()
-          const matchingResult = resultData.results?.find((r: any) => r.race_id === raceId)
+          const matchingResult = resultData.results?.find((r: Result) => r.race_id === raceId)
           if (matchingResult) {
             setRaceResult(matchingResult)
           }
@@ -70,7 +64,13 @@ export default function RaceDetail({ params }: RaceDetailProps) {
       setError('データの取得に失敗しました')
       setLoading(false)
     }
-  }
+  }, [raceId])
+
+  useEffect(() => {
+    if (raceId) {
+      fetchRaceData()
+    }
+  }, [raceId, fetchRaceData])
 
   const fetchFixedFirstForecast = async (lane: number | null) => {
     if (!raceId) return
@@ -99,7 +99,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     fetchFixedFirstForecast(lane)
   }
 
-  const generateMockCloseAt = (raceInfo: any) => {
+  const generateMockCloseAt = (raceInfo: RaceIdInfo) => {
     const raceNo = parseInt(raceInfo.raceNo.replace('R', ''))
     const today = new Date()
     today.setHours(10 + raceNo, 45, 0, 0)
@@ -151,7 +151,6 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
         {/* レースヘッダー */}
         <RaceHeader
-          raceId={raceId}
           venue={getVenueDisplayName(raceInfo.venue)}
           date={raceInfo.date}
           raceNo={raceInfo.raceNo}
@@ -183,7 +182,11 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           <ForecastList
             triples={forecast?.triples || []}
             loading={loading}
-            raceResult={raceResult}
+            raceResult={raceResult ? {
+              triple: raceResult.triple,
+              payout: raceResult.payout,
+              popularity: raceResult.popularity
+            } : undefined}
           />
         </div>
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { VenueResponseSchema } from '@/lib/types'
+import { VenueResponseSchema, Weather } from '@/lib/types'
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const raceData = races && races.length > 0 ? races[0] : null
 
     // Get weather data if race exists
-    let weatherData = null
+    let weatherData: Weather | null = null
     if (raceData) {
       const { data: weather } = await supabase
         .from('weather')

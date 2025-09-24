@@ -18,6 +18,10 @@ export default function ForecastList({ triples, loading, raceResult }: ForecastL
   const [showTooltip, setShowTooltip] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'ev' | 'probability' | 'odds'>('ev')
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
+
+  const isWinningCombo = (combo: string) => {
+    return raceResult && raceResult.triple === combo
+  }
   const [showLimit, setShowLimit] = useState(5)
 
   const sortedTriples = useMemo(() => {
