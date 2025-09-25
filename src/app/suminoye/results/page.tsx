@@ -59,7 +59,7 @@ function ResultsPageContent() {
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">レース結果</h1>
-                <p className="text-gray-600">{date} 住之江ボートレース</p>
+                <p className="text-gray-600">{date} 舟券王への道from住之江競艇</p>
               </div>
             </div>
 

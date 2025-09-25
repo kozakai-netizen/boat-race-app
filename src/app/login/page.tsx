@@ -21,7 +21,7 @@ export default function LoginSelection() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
-                    住之江ボートレース予想
+                    舟券王への道from住之江競艇
                   </h3>
                   <p className="text-gray-600 text-sm">
                     レース情報・予想・結果を確認
@@ -60,7 +60,7 @@ export default function LoginSelection() {
         {/* フッター */}
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
-            住之江ボートレース予想システム v2025
+            舟券王への道from住之江競艇 v2025
           </p>
         </div>
       </div>

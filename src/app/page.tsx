@@ -31,7 +31,7 @@ export default function Home() {
         </div>
 
         {/* タイトル */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">住之江ボートレース</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">舟券王への道from住之江競艇</h1>
         <h2 className="text-xl text-gray-600 mb-6">AI予想システム MVP</h2>
 
         {/* 機能紹介 */}
@@ -63,7 +63,7 @@ export default function Home() {
             href="/suminoye"
             className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition font-medium"
           >
-            🚤 住之江ボートレースを開く
+            🚤 舟券王への道from住之江競艇を開く
           </Link>
 
           <div className="grid grid-cols-2 gap-3">

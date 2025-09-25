@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/admin" className="text-xl font-bold text-blue-600">
-                  競艇予想アプリ 管理画面
+                  管理画面
                 </Link>
               </div>
               <div className="hidden sm:ml-8 sm:flex sm:space-x-8">

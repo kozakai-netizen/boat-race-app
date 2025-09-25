@@ -69,7 +69,7 @@ export default function AdminDashboard() {
             管理画面ダッシュボード
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            競艇予想アプリのデータ管理
+            舟券王への道のデータ管理
           </p>
         </div>
         <div className="mt-4 flex md:mt-0 md:ml-4">

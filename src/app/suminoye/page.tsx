@@ -81,7 +81,7 @@ export default function SuminoyeHome() {
                 💬 フィードバック
               </button>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">🚤 住之江ボートレース</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">🚤 舟券王への道from住之江競艇</h1>
             <p className="text-gray-600">AIによる競艇予想システム</p>
           </div>
 
