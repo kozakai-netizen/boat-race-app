@@ -3,6 +3,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { RaceListItem as RaceListItemType, Forecast } from '@/lib/types'
 import CompactForecast from './CompactForecast'
+import { useRaceEntries } from '@/hooks/useRaceEntries'
 
 const EntryRow = dynamic(() => import('./EntryRow'), {
   loading: () => <div className="animate-pulse bg-gray-200 rounded h-12 mx-3" />
@@ -14,44 +15,15 @@ interface RaceListItemProps {
   onToggle: () => void
 }
 
-interface RaceEntriesResponse {
-  entries: Array<{
-    lane: number
-    player_name: string
-    player_grade: string
-    st_time: number
-    exhibition_time: number
-    motor_rate: number
-    motor_condition: string
-    motor_description: string
-    // API側で計算済みのデータ
-    motor_badge: {
-      grade: '◎' | '○' | '△'
-      color: string
-      tooltip: string
-    }
-    grade_badge_color: string
-    st_color: string
-    exhibition_color: string
-    two_rate: number
-    three_rate: number
-    // 外部リンクと画像用（データ取り込み用）
-    photo_path?: string
-    external_url?: string
-  }>
-  why_brief: {
-    icons: string[]
-    summary: string
-  }
-}
+// RaceEntriesResponse interface moved to useRaceEntries hook
 
 const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: RaceListItemProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [entriesData, setEntriesData] = useState<RaceEntriesResponse | null>(null)
   const [forecastData, setForecastData] = useState<Forecast | null>(null)
   const [forecastLoading, setForecastLoading] = useState(false)
-  const [fetchError, setFetchError] = useState<string | null>(null)
   const raceItemRef = useRef<HTMLDivElement>(null)
+
+  // SWR for race entries - only fetch when race is expanded
+  const { entriesData, isLoading, error: fetchError, mutate } = useRaceEntries(race.race_id, isOpen)
 
   // 重い計算をuseMemoでキャッシュ
   const computedValues = useMemo(() => {
@@ -84,12 +56,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
     }
   }, [forecastData, forecastLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // エントリーデータの取得
-  useEffect(() => {
-    if (isOpen && !entriesData && !isLoading) {
-      fetchEntriesData()
-    }
-  }, [isOpen, entriesData, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
+  // SWR handles race entries fetching automatically when isOpen becomes true
 
   // 展開時の自動スクロール
   useEffect(() => {
@@ -104,26 +71,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
     }
   }, [isOpen])
 
-  const fetchEntriesData = async () => {
-    setIsLoading(true)
-    setFetchError(null)
-
-    try {
-      const response = await fetch(`/api/race-entries?raceId=${race.race_id}`)
-
-      if (!response.ok) {
-        throw new Error('エントリーデータの取得に失敗しました')
-      }
-
-      const data = await response.json()
-      setEntriesData(data)
-    } catch (error) {
-      console.error('Error fetching entries:', error)
-      setFetchError(error instanceof Error ? error.message : 'エラーが発生しました')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // Manual fetch function removed - now handled by SWR
 
   const fetchForecastData = async () => {
     setForecastLoading(true)
@@ -427,7 +375,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
               <div className="rounded-lg border border-error-soft p-4 text-center text-error text-sm bg-error-soft">
                 {fetchError}
                 <button
-                  onClick={fetchEntriesData}
+                  onClick={() => mutate()}
                   className="ml-2 text-brand hover:opacity-90 underline"
                 >
                   再試行
