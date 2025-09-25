@@ -94,9 +94,10 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
-              className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition flex-shrink-0"
+              className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition flex-shrink-0 flex items-center space-x-1"
             >
-              {entry.external_url ? '詳しく見る' : '選手情報（マクール）'}
+              <span>{entry.external_url ? '詳しく見る' : '選手情報（マクール）'}</span>
+              <span className="text-xs">↗</span>
             </a>
           </div>
         </div>
