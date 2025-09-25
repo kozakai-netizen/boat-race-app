@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import {
   ArrowLeftIcon,
   InformationCircleIcon,
@@ -144,6 +145,14 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
               )
             )
           })}
+        </div>
+
+        {/* テーマ切り替え */}
+        <div className="px-4 py-4 border-t border-ink-line">
+          <div className="mb-2">
+            <span className="text-xs text-ink-4 uppercase tracking-wide">テーマ設定</span>
+          </div>
+          <ThemeToggle variant="dropdown" />
         </div>
       </div>
 
