@@ -18,8 +18,7 @@ export default function Home() {
         </div>
 
         {/* タイトル */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">舟券王への道from住之江競艇</h1>
-        <h2 className="text-xl text-gray-600 mb-6">AI予想システム MVP</h2>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">舟券王への道from住之江競艇</h1>
 
         {/* 機能紹介 */}
         <div className="bg-gray-50 rounded-lg p-6 mb-6">
