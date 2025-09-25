@@ -104,10 +104,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
   return (
     <div className={`
-      border-b transition-all duration-300
+      transition-all duration-300 relative
       ${isOpen
-        ? 'border-blue-200 shadow-lg bg-blue-50/30'
-        : 'border-gray-100 shadow-sm bg-white hover:bg-gray-50'
+        ? 'border-2 border-blue-500 shadow-2xl bg-white rounded-lg m-2 z-10'
+        : 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
       }
     `}>
       {/* レースヘッダー */}
