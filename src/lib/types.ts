@@ -9,6 +9,41 @@ export const PlayerSchema = z.object({
   win_rate_by_course: z.array(z.number()).nullable(),
 })
 
+// 管理画面用：拡張選手スキーマ（パフォーマンス重視）
+export const AdminPlayerSchema = z.object({
+  id: z.string().uuid().optional(), // 自動生成
+  reg_no: z.number().int().min(1000).max(9999).nullable(), // 4桁登録番号
+  player_name: z.string().min(1).max(50), // 本名
+  name_kana: z.string().max(100).nullable(), // ひらがな名前
+  grade: z.enum(['A1', 'A2', 'B1', 'B2']),
+  birth_date: z.string().date().nullable(), // YYYY-MM-DD
+  hometown: z.string().max(20).nullable(), // 出身地
+  external_url: z.string().url().nullable(), // 外部リンク
+  is_active: z.boolean().default(true), // 現役フラグ
+  created_at: z.string().datetime().optional(),
+  updated_at: z.string().datetime().optional(),
+})
+
+// レスポンス用
+export const AdminPlayersResponseSchema = z.object({
+  players: z.array(AdminPlayerSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  hasMore: z.boolean(),
+})
+
+// 検索・フィルタ用
+export const PlayerSearchParamsSchema = z.object({
+  q: z.string().optional(), // 検索キーワード
+  grade: z.enum(['A1', 'A2', 'B1', 'B2', '']).optional(),
+  isActive: z.enum(['true', 'false', '']).optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  sortBy: z.enum(['reg_no', 'player_name', 'grade', 'created_at']).default('reg_no'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+})
+
 export const RaceSchema = z.object({
   race_id: z.string(),
   venue: z.string(),
@@ -182,3 +217,8 @@ export type RacesResponse = z.infer<typeof RacesResponseSchema>
 export type Result = z.infer<typeof ResultSchema>
 export type ResultsResponse = z.infer<typeof ResultsResponseSchema>
 export type Feedback = z.infer<typeof FeedbackSchema>
+
+// 管理画面用型定義
+export type AdminPlayer = z.infer<typeof AdminPlayerSchema>
+export type AdminPlayersResponse = z.infer<typeof AdminPlayersResponseSchema>
+export type PlayerSearchParams = z.infer<typeof PlayerSearchParamsSchema>
