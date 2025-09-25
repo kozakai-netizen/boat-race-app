@@ -44,8 +44,9 @@ export async function GET(request: NextRequest) {
         exhibition_color: exhibitionColor,
         two_rate: twoRate,
         three_rate: threeRate,
-        // 写真用フィールド
-        photo_path: null // 現在は写真なし
+        // 外部リンクと写真用フィールド（データ取り込み用として保持）
+        photo_path: null, // 現在は写真なし
+        external_url: null // データ取り込み用として保持
       }
     })
 
