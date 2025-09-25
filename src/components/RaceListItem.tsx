@@ -115,7 +115,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
         className={`
           p-4 cursor-pointer transition-all duration-300
           ${isOpen
-            ? 'bg-white border-l-4 border-l-blue-500'
+            ? 'bg-gray-100 border-l-4 border-l-blue-500 shadow-sm'
             : 'hover:bg-gray-50'
           }
           ${!raceIsOpen ? 'opacity-60' : ''}
@@ -159,10 +159,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
           <div className="col-span-5 flex items-center space-x-3">
             {/* 固定位置アイコン - 加点要素として表示 */}
             <div className="flex items-center w-24">
-              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('🚀') ? 'opacity-100' : 'opacity-20'}`}>🚀</span>
-              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('💨') ? 'opacity-100' : 'opacity-20'}`}>💨</span>
-              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('🧱') ? 'opacity-100' : 'opacity-20'}`}>🧱</span>
-              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100' : 'opacity-20'}`}>⚡</span>
+              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>🚀</span>
+              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>💨</span>
+              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>🧱</span>
+              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>⚡</span>
             </div>
 
             {/* 根拠1行 - API側で計算済みの場合は表示、未取得の場合はプレースホルダー */}
@@ -174,19 +174,21 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                       <span key={idx} className="text-sm">{icon}</span>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-700 font-medium truncate">
+                  <span className="text-sm text-gray-900 font-bold truncate bg-yellow-50 px-2 py-1 rounded">
                     {entriesData.why_brief.summary}
                   </span>
                 </>
               ) : (
-                <>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-sm">📊</span>
-                  </div>
-                  <span className="text-sm text-gray-500 font-medium truncate">
-                    {isOpen && isLoading ? '分析中...' : 'AI予想'}
-                  </span>
-                </>
+                isOpen && isLoading ? (
+                  <>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-sm">📊</span>
+                    </div>
+                    <span className="text-sm text-gray-500 font-medium truncate">
+                      分析中...
+                    </span>
+                  </>
+                ) : null
               )}
             </div>
           </div>
