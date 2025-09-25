@@ -412,7 +412,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 </div>
 
                 {/* モバイル: カード形式 */}
-                <div className="sm:hidden space-y-2">
+                <div className="sm:hidden space-y-1 px-2">
                   {entriesData.entries
                     .sort((a, b) => a.lane - b.lane)
                     .map((entry) => (

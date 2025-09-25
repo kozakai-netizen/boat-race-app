@@ -156,72 +156,71 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       </div>
     </div>
 
-      {/* モバイル: コンパクトカード */}
-      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-1.5 mx-2 my-0.5 shadow-card">
-        <div className="flex items-center space-x-2">
-          {/* 枠番 */}
-          <div className={`
-            w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
-            ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
-              entry.lane === 2 ? 'bg-black text-white' :
-              entry.lane === 3 ? 'bg-red-500' :
-              entry.lane === 4 ? 'bg-blue-500' :
-              entry.lane === 5 ? 'bg-yellow-500 text-black' :
-              'bg-green-500'}
-          `}>
-            {entry.lane}
-          </div>
+      {/* モバイル: 極コンパクト1行レイアウト */}
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-md p-1 my-0.5 shadow-card">
+        <div className="flex items-center justify-between">
+          {/* 左側：枠番 + 選手名 + 級別 */}
+          <div className="flex items-center space-x-1.5 flex-1 min-w-0">
+            {/* 枠番 */}
+            <div className={`
+              w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
+              ${entry.lane === 1 ? 'bg-white text-black border border-black' :
+                entry.lane === 2 ? 'bg-black text-white' :
+                entry.lane === 3 ? 'bg-red-500' :
+                entry.lane === 4 ? 'bg-blue-500' :
+                entry.lane === 5 ? 'bg-yellow-500 text-black' :
+                'bg-green-500'}
+            `}>
+              {entry.lane}
+            </div>
 
-          {/* 選手名 + 級別 */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-1.5">
-              <h3 className="font-medium text-ink-1 truncate text-xs">
-                {entry.player_name}
-              </h3>
-              <span className={`
-                px-1 py-0.5 rounded text-xs font-medium border flex-shrink-0
-                ${entry.grade_badge_color}
-              `}>
-                {entry.player_grade}
-              </span>
+            {/* 選手名（8文字でトランケート） */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-1">
+                <span className="font-medium text-ink-1 truncate text-xs max-w-[4rem]">
+                  {entry.player_name}
+                </span>
+                <span className={`
+                  px-1 py-0.5 rounded text-xs font-medium border flex-shrink-0
+                  ${entry.grade_badge_color}
+                `}>
+                  {entry.player_grade}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* データ行（横並び） */}
-          <div className="flex items-center space-x-1.5 flex-shrink-0">
+          {/* 右側：データ（4列コンパクト） */}
+          <div className="flex items-center space-x-1 flex-shrink-0">
             {/* ST */}
-            <div className="text-center min-w-[2rem]">
-              <div className={`text-xs font-mono ${entry.st_color}`}>
+            <div className="text-center min-w-[1.8rem]">
+              <div className={`text-xs font-mono leading-tight ${entry.st_color}`}>
                 {entry.st_time.toFixed(2)}
               </div>
-              <div className="text-xs text-ink-4">ST</div>
             </div>
 
             {/* 展示 */}
-            <div className="text-center min-w-[2rem]">
-              <div className={`text-xs font-mono ${entry.exhibition_color}`}>
+            <div className="text-center min-w-[1.8rem]">
+              <div className={`text-xs font-mono leading-tight ${entry.exhibition_color}`}>
                 {entry.exhibition_time.toFixed(2)}
               </div>
-              <div className="text-xs text-ink-4">展示</div>
             </div>
 
             {/* 機力 */}
-            <div className="text-center min-w-[1.5rem]">
+            <div className="text-center min-w-[1.2rem]">
               <span className={`
                 px-0.5 py-0.5 rounded text-xs font-bold border
                 ${entry.motor_badge.color}
               `}>
                 {entry.motor_badge.grade}
               </span>
-              <div className="text-xs text-ink-4">機力</div>
             </div>
 
             {/* 2連率 */}
             <div className="text-center min-w-[1.5rem]">
-              <div className="text-xs font-medium text-ink-1">
+              <div className="text-xs font-medium text-ink-1 leading-tight">
                 {Math.round(entry.two_rate)}%
               </div>
-              <div className="text-xs text-ink-4">2連</div>
             </div>
           </div>
         </div>
