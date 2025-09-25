@@ -73,9 +73,9 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
 
   return (
     <>
-      {/* サイドメニュー - 少し覗かせて表示 */}
+      {/* サイドメニュー - デスクトップのみ表示 */}
       <div
-        className="fixed left-0 top-0 h-full z-50"
+        className="hidden md:block fixed left-0 top-0 h-full z-50"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

@@ -12,6 +12,7 @@ import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import { useUrlSync } from '@/hooks/useUrlSync'
 import SideMenu from '@/components/SideMenu'
+import MobileHeader from '@/components/MobileHeader'
 
 interface RaceDetailProps {
   params: Promise<{ id: string }>
@@ -160,15 +161,24 @@ export default function RaceDetail({ params }: RaceDetailProps) {
   const raceInfo = parseRaceId(raceId)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-      {/* ARC風サイドメニュー */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+      {/* ARC風サイドメニュー - デスクトップのみ */}
       <SideMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={true}
       />
 
-      <div className="max-w-6xl mx-auto">
+      {/* モバイル用ヘッダー */}
+      <MobileHeader
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* メインコンテンツ - デスクトップのみ左マージン、モバイルは上部マージン */}
+      <div className="md:ml-12 pt-16 md:pt-4 p-4">
+        <div className="max-w-6xl mx-auto">
         {/* ナビゲーション */}
         <div className="mb-4 flex items-center">
           <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
@@ -228,7 +238,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
         {/* 凡例 */}
         <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
           <h3 className="text-sm font-semibold text-gray-800 mb-3">凡例</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="flex items-center space-x-2">
               <span className="text-lg">🚀</span>
               <span>スピード</span>
@@ -249,6 +259,7 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           <div className="mt-3 text-xs text-gray-500">
             <p>EV ≥ 1.25 かつ 確率 ≥ 4% で⭐SUPER表示</p>
           </div>
+        </div>
         </div>
       </div>
 

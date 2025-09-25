@@ -5,6 +5,10 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { RacesResponse } from '@/lib/types'
 import RaceListItem from '@/components/RaceListItem'
+import SideMenu from '@/components/SideMenu'
+import MobileHeader from '@/components/MobileHeader'
+import LegendModal, { useLegendModal } from '@/components/LegendModal'
+import { useFeedbackModal } from '@/components/FeedbackForm'
 
 function RacesPageContent() {
   const searchParams = useSearchParams()
@@ -14,6 +18,9 @@ function RacesPageContent() {
   const [showSuperOnly, setShowSuperOnly] = useState(false)
   const [showOpenOnly, setShowOpenOnly] = useState(false)
   const [expandedRaces, setExpandedRaces] = useState<Set<string>>(new Set())
+
+  const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
+  const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal('/suminoye/races')
 
   // 外部リンク表示フラグ
   const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
@@ -73,26 +80,44 @@ function RacesPageContent() {
   }, [racesData?.races, showSuperOnly, showOpenOnly, isRaceOpen])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+      {/* ARC風サイドメニュー - デスクトップのみ */}
+      <SideMenu
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* モバイル用ヘッダー */}
+      <MobileHeader
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* メインコンテンツ - デスクトップのみ左マージン、モバイルは上部マージン */}
+      <div className="md:ml-12 pt-16 md:pt-4 p-4">
+        <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => router.back()}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
-              >
-                <span>←</span>
-                <span>戻る</span>
-              </button>
-              <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
-                <span>🏠</span>
-                <span>ホーム</span>
-              </Link>
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-4 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <div className="flex items-center space-x-2 md:hidden">
+                <button
+                  onClick={() => router.back()}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
+                >
+                  <span>←</span>
+                  <span>戻る</span>
+                </button>
+                <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
+                  <span>🏠</span>
+                  <span>ホーム</span>
+                </Link>
+              </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">レース一覧</h1>
-                <p className="text-gray-600">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">レース一覧</h1>
+                <p className="text-gray-600 text-sm sm:text-base">
                   {date} ({grade === 'major' ? '重賞' : '一般戦'})
                 </p>
               </div>
@@ -219,7 +244,12 @@ function RacesPageContent() {
             <p>• データの正確性や最新性については保証いたしません</p>
           </div>
         </div>
+        </div>
       </div>
+
+      {/* モーダル */}
+      <LegendModal isOpen={legendOpen} onClose={closeLegend} />
+      <FeedbackFormComponent />
     </div>
   )
 }

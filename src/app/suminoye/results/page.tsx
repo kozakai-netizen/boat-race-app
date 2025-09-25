@@ -6,12 +6,19 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { ResultsResponse } from '@/lib/types'
 import { HIT_ICONS } from '@/lib/constants'
 import ResultCard from '@/components/ResultCard'
+import SideMenu from '@/components/SideMenu'
+import MobileHeader from '@/components/MobileHeader'
+import LegendModal, { useLegendModal } from '@/components/LegendModal'
+import { useFeedbackModal } from '@/components/FeedbackForm'
 
 function ResultsPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [resultsData, setResultsData] = useState<ResultsResponse | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
+  const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal('/suminoye/results')
 
   const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
 
@@ -40,8 +47,24 @@ function ResultsPageContent() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+      {/* ARC風サイドメニュー - デスクトップのみ */}
+      <SideMenu
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* モバイル用ヘッダー */}
+      <MobileHeader
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* メインコンテンツ - デスクトップのみ左マージン、モバイルは上部マージン */}
+      <div className="md:ml-12 pt-16 md:pt-4 p-4">
+        <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -118,7 +141,12 @@ function ResultsPageContent() {
             </p>
           </div>
         )}
+        </div>
       </div>
+
+      {/* モーダル */}
+      <LegendModal isOpen={legendOpen} onClose={closeLegend} />
+      <FeedbackFormComponent />
     </div>
   )
 }

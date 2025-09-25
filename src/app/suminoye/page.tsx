@@ -6,6 +6,7 @@ import { VenueResponse } from '@/lib/types'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import SideMenu from '@/components/SideMenu'
+import MobileHeader from '@/components/MobileHeader'
 
 export default function SuminoyeHome() {
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -52,15 +53,24 @@ export default function SuminoyeHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-      {/* ARC風サイドメニュー */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+      {/* ARC風サイドメニュー - デスクトップのみ */}
       <SideMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={true}
       />
 
-      <div className="max-w-4xl mx-auto">
+      {/* モバイル用ヘッダー */}
+      <MobileHeader
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
+      {/* メインコンテンツ - デスクトップのみ左マージン、モバイルは上部マージン */}
+      <div className="md:ml-12 pt-16 md:pt-4 p-4">
+        <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="text-center">
@@ -69,7 +79,7 @@ export default function SuminoyeHome() {
           </div>
 
           {/* 日付・グレード選択 */}
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
             <div className="flex items-center gap-2">
               <label htmlFor="date" className="text-sm font-medium text-gray-700">
                 日付:
@@ -117,10 +127,10 @@ export default function SuminoyeHome() {
         {venueData && !loading && (
           <>
             {/* 天候・基本情報 */}
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">基本情報</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                 {/* 天候 */}
                 <div className="text-center">
                   <div className="text-2xl mb-2">
@@ -158,9 +168,9 @@ export default function SuminoyeHome() {
             </div>
 
             {/* ナビゲーション */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href={`/suminoye/races?date=${selectedDate}&grade=${selectedGrade}`}>
-                <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 hover:shadow-xl transition-shadow cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">📋 レース一覧</h3>
@@ -174,7 +184,7 @@ export default function SuminoyeHome() {
               </Link>
 
               <Link href={`/suminoye/results?date=${selectedDate}`}>
-                <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 hover:shadow-xl transition-shadow cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">📊 結果・成績</h3>
@@ -198,6 +208,7 @@ export default function SuminoyeHome() {
             </p>
           </div>
         )}
+        </div>
       </div>
 
       {/* モーダル */}
