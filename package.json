@@ -10,6 +10,7 @@
     "seed:test:suminoye": "tsx scripts/seed-test-race.ts"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@supabase/supabase-js": "^2.57.4",
     "next": "15.5.3",
     "react": "19.1.0",

@@ -6,9 +6,10 @@ const DATA_MODE = process.env.NEXT_PUBLIC_DATA_MODE || 'mock'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  console.info(`[API] admin/results/${params.id} GET - DATA_MODE: ${DATA_MODE}`)
+  const resolvedParams = await params
+  console.info(`[API] admin/results/${resolvedParams.id} GET - DATA_MODE: ${DATA_MODE}`)
 
   try {
     const { data, error } = await supabase
@@ -25,7 +26,7 @@ export async function GET(
         created_at,
         updated_at
       `)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (error) {
@@ -51,9 +52,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  console.info(`[API] admin/results/${params.id} PUT - DATA_MODE: ${DATA_MODE}`)
+  const resolvedParams = await params
+  console.info(`[API] admin/results/${resolvedParams.id} PUT - DATA_MODE: ${DATA_MODE}`)
 
   if (DATA_MODE !== 'live') {
     return NextResponse.json(
@@ -70,7 +72,7 @@ export async function PUT(
     const { data: existing, error: fetchError } = await supabase
       .from('result')
       .select('id, race_id')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (fetchError) {
@@ -89,7 +91,7 @@ export async function PUT(
         .from('result')
         .select('id')
         .eq('race_id', resultData.race_id)
-        .neq('id', params.id)
+        .neq('id', resolvedParams.id)
         .limit(1)
         .single()
 
@@ -111,7 +113,7 @@ export async function PUT(
         popularity: resultData.popularity,
         settled_at: resultData.settled_at || new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .select()
       .single()
 
@@ -141,9 +143,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  console.info(`[API] admin/results/${params.id} DELETE - DATA_MODE: ${DATA_MODE}`)
+  const resolvedParams = await params
+  console.info(`[API] admin/results/${resolvedParams.id} DELETE - DATA_MODE: ${DATA_MODE}`)
 
   if (DATA_MODE !== 'live') {
     return NextResponse.json(
@@ -157,7 +160,7 @@ export async function DELETE(
     const { data: existing, error: fetchError } = await supabase
       .from('result')
       .select('id, race_id')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (fetchError) {
@@ -174,7 +177,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('result')
       .delete()
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
 
     if (error) {
       console.error('Delete error:', error)

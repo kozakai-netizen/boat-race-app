@@ -416,7 +416,7 @@ export default function PlayersManagement() {
                     </label>
                     <select
                       value={formData.grade || 'B1'}
-                      onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value as any }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value as 'A1' | 'A2' | 'B1' | 'B2' }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                     >
                       <option value="A1">A1</option>
