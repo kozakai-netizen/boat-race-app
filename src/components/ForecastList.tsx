@@ -209,7 +209,7 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
 
                 {triple.odds && (
                   <div className="text-xs text-gray-500 mt-1">
-                    オッズ {triple.odds}倍
+                    オッズ {typeof triple.odds === 'number' ? triple.odds.toFixed(1) : triple.odds}倍
                   </div>
                 )}
               </div>
