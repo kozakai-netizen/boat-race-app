@@ -1,25 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Admin routes protection
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    // Skip authentication for login page
-    if (request.nextUrl.pathname === '/admin/login') {
-      return NextResponse.next()
-    }
+  // Admin routes protection - matcher already excludes /admin/login
+  const adminToken = request.cookies.get('admin-token')?.value
+  const validToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'
 
-    const adminToken = request.cookies.get('admin-token')?.value
-    const validToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'
-
-    // If no token or invalid token, redirect to login
-    if (!adminToken || adminToken !== validToken) {
-      return NextResponse.redirect(new URL('/admin/login', request.url))
-    }
+  // If no token or invalid token, redirect to login
+  if (!adminToken || adminToken !== validToken) {
+    return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: [
+    '/admin',
+    '/admin/races/:path*',
+    '/admin/players/:path*',
+    '/admin/results/:path*',
+    '/admin/photos/:path*',
+    '/admin/import/:path*'
+  ]
 }
