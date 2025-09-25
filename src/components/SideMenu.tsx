@@ -78,14 +78,24 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       }`}>
         {/* ヘッダー */}
         <div className="px-6 py-8 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-              <span className="text-white text-lg">🚤</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <span className="text-white text-lg">🚤</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800">舟券王への道</h2>
+                <p className="text-sm text-gray-500">from住之江競艇</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800">舟券王への道</h2>
-              <p className="text-sm text-gray-500">from住之江競艇</p>
-            </div>
+
+            {/* 閉じるボタン */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors duration-200"
+            >
+              <span className="text-gray-600 text-lg">×</span>
+            </button>
           </div>
         </div>
 
