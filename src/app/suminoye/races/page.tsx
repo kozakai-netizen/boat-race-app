@@ -256,24 +256,29 @@ function RacesPageContent() {
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">🚀</span>
-              <span>スピード重視</span>
+              <span>スピード優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">💨</span>
-              <span>パワー重視</span>
+              <span>パワー優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">🧱</span>
-              <span>安定重視</span>
+              <span>安定性優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">⚡</span>
-              <span>テクニック重視</span>
+              <span>テクニック優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">📊</span>
               <span>AI予想・分析</span>
             </div>
+          </div>
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <p className="text-xs text-gray-500">
+              💡 アイコンが多く表示されているレースほど、複数の要素で優位性がある狙い目のレースです
+            </p>
           </div>
         </div>
 

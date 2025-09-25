@@ -241,19 +241,19 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="flex items-center space-x-2">
               <span className="text-lg">🚀</span>
-              <span>スピード</span>
+              <span>スピード優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">💨</span>
-              <span>パワー</span>
+              <span>パワー優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">🧱</span>
-              <span>安定</span>
+              <span>安定性優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">⚡</span>
-              <span>テクニック</span>
+              <span>テクニック優位</span>
             </div>
           </div>
           <div className="mt-3 text-xs text-gray-500">
