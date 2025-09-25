@@ -11,7 +11,43 @@ interface SideMenuProps {
 
 export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButton = true }: SideMenuProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [expandTimer, setExpandTimer] = useState<NodeJS.Timeout | null>(null)
+  const [collapseTimer, setCollapseTimer] = useState<NodeJS.Timeout | null>(null)
   const router = useRouter()
+
+  const handleMouseEnter = () => {
+    // 閉じるタイマーをクリア
+    if (collapseTimer) {
+      clearTimeout(collapseTimer)
+      setCollapseTimer(null)
+    }
+
+    // 遅延展開
+    if (!isExpanded && !expandTimer) {
+      const timer = setTimeout(() => {
+        setIsExpanded(true)
+        setExpandTimer(null)
+      }, 200)
+      setExpandTimer(timer)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    // 展開タイマーをクリア
+    if (expandTimer) {
+      clearTimeout(expandTimer)
+      setExpandTimer(null)
+    }
+
+    // 遅延閉じる
+    if (isExpanded) {
+      const timer = setTimeout(() => {
+        setIsExpanded(false)
+        setCollapseTimer(null)
+      }, 400)
+      setCollapseTimer(timer)
+    }
+  }
 
   // メニュー項目定義
   const menuItems = [
@@ -37,14 +73,17 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
 
   return (
     <>
-      {/* サイドメニュー - 常時表示 */}
+      {/* サイドメニュー - 少し覗かせて表示 */}
       <div
         className="fixed left-0 top-0 h-full z-50"
-        onMouseEnter={() => setIsExpanded(true)}
-        onMouseLeave={() => setIsExpanded(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
+        {/* 広いホバーエリア（透明） */}
+        <div className="absolute -right-5 top-0 w-5 h-full" />
+
         <div className={`h-full bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-xl transition-all duration-300 ease-out ${
-          isExpanded ? 'w-48' : 'w-16'
+          isExpanded ? 'w-48' : 'w-12'
         }`}>
           {/* メニューアイテム */}
           <div className="flex flex-col items-start py-6 space-y-4 px-3">
@@ -54,7 +93,7 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
                   key={index}
                   onClick={item.action}
                   className={`flex items-center w-full rounded-xl transition-all duration-200 ${item.bgColor} group relative overflow-hidden ${
-                    isExpanded ? 'px-3 py-3 justify-start' : 'w-10 h-10 justify-center'
+                    isExpanded ? 'px-3 py-3 justify-start' : 'w-8 h-8 justify-center'
                   }`}
                   title={!isExpanded ? item.label : undefined}
                 >
@@ -83,8 +122,15 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
             ))}
           </div>
 
-          {/* 装飾的な縦線 */}
+          {/* 装飾的な縦線とヒント */}
           <div className="absolute right-0 top-1/4 bottom-1/4 w-0.5 bg-gradient-to-b from-transparent via-blue-300 to-transparent" />
+
+          {/* 隠れメニューがあることを示すヒント */}
+          {!isExpanded && (
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8">
+              <div className="w-full h-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-400 rounded-r-full opacity-60 animate-pulse" />
+            </div>
+          )}
         </div>
       </div>
 
