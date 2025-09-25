@@ -25,14 +25,6 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       }
     }] : []),
     {
-      icon: '🏠',
-      label: 'ホーム',
-      action: () => {
-        router.push('/suminoye')
-        setIsOpen(false)
-      }
-    },
-    {
       icon: '❓',
       label: '凡例',
       action: () => {
@@ -80,9 +72,16 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
         <div className="px-6 py-8 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+              <button
+                onClick={() => {
+                  router.push('/suminoye')
+                  setIsOpen(false)
+                }}
+                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 hover:scale-105"
+                title="ホームに戻る"
+              >
                 <span className="text-white text-lg">🚤</span>
-              </div>
+              </button>
               <div>
                 <h2 className="text-lg font-semibold text-gray-800">舟券王への道</h2>
                 <p className="text-sm text-gray-500">from住之江競艇</p>
