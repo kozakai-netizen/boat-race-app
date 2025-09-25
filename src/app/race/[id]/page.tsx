@@ -236,27 +236,27 @@ export default function RaceDetail({ params }: RaceDetailProps) {
         </div>
 
         {/* 凡例 */}
-        <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
-          <h3 className="text-sm font-semibold text-gray-800 mb-3">凡例</h3>
+        <div className="mt-6 bg-surface-1 rounded-xl shadow-hover p-4 border border-ink-line">
+          <h3 className="text-sm font-semibold text-ink-1 mb-3">凡例</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="flex items-center space-x-2">
               <span className="text-lg">🚀</span>
-              <span>スピード優位</span>
+              <span className="text-ink-2">スピード優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">💨</span>
-              <span>パワー優位</span>
+              <span className="text-ink-2">パワー優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">🧱</span>
-              <span>安定性優位</span>
+              <span className="text-ink-2">安定性優位</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">⚡</span>
-              <span>テクニック優位</span>
+              <span className="text-ink-2">テクニック優位</span>
             </div>
           </div>
-          <div className="mt-3 text-xs text-gray-500">
+          <div className="mt-3 text-xs text-ink-3">
             <p>EV ≥ 1.25 かつ 確率 ≥ 4% で⭐SUPER表示</p>
           </div>
         </div>

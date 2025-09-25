@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
 
 :root {
   --background: #ffffff;
@@ -6,21 +7,87 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* カラーシステム - プロフェッショナル */
+  --color-brand: #2563eb;
+  --color-brand-soft: #e7efff;
+  --color-brand-ring: #93c5fd;
+
+  /* インクカラー - 階層構造 */
+  --color-ink-1: #0b1220;  /* 見出し */
+  --color-ink-2: #1f2937;  /* 本文 */
+  --color-ink-3: #6b7280;  /* サブ */
+  --color-ink-4: #9ca3af;  /* ミュート */
+  --color-ink-line: #e5e7eb; /* 区切り線 */
+
+  /* サーフェス */
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f8fafc;
+  --color-surface-3: #f1f5f9;
+
+  /* 成功・警告・エラー */
+  --color-success: #10b981;
+  --color-success-soft: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fef3c7;
+  --color-error: #ef4444;
+  --color-error-soft: #fee2e2;
+
+  /* フォント */
+  --font-sans: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+
+  /* ボーダーラディウス */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+
+  /* シャドウ */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-focus: 0 0 0 3px var(--color-brand-ring);
+
+  /* スペーシング */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    /* ダークモード調整 */
+    --color-surface-1: #111827;
+    --color-surface-2: #1f2937;
+    --color-surface-3: #374151;
+    --color-ink-1: #f9fafb;
+    --color-ink-2: #f3f4f6;
+    --color-ink-3: #d1d5db;
+    --color-ink-4: #9ca3af;
+    --color-ink-line: #374151;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+/* タブラー数字 */
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' on;
+}
+
+/* データ表示用の最適化 */
+.data-cell {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
 }

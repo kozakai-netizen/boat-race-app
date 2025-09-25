@@ -143,10 +143,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
       className={`
         transition-all duration-300 relative
         ${isOpen
-          ? 'border-2 border-blue-500 shadow-2xl bg-white rounded-lg m-2 z-10'
+          ? 'border border-brand shadow-hover bg-surface-1 rounded-xl m-2 z-10'
           : raceIsOpen
-            ? 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
-            : 'border-b border-gray-200 shadow-sm bg-gray-50 hover:bg-gray-100 opacity-85'
+            ? 'border-b border-ink-line bg-surface-1 hover:bg-surface-2'
+            : 'border-b border-ink-line bg-surface-2 hover:bg-surface-3 opacity-85'
         }
       `}>
       {/* レースヘッダー */}
@@ -154,21 +154,22 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
         className={`
           p-4 cursor-pointer transition-all duration-300
           ${isOpen
-            ? 'bg-gray-100 border-l-4 border-l-blue-500 shadow-sm'
-            : 'hover:bg-gray-50'
+            ? 'bg-surface-2 border-l-4 border-l-brand shadow-card'
+            : 'hover:bg-surface-2'
           }
           ${!raceIsOpen ? 'opacity-75' : ''}
         `}
         onClick={handleToggle}
       >
-        <div className="grid grid-cols-12 gap-4 items-center">
+        <div className="hidden md:grid md:grid-cols-12 gap-4 items-center">
+          {/* デスクトップレイアウトの内容はそのまま */}
           {/* Race Number */}
           <div className="col-span-1">
             <div className={`
-              w-10 h-10 rounded-full font-bold text-sm flex items-center justify-center transition-all duration-300
+              w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center transition-all duration-300
               ${isOpen
-                ? 'bg-blue-600 text-white shadow-lg scale-110'
-                : 'bg-blue-500 text-white hover:bg-blue-600'
+                ? 'bg-brand text-white shadow-hover scale-110'
+                : 'bg-brand text-white hover:opacity-90'
               }
             `}>
               {race.race_no}
@@ -177,10 +178,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
           {/* Close Time */}
           <div className="col-span-2">
-            <div className="text-sm font-medium text-gray-800">
+            <div className="text-sm font-medium text-ink-1">
               {closeTime}
             </div>
-            <div className={`text-xs ${raceIsOpen ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-xs ${raceIsOpen ? 'text-success' : 'text-error'}`}>
               {raceIsOpen ? '発売中' : '締切済'}
             </div>
           </div>
@@ -188,7 +189,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
           {/* Super Pick */}
           <div className="col-span-1">
             {race.has_super && (
-              <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
+              <div className="bg-warning-soft text-warning px-2 py-1 rounded-md text-xs font-medium">
                 ⭐
               </div>
             )}
@@ -215,7 +216,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                         <span key={idx} className="text-base">{icon}</span>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-900 font-bold truncate bg-yellow-100 px-3 py-1.5 rounded-md border border-yellow-200">
+                    <span className="text-sm text-ink-1 font-bold truncate bg-warning-soft px-3 py-1.5 rounded-md border border-warning">
                       {entriesData.why_brief.summary}
                     </span>
                   </div>
@@ -223,7 +224,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                   {/* 初期推定（下段） */}
                   <div className="flex items-center space-x-1">
                     <span className="text-base">🎯</span>
-                    <span className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-200">
+                    <span className="text-xs bg-surface-2 text-ink-3 px-2 py-1 rounded border border-ink-line">
                       初期推定: {generateInitialReason(race.icons)}
                     </span>
                   </div>
@@ -233,7 +234,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                   <div className="flex items-center space-x-1">
                     <span className="text-base">📊</span>
                   </div>
-                  <span className="text-sm text-blue-600 font-semibold truncate bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200">
+                  <span className="text-sm text-brand font-semibold truncate bg-brand-soft px-3 py-1.5 rounded-md border border-brand">
                     AI詳細分析中...
                   </span>
                 </>
@@ -241,11 +242,11 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 <>
                   <div className="flex items-center space-x-1">
                     <span className="text-base">🎯</span>
-                    <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full border border-amber-200 font-medium">
+                    <span className="text-xs bg-warning-soft text-warning px-1.5 py-0.5 rounded-full border border-warning font-medium">
                       推定
                     </span>
                   </div>
-                  <span className="text-sm text-gray-800 font-medium truncate bg-gray-100 px-3 py-1.5 rounded-md border border-gray-300">
+                  <span className="text-sm text-ink-2 font-medium truncate bg-surface-2 px-3 py-1.5 rounded-md border border-ink-line">
                     {generateInitialReason(race.icons)}
                   </span>
                 </>
@@ -256,7 +257,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
           {/* Exhibition Summary + Actions */}
           <div className="col-span-3 flex items-center justify-between">
             {/* Exhibition Summary */}
-            <div className="text-xs text-gray-600 flex-1">
+            <div className="text-xs text-ink-3 flex-1">
               {race.exhibition_summary?.left_right_gap_max && (
                 <div>左右差: {race.exhibition_summary.left_right_gap_max.toFixed(2)}s</div>
               )}
@@ -264,7 +265,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 <div>外内差: {race.exhibition_summary.outer_inner_gap_min.toFixed(2)}s</div>
               )}
               {!race.exhibition_summary?.left_right_gap_max && !race.exhibition_summary?.outer_inner_gap_min && (
-                <div className="text-gray-400">展示データなし</div>
+                <div className="text-ink-4">展示データなし</div>
               )}
             </div>
 
@@ -272,32 +273,110 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             <div className="flex items-center space-x-2 ml-2">
               <Link
                 href={`/race/${race.race_id}`}
-                className="inline-block bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition"
+                className="inline-block bg-brand text-white px-3 py-1 rounded-lg text-xs font-medium hover:opacity-90 transition"
                 onClick={(e) => e.stopPropagation()}
               >
                 詳細
               </Link>
               <div className={`text-xs transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
-                <span className="text-gray-400">▼</span>
+                <span className="text-ink-4">▼</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* モバイル専用シンプルカード */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-between">
+            {/* 左側: レース番号 + 時刻 */}
+            <div className="flex items-center space-x-3">
+              <div className={`
+                w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center
+                ${isOpen ? 'bg-brand text-white shadow-hover scale-110' : 'bg-brand text-white'}
+              `}>
+                {race.race_no}
+              </div>
+              <div>
+                <div className="text-sm font-medium text-ink-1">{closeTime}</div>
+                <div className={`text-xs ${raceIsOpen ? 'text-success' : 'text-error'}`}>
+                  {raceIsOpen ? '発売中' : '締切済'}
+                </div>
+              </div>
+            </div>
+
+            {/* 右側: アイコン + 詳細ボタン + 矢印 */}
+            <div className="flex items-center space-x-2">
+              {/* アイコンサマリー */}
+              <div className="flex items-center">
+                {race.icons.slice(0, 2).map((icon, idx) => (
+                  <span key={idx} className="text-lg">{icon}</span>
+                ))}
+                {race.icons.length > 2 && (
+                  <span className="text-xs text-ink-3 ml-1">+{race.icons.length - 2}</span>
+                )}
+              </div>
+
+              {/* 詳細ボタン */}
+              <Link
+                href={`/race/${race.race_id}`}
+                className="bg-brand text-white px-2 py-1 rounded text-xs font-medium hover:opacity-90 transition"
+                onClick={(e) => e.stopPropagation()}
+              >
+                詳細
+              </Link>
+
+              {/* 展開矢印 */}
+              <div className={`text-xs transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+                <span className="text-ink-4">▼</span>
+              </div>
+            </div>
+          </div>
+
+          {/* モバイル：推定情報（1行のみ） */}
+          <div className="mt-2 flex items-center space-x-2">
+            {entriesData?.why_brief ? (
+              <>
+                <div className="flex items-center space-x-1">
+                  {entriesData.why_brief.icons.slice(0, 2).map((icon, idx) => (
+                    <span key={idx} className="text-sm">{icon}</span>
+                  ))}
+                </div>
+                <span className="text-xs text-ink-1 font-medium truncate bg-warning-soft px-2 py-1 rounded-md border border-warning flex-1">
+                  {entriesData.why_brief.summary}
+                </span>
+              </>
+            ) : isOpen && isLoading ? (
+              <>
+                <span className="text-sm">📊</span>
+                <span className="text-xs text-brand font-medium bg-brand-soft px-2 py-1 rounded-md border border-brand flex-1">
+                  AI詳細分析中...
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-sm">🎯</span>
+                <span className="text-xs text-ink-2 font-medium bg-surface-2 px-2 py-1 rounded-md border border-ink-line flex-1 truncate">
+                  {generateInitialReason(race.icons)}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {/* 展開コンテンツ - 選手情報 */}
       {isOpen && (
-        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-t border-blue-200 animate-in slide-in-from-top-2 duration-300">
-          <div className="px-6 py-4 mx-4 bg-white rounded-lg shadow-md border border-blue-100 my-4 ml-8 relative">
+        <div className="bg-gradient-to-r from-brand-soft to-surface-2 border-t border-brand animate-in slide-in-from-top-2 duration-300">
+          <div className="px-6 py-4 mx-4 bg-surface-1 rounded-lg shadow-hover border border-brand my-4 ml-8 relative">
             {/* 展開インジケーター：より目立つように */}
-            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full shadow-md"></div>
+            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-brand to-brand rounded-full shadow-md"></div>
             {/* 角の装飾 */}
-            <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full opacity-20"></div>
+            <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand rounded-full opacity-20"></div>
             {isLoading && (
-              <div className="rounded-lg border overflow-hidden">
+              <div className="rounded-lg border border-ink-line overflow-hidden">
               {/* ヘッダー */}
-              <div className="bg-gray-100 px-4 py-2 border-b">
-                <div className="flex items-center space-x-2 text-xs font-medium text-gray-600">
+              <div className="bg-surface-2 px-4 py-2 border-b border-ink-line">
+                <div className="flex items-center space-x-2 text-xs font-medium text-ink-3">
                   <span className="w-8">枠</span>
                   <span className="flex-1">選手情報</span>
                   <span className="w-12 text-center">ST</span>
@@ -308,18 +387,18 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
               </div>
 
               {/* スケルトンローディング */}
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-ink-line">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="flex items-center space-x-2 p-2 animate-pulse">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                    <div className="w-8 h-8 bg-surface-3 rounded-full"></div>
                     <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded mb-1"></div>
-                      <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-4 bg-surface-3 rounded mb-1"></div>
+                      <div className="h-3 bg-surface-3 rounded w-3/4"></div>
                     </div>
-                    <div className="w-12 h-6 bg-gray-200 rounded"></div>
-                    <div className="w-12 h-6 bg-gray-200 rounded"></div>
-                    <div className="w-8 h-6 bg-gray-200 rounded"></div>
-                    <div className="w-12 h-6 bg-gray-200 rounded"></div>
+                    <div className="w-12 h-6 bg-surface-3 rounded"></div>
+                    <div className="w-12 h-6 bg-surface-3 rounded"></div>
+                    <div className="w-8 h-6 bg-surface-3 rounded"></div>
+                    <div className="w-12 h-6 bg-surface-3 rounded"></div>
                   </div>
                 ))}
               </div>
@@ -327,11 +406,11 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             )}
 
             {!isLoading && fetchError && (
-              <div className="rounded-lg border p-4 text-center text-red-500 text-sm">
+              <div className="rounded-lg border border-error-soft p-4 text-center text-error text-sm bg-error-soft">
                 {fetchError}
                 <button
                   onClick={fetchEntriesData}
-                  className="ml-2 text-blue-600 hover:text-blue-800 underline"
+                  className="ml-2 text-brand hover:opacity-90 underline"
                 >
                   再試行
                 </button>
@@ -341,10 +420,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             {!isLoading && !fetchError && entriesData?.entries && entriesData.entries.length > 0 && (
               <>
                 {/* デスクトップ: テーブル形式 */}
-                <div className="hidden sm:block rounded-lg border overflow-hidden">
+                <div className="hidden sm:block rounded-lg border border-ink-line overflow-hidden">
                   {/* ヘッダー */}
-                  <div className="bg-gray-100 px-4 py-2 border-b">
-                    <div className="flex items-center space-x-2 text-xs font-medium text-gray-600 min-w-max">
+                  <div className="bg-surface-2 px-4 py-2 border-b border-ink-line">
+                    <div className="flex items-center space-x-2 text-xs font-medium text-ink-3 min-w-max">
                       <span className="w-8">枠</span>
                       <span className="flex-1 min-w-24">選手情報</span>
                       <span className="w-12 text-center">ST</span>
@@ -355,7 +434,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                   </div>
 
                   {/* エントリー行 */}
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-ink-line">
                     {entriesData.entries
                       .sort((a, b) => a.lane - b.lane)
                       .map((entry) => (
@@ -382,7 +461,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             )}
 
             {!isLoading && !fetchError && (!entriesData?.entries || entriesData.entries.length === 0) && (
-              <div className="rounded-lg border p-4 text-center text-gray-500 text-sm">
+              <div className="rounded-lg border border-ink-line p-4 text-center text-ink-3 text-sm bg-surface-2">
                 選手情報が準備されていません
               </div>
             )}

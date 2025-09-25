@@ -38,7 +38,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
   return (
     <>
       {/* デスクトップ: テーブル形式 */}
-      <div className="hidden sm:flex items-center space-x-2 p-2 hover:bg-gray-50 transition-colors min-w-max">
+      <div className="hidden sm:flex items-center space-x-2 p-2 hover:bg-surface-2 transition-colors min-w-max">
       {/* 枠番 */}
       <div className={`
         w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
@@ -65,8 +65,8 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             priority={false}
           />
         ) : (
-          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-xs text-gray-500 font-bold">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-surface-3 flex items-center justify-center">
+            <span className="text-xs text-ink-3 font-bold">
               {entry.player_name.charAt(0)}
             </span>
           </div>
@@ -78,7 +78,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-1 sm:space-y-0">
           {/* 上段：選手名 + 級別 */}
           <div className="flex items-center space-x-2">
-            <span className="font-medium text-sm text-gray-900 truncate">
+            <span className="font-medium text-sm text-ink-1 truncate">
               {entry.player_name}
             </span>
             <span className={`
@@ -91,7 +91,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
 
           {/* 下段：号艇 + 外部リンク */}
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-500 flex-shrink-0">
+            <span className="text-xs text-ink-3 flex-shrink-0">
               {entry.lane}号艇
             </span>
             {enableExternalLinks && (
@@ -100,7 +100,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
-                className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition flex-shrink-0 flex items-center space-x-1"
+                className="text-xs text-brand hover:opacity-90 hover:underline transition flex-shrink-0 flex items-center space-x-1"
               >
                 <span>{entry.external_url ? '詳しく見る' : '選手情報（マクール）'}</span>
                 <span className="text-xs">↗</span>
@@ -115,7 +115,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
         <div className={`text-xs sm:text-sm font-mono ${entry.st_color}`}>
           {entry.st_time.toFixed(2)}
         </div>
-        <div className="text-xs text-gray-400">ST</div>
+        <div className="text-xs text-ink-4">ST</div>
       </div>
 
       {/* 展示T */}
@@ -123,7 +123,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
         <div className={`text-xs sm:text-sm font-mono ${entry.exhibition_color}`}>
           {entry.exhibition_time.toFixed(2)}
         </div>
-        <div className="text-xs text-gray-400">展示</div>
+        <div className="text-xs text-ink-4">展示</div>
       </div>
 
       {/* モーター調子バッジ */}
@@ -136,28 +136,28 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
         </span>
 
         {/* デスクトップ: ツールチップ */}
-        <div className="hidden sm:block absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+        <div className="hidden sm:block absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-ink-1 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
           {entry.motor_badge.tooltip}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-ink-1"></div>
         </div>
 
         {/* モバイル: 括弧書き */}
-        <div className="sm:hidden text-xs text-gray-500 mt-0.5 text-center">
+        <div className="sm:hidden text-xs text-ink-3 mt-0.5 text-center">
           ({entry.motor_rate}%)
         </div>
       </div>
 
       {/* 2連率 */}
       <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
-        <div className="text-xs sm:text-sm font-medium text-gray-900">
+        <div className="text-xs sm:text-sm font-medium text-ink-1">
           {entry.two_rate}%
         </div>
-        <div className="text-xs text-gray-400">2連</div>
+        <div className="text-xs text-ink-4">2連</div>
       </div>
     </div>
 
       {/* モバイル: カード形式 */}
-      <div className="sm:hidden bg-white border border-gray-200 rounded-lg p-3 m-1">
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-3 m-1">
         <div className="flex items-start space-x-3">
           {/* 左側: 枠番 + 写真 */}
           <div className="flex flex-col items-center space-y-2">
@@ -183,8 +183,8 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
                 priority={false}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-xs text-gray-500 font-bold">
+              <div className="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center">
+                <span className="text-xs text-ink-3 font-bold">
                   {entry.player_name.charAt(0)}
                 </span>
               </div>
@@ -195,7 +195,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
           <div className="flex-1 min-w-0">
             {/* 選手名 + 級別 */}
             <div className="flex items-center space-x-2 mb-2">
-              <h3 className="font-medium text-gray-900 truncate">
+              <h3 className="font-medium text-ink-1 truncate">
                 {entry.player_name}
               </h3>
               <span className={`
@@ -212,13 +212,13 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
                 <div className={`text-sm font-mono ${entry.st_color}`}>
                   {entry.st_time.toFixed(2)}
                 </div>
-                <div className="text-xs text-gray-400">ST</div>
+                <div className="text-xs text-ink-4">ST</div>
               </div>
               <div className="text-center">
                 <div className={`text-sm font-mono ${entry.exhibition_color}`}>
                   {entry.exhibition_time.toFixed(2)}
                 </div>
-                <div className="text-xs text-gray-400">展示</div>
+                <div className="text-xs text-ink-4">展示</div>
               </div>
             </div>
 
@@ -231,13 +231,13 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
                 `}>
                   {entry.motor_badge.grade}
                 </span>
-                <div className="text-xs text-gray-400 mt-1">({entry.motor_rate}%)</div>
+                <div className="text-xs text-ink-3 mt-1">({entry.motor_rate}%)</div>
               </div>
               <div className="text-center">
-                <div className="text-sm font-medium text-gray-900">
+                <div className="text-sm font-medium text-ink-1">
                   {entry.two_rate}%
                 </div>
-                <div className="text-xs text-gray-400">2連率</div>
+                <div className="text-xs text-ink-4">2連率</div>
               </div>
             </div>
 
@@ -248,7 +248,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
                   href={externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center space-x-1"
+                  className="text-xs text-brand hover:opacity-90 hover:underline inline-flex items-center space-x-1"
                 >
                   <span>詳しく見る</span>
                   <span className="text-xs">↗</span>
