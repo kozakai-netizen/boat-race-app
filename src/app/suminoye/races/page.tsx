@@ -58,6 +58,9 @@ function RacesPageContent() {
   }, [])
 
   const toggleRaceExpansion = useCallback((raceId: string) => {
+    const startTime = performance.now()
+    const isExpanding = !expandedRaces.has(raceId)
+
     setExpandedRaces(prev => {
       const newExpanded = new Set(prev)
       if (newExpanded.has(raceId)) {
@@ -67,7 +70,38 @@ function RacesPageContent() {
       }
       return newExpanded
     })
-  }, [])
+
+    // Performance measurement for race expansion
+    if (isExpanding) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const endTime = performance.now()
+          const duration = endTime - startTime
+          const target = 600 // 600ms target
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Race expansion performance:`, {
+              raceId,
+              duration: `${duration.toFixed(2)}ms`,
+              target: `${target}ms`,
+              status: duration <= target ? '✅ PASS' : '❌ FAIL',
+              difference: duration > target ? `+${(duration - target).toFixed(2)}ms over target` : `${(target - duration).toFixed(2)}ms under target`
+            })
+          }
+
+          // Report to analytics/monitoring if available
+          if (window.gtag) {
+            window.gtag('event', 'race_expansion_performance', {
+              duration: Math.round(duration),
+              target: target,
+              within_target: duration <= target,
+              race_id: raceId
+            })
+          }
+        }, 0)
+      })
+    }
+  }, [expandedRaces])
 
   const filteredRaces = useMemo(() => {
     return racesData?.races.filter(race => {
