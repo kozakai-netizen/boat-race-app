@@ -183,7 +183,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                     <span className="text-sm">📊</span>
                   </div>
                   <span className="text-sm text-gray-500 font-medium truncate">
-                    {isOpen && isLoading ? '分析中...' : 'クリックで分析'}
+                    {isOpen && isLoading ? '分析中...' : 'AI予想'}
                   </span>
                 </>
               )}

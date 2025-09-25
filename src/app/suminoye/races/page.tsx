@@ -234,6 +234,49 @@ function RacesPageContent() {
           </div>
         )}
 
+        {/* 凡例 */}
+        <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">凡例</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">⭐</span>
+              <span>SUPER PICKS（高EV予想）</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">🔴</span>
+              <span>受付終了</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">🟡</span>
+              <span>まもなく締切</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">⚫</span>
+              <span>受付中</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">🚀</span>
+              <span>スピード重視</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">💨</span>
+              <span>パワー重視</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">🧱</span>
+              <span>安定重視</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">⚡</span>
+              <span>テクニック重視</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">📊</span>
+              <span>AI予想・分析</span>
+            </div>
+          </div>
+        </div>
+
         {/* 利用規約・注意事項 */}
         <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
           <h3 className="text-sm font-medium text-gray-800 mb-2">ご利用について</h3>
