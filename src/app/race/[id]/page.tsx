@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Forecast, Result } from '@/lib/types'
 import { parseRaceId, getVenueDisplayName, type RaceIdInfo } from '@/lib/raceId'
 import RaceHeader from '@/components/RaceHeader'
@@ -12,13 +11,13 @@ import ShareButton from '@/components/ShareButton'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import { useUrlSync } from '@/hooks/useUrlSync'
+import SideMenu from '@/components/SideMenu'
 
 interface RaceDetailProps {
   params: Promise<{ id: string }>
 }
 
 export default function RaceDetail({ params }: RaceDetailProps) {
-  const router = useRouter()
   const [raceId, setRaceId] = useState<string>('')
   const [forecast, setForecast] = useState<Forecast | null>(null)
   const [raceResult, setRaceResult] = useState<Result | null>(null)
@@ -162,36 +161,20 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
+      {/* ARC風サイドメニュー */}
+      <SideMenu
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
       <div className="max-w-6xl mx-auto">
         {/* ナビゲーション */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => router.back()}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
-            >
-              <span>←</span>
-              <span>戻る</span>
-            </button>
-            <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
-              <span>🏠</span>
-              <span>ホーム</span>
-            </Link>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={openLegend}
-              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm"
-            >
-              凡例
-            </button>
-            <button
-              onClick={openFeedback}
-              className="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-sm"
-            >
-              💬 フィードバック
-            </button>
-          </div>
+        <div className="mb-4 flex items-center">
+          <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
+            <span>🏠</span>
+            <span>ホーム</span>
+          </Link>
         </div>
 
         {/* レースヘッダー */}

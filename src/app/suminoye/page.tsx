@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { VenueResponse } from '@/lib/types'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
+import SideMenu from '@/components/SideMenu'
 
 export default function SuminoyeHome() {
-  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date()
     return today.toISOString().split('T')[0]
@@ -54,33 +53,17 @@ export default function SuminoyeHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
+      {/* ARC風サイドメニュー */}
+      <SideMenu
+        onLegendClick={openLegend}
+        onFeedbackClick={openFeedback}
+        showBackButton={true}
+      />
+
       <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="text-center relative">
-            <div className="absolute top-0 left-0">
-              <button
-                onClick={() => router.back()}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
-              >
-                <span>←</span>
-                <span>戻る</span>
-              </button>
-            </div>
-            <div className="absolute top-0 right-0 flex items-center space-x-2">
-              <button
-                onClick={openLegend}
-                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm"
-              >
-                凡例
-              </button>
-              <button
-                onClick={openFeedback}
-                className="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-sm"
-              >
-                💬 フィードバック
-              </button>
-            </div>
+          <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">🚤 舟券王への道from住之江競艇</h1>
             <p className="text-gray-600">AIによる競艇予想システム</p>
           </div>
