@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 interface SideMenuProps {
   onLegendClick?: () => void
@@ -14,6 +15,7 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
   const [expandTimer, setExpandTimer] = useState<NodeJS.Timeout | null>(null)
   const [collapseTimer, setCollapseTimer] = useState<NodeJS.Timeout | null>(null)
   const router = useRouter()
+  const { isAdmin } = useAuth()
 
   const handleMouseEnter = () => {
     // 閉じるタイマーをクリア
@@ -68,7 +70,13 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       label: 'フィードバック',
       action: onFeedbackClick,
       bgColor: 'hover:bg-green-50'
-    }
+    },
+    ...(isAdmin ? [{
+      icon: '⚙️',
+      label: '管理画面',
+      action: () => router.push('/admin'),
+      bgColor: 'hover:bg-orange-50'
+    }] : [])
   ]
 
   return (
