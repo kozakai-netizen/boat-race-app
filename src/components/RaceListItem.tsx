@@ -29,6 +29,10 @@ interface RaceEntriesResponse {
     st_color: string
     exhibition_color: string
     two_rate: number
+    three_rate: number
+    // 外部リンクと画像用（データ取り込み用）
+    photo_path?: string
+    external_url?: string
   }>
   why_brief: {
     icons: string[]
