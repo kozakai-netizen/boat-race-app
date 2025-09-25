@@ -59,12 +59,12 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/login"
+              href="/admin/login"
               className="block w-full bg-orange-500 text-white py-4 px-4 rounded-lg hover:bg-orange-600 transition font-medium shadow-lg hover:shadow-xl"
             >
               <div className="flex items-center justify-center space-x-2">
-                <span className="text-xl">🔐</span>
-                <span>ログイン選択画面</span>
+                <span className="text-xl">⚙️</span>
+                <span>管理画面</span>
               </div>
             </Link>
           </div>
@@ -72,7 +72,7 @@ export default function Home() {
           {/* サブ選択肢 */}
           <div className="border-t pt-4">
             <p className="text-xs text-gray-500 mb-3 text-center">ダイレクトアクセス</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mb-3">
               <Link
                 href="/suminoye/races"
                 className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition text-center"
@@ -86,6 +86,12 @@ export default function Home() {
                 📊 結果確認
               </Link>
             </div>
+            <Link
+              href="/login"
+              className="block w-full bg-gray-50 text-gray-600 py-2 px-3 rounded text-xs hover:bg-gray-100 transition text-center border"
+            >
+              🔐 ログイン選択画面
+            </Link>
           </div>
         </div>
 
