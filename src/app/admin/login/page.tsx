@@ -33,6 +33,10 @@ export default function AdminLogin() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">管理画面ログイン</h1>
           <p className="text-gray-600 mt-2">アクセストークンを入力してください</p>
+          {/* デバッグ用 - 本番では削除予定 */}
+          <div className="text-xs text-gray-500 mt-2 p-2 bg-gray-50 rounded">
+            期待トークン: {process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
