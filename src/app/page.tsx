@@ -80,6 +80,14 @@ export default function Home() {
               📊 結果確認
             </Link>
           </div>
+
+          {/* ログイン選択画面へのリンク */}
+          <Link
+            href="/login"
+            className="block w-full bg-orange-100 text-orange-700 py-2 px-4 rounded-lg hover:bg-orange-200 transition text-sm border border-orange-200"
+          >
+            🔐 ログイン選択画面
+          </Link>
         </div>
 
         {/* フッター */}
