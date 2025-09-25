@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface DashboardStats {
   races: number
@@ -11,6 +12,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     races: 0,
     players: 0,
@@ -53,6 +55,14 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="md:flex md:items-center md:justify-between">
         <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-4 mb-2">
+            <button
+              onClick={() => router.back()}
+              className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition text-sm"
+            >
+              ← 戻る
+            </button>
+          </div>
           <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
             管理画面ダッシュボード
           </h1>

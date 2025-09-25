@@ -2,12 +2,13 @@
 
 import { useState, useEffect, Suspense, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { RacesResponse } from '@/lib/types'
 import RaceListItem from '@/components/RaceListItem'
 
 function RacesPageContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [racesData, setRacesData] = useState<RacesResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [showSuperOnly, setShowSuperOnly] = useState(false)
@@ -74,9 +75,16 @@ function RacesPageContent() {
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <Link href="/suminoye" className="text-blue-600 hover:text-blue-800">
-                ← ホームに戻る
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => router.back()}
+                className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition"
+              >
+                ← 戻る
+              </button>
+              <span className="text-gray-300">|</span>
+              <Link href="/suminoye" className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition">
+                🏠 ホーム
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">レース一覧</h1>

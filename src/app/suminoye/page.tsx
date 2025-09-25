@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { VenueResponse } from '@/lib/types'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 
 export default function SuminoyeHome() {
+  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date()
     return today.toISOString().split('T')[0]
@@ -56,6 +58,14 @@ export default function SuminoyeHome() {
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="text-center relative">
+            <div className="absolute top-0 left-0">
+              <button
+                onClick={() => router.back()}
+                className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition text-sm"
+              >
+                ← 戻る
+              </button>
+            </div>
             <div className="absolute top-0 right-0 flex items-center space-x-2">
               <button
                 onClick={openLegend}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 interface Race {
   race_id: string
@@ -13,6 +14,7 @@ interface Race {
 }
 
 export default function RacesManagement() {
+  const router = useRouter()
   const [races, setRaces] = useState<Race[]>([])
   const [loading, setLoading] = useState(true)
   const [editingRace, setEditingRace] = useState<Race | null>(null)
@@ -168,6 +170,14 @@ export default function RacesManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
+          <div className="flex items-center space-x-4 mb-2">
+            <button
+              onClick={() => router.back()}
+              className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition text-sm"
+            >
+              ← 戻る
+            </button>
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">レース管理</h1>
           <p className="text-gray-600">レース情報の作成・編集・削除</p>
         </div>
