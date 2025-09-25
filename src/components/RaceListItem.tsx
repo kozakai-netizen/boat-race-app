@@ -161,12 +161,13 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
         `}
         onClick={handleToggle}
       >
-        <div className="hidden md:grid md:grid-cols-12 gap-4 items-center">
-          {/* デスクトップレイアウトの内容はそのまま */}
-          {/* Race Number */}
-          <div className="col-span-1">
+        {/* デスクトップ: フレックスレイアウト */}
+        <div className="hidden sm:flex items-center justify-between py-1">
+          {/* 左側: レース情報 */}
+          <div className="flex items-center space-x-4">
+            {/* Race Number */}
             <div className={`
-              w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center transition-all duration-300
+              w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center transition-all duration-300 flex-shrink-0
               ${isOpen
                 ? 'bg-brand text-white shadow-hover scale-110'
                 : 'bg-brand text-white hover:opacity-90'
@@ -174,106 +175,72 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             `}>
               {race.race_no}
             </div>
-          </div>
 
-          {/* Close Time */}
-          <div className="col-span-2">
-            <div className="text-sm font-medium text-ink-1">
-              {closeTime}
-            </div>
-            <div className={`text-xs ${raceIsOpen ? 'text-success' : 'text-error'}`}>
-              {raceIsOpen ? '発売中' : '締切済'}
-            </div>
-          </div>
-
-          {/* Super Pick */}
-          <div className="col-span-1">
-            {race.has_super && (
-              <div className="bg-warning-soft text-warning px-2 py-1 rounded-md text-xs font-medium">
-                ⭐
+            {/* Close Time */}
+            <div className="flex-shrink-0">
+              <div className="text-sm font-medium text-ink-1">
+                {closeTime}
               </div>
-            )}
-          </div>
-
-          {/* Icons + Why Brief */}
-          <div className="col-span-5 flex items-center space-x-3">
-            {/* 固定位置アイコン - 加点要素として表示 */}
-            <div className="flex items-center w-24">
-              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>🚀</span>
-              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>💨</span>
-              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>🧱</span>
-              <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>⚡</span>
+              <div className={`text-xs ${raceIsOpen ? 'text-success' : 'text-error'}`}>
+                {raceIsOpen ? '発売中' : '締切済'}
+              </div>
             </div>
 
-            {/* 根拠1行 - 常に表示 */}
-            <div className="flex items-center space-x-2 flex-1 min-w-0">
-              {entriesData?.why_brief ? (
-                <div className="flex-1 min-w-0">
-                  {/* 詳細分析結果 */}
-                  <div className="flex items-center space-x-2 mb-1">
-                    <div className="flex items-center space-x-1">
-                      {entriesData.why_brief.icons.map((icon, idx) => (
-                        <span key={idx} className="text-base">{icon}</span>
-                      ))}
-                    </div>
-                    <span className="text-sm text-ink-1 font-bold truncate bg-warning-soft px-3 py-1.5 rounded-md border border-warning">
-                      {entriesData.why_brief.summary}
-                    </span>
-                  </div>
-
-                  {/* 初期推定（下段） */}
-                  <div className="flex items-center space-x-1">
-                    <span className="text-base">🎯</span>
-                    <span className="text-xs bg-surface-2 text-ink-3 px-2 py-1 rounded border border-ink-line">
-                      初期推定: {generateInitialReason(race.icons)}
-                    </span>
-                  </div>
+            {/* Super Pick */}
+            <div className="flex-shrink-0">
+              {race.has_super && (
+                <div className="bg-warning-soft text-warning px-2 py-1 rounded-md text-xs font-medium">
+                  ⭐
                 </div>
-              ) : isOpen && isLoading ? (
-                <>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-base">📊</span>
-                  </div>
-                  <span className="text-sm text-brand font-semibold truncate bg-brand-soft px-3 py-1.5 rounded-md border border-brand">
-                    AI詳細分析中...
-                  </span>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-base">🎯</span>
-                    <span className="text-xs bg-warning-soft text-warning px-1.5 py-0.5 rounded-full border border-warning font-medium">
-                      推定
-                    </span>
-                  </div>
-                  <span className="text-sm text-ink-2 font-medium truncate bg-surface-2 px-3 py-1.5 rounded-md border border-ink-line">
-                    {generateInitialReason(race.icons)}
-                  </span>
-                </>
               )}
             </div>
           </div>
 
-          {/* Exhibition Summary + Actions */}
-          <div className="col-span-3 flex items-center justify-between">
-            {/* Exhibition Summary */}
-            <div className="text-xs text-ink-3 flex-1">
+          {/* アイコン表示 */}
+          <div className="flex items-center space-x-1">
+            {race.icons.slice(0, 3).map((icon, idx) => (
+              <span key={idx} className="text-base">{icon}</span>
+            ))}
+            {race.icons.length > 3 && (
+              <span className="text-xs text-ink-3">+{race.icons.length - 3}</span>
+            )}
+          </div>
+
+          {/* 根拠表示（簡潔版） */}
+          <div className="flex-1 min-w-0">
+            {entriesData?.why_brief ? (
+              <span className="text-sm text-ink-1 font-medium bg-warning-soft px-2 py-1 rounded border border-warning truncate">
+                {entriesData.why_brief.summary}
+              </span>
+            ) : isOpen && isLoading ? (
+              <span className="text-sm text-brand bg-brand-soft px-2 py-1 rounded border border-brand">
+                分析中...
+              </span>
+            ) : (
+              <span className="text-sm text-ink-2 bg-surface-2 px-2 py-1 rounded border border-ink-line truncate">
+                {generateInitialReason(race.icons)}
+              </span>
+            )}
+          </div>
+          </div>
+
+          {/* 右側: アクション */}
+          <div className="flex items-center space-x-3">
+            {/* 展示サマリー */}
+            <div className="text-xs text-ink-3 text-right">
               {race.exhibition_summary?.left_right_gap_max && (
                 <div>左右差: {race.exhibition_summary.left_right_gap_max.toFixed(2)}s</div>
               )}
               {race.exhibition_summary?.outer_inner_gap_min && (
                 <div>外内差: {race.exhibition_summary.outer_inner_gap_min.toFixed(2)}s</div>
               )}
-              {!race.exhibition_summary?.left_right_gap_max && !race.exhibition_summary?.outer_inner_gap_min && (
-                <div className="text-ink-4">展示データなし</div>
-              )}
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center space-x-2 ml-2">
+            {/* 詳細ボタン + 矢印 */}
+            <div className="flex items-center space-x-2">
               <Link
                 href={`/race/${race.race_id}`}
-                className="inline-block bg-brand text-white px-3 py-1 rounded-lg text-xs font-medium hover:opacity-90 transition"
+                className="bg-brand text-white px-3 py-1 rounded-lg text-xs font-medium hover:opacity-90 transition"
                 onClick={(e) => e.stopPropagation()}
               >
                 詳細

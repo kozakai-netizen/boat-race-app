@@ -7,7 +7,8 @@ import {
   ArrowLeftIcon,
   InformationCircleIcon,
   ChatBubbleLeftEllipsisIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  HomeIcon
 } from '@heroicons/react/24/outline'
 
 interface SideMenuProps {
@@ -113,9 +114,7 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
                 title="ホームに戻る"
                 aria-label="ホームに戻る"
               >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3 13h1v7c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-7h1a1 1 0 0 0 .707-1.707l-9-9a1 1 0 0 0-1.414 0l-9 9A1 1 0 0 0 3 13z"/>
-                </svg>
+                <HomeIcon className="w-5 h-5 text-white" />
               </button>
               <div>
                 <h2 className="text-lg font-semibold text-ink-1">競艇予想システム</h2>
