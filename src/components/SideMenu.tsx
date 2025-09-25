@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface SideMenuProps {
@@ -10,8 +10,7 @@ interface SideMenuProps {
 }
 
 export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButton = true }: SideMenuProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const router = useRouter()
 
   // メニュー項目定義
@@ -36,63 +35,49 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
     }
   ]
 
-  // マウス位置でメニューの表示制御
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const isNearLeftEdge = e.clientX <= 20
-      setIsHovering(isNearLeftEdge)
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    return () => document.removeEventListener('mousemove', handleMouseMove)
-  }, [])
-
-  // ホバー状態でメニュー表示
-  useEffect(() => {
-    if (isHovering) {
-      setIsOpen(true)
-    } else {
-      // 少し遅延してから閉じる（誤操作防止）
-      const timer = setTimeout(() => setIsOpen(false), 300)
-      return () => clearTimeout(timer)
-    }
-  }, [isHovering])
-
   return (
     <>
-      {/* トリガーエリア（透明） */}
+      {/* サイドメニュー - 常時表示 */}
       <div
-        className="fixed left-0 top-0 w-5 h-full z-40 bg-transparent"
-        onMouseEnter={() => setIsHovering(true)}
-      />
-
-      {/* サイドメニュー */}
-      <div
-        className={`fixed left-0 top-0 h-full z-50 transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        className="fixed left-0 top-0 h-full z-50"
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
       >
-        <div className="h-full w-16 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-xl">
+        <div className={`h-full bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-xl transition-all duration-300 ease-out ${
+          isExpanded ? 'w-48' : 'w-16'
+        }`}>
           {/* メニューアイテム */}
-          <div className="flex flex-col items-center py-6 space-y-4">
+          <div className="flex flex-col items-start py-6 space-y-4 px-3">
             {menuItems.map((item, index) => (
               item.action && (
                 <button
                   key={index}
                   onClick={item.action}
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg transition-all duration-200 ${item.bgColor} group relative`}
-                  title={item.label}
+                  className={`flex items-center w-full rounded-xl transition-all duration-200 ${item.bgColor} group relative overflow-hidden ${
+                    isExpanded ? 'px-3 py-3 justify-start' : 'w-10 h-10 justify-center'
+                  }`}
+                  title={!isExpanded ? item.label : undefined}
                 >
-                  <span className="text-gray-700 group-hover:scale-110 transition-transform">
+                  {/* アイコン */}
+                  <span className={`text-gray-700 group-hover:scale-110 transition-transform flex-shrink-0 ${
+                    isExpanded ? 'text-base mr-3' : 'text-lg'
+                  }`}>
                     {item.icon}
                   </span>
 
-                  {/* ツールチップ */}
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                  {/* テキスト - 展開時のみ表示 */}
+                  <span className={`text-sm font-medium text-gray-700 transition-all duration-300 whitespace-nowrap ${
+                    isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 absolute'
+                  }`}>
                     {item.label}
-                  </div>
+                  </span>
+
+                  {/* 縮小時のツールチップ */}
+                  {!isExpanded && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                      {item.label}
+                    </div>
+                  )}
                 </button>
               )
             ))}
@@ -103,14 +88,11 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
         </div>
       </div>
 
-      {/* 背景オーバーレイ（モバイル用） */}
-      {isOpen && (
+      {/* 背景オーバーレイ（モバイル展開時） */}
+      {isExpanded && (
         <div
-          className="fixed inset-0 bg-black/10 z-30 md:hidden"
-          onClick={() => {
-            setIsOpen(false)
-            setIsHovering(false)
-          }}
+          className="fixed inset-0 bg-black/5 z-30 md:hidden"
+          onClick={() => setIsExpanded(false)}
         />
       )}
     </>
