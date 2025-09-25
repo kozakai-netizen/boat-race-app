@@ -61,9 +61,10 @@ export default function SuminoyeHome() {
             <div className="absolute top-0 left-0">
               <button
                 onClick={() => router.back()}
-                className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition text-sm"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
               >
-                ← 戻る
+                <span>←</span>
+                <span>戻る</span>
               </button>
             </div>
             <div className="absolute top-0 right-0 flex items-center space-x-2">

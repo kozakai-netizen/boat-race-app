@@ -78,13 +78,14 @@ function RacesPageContent() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => router.back()}
-                className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
               >
-                ← 戻る
+                <span>←</span>
+                <span>戻る</span>
               </button>
-              <span className="text-gray-300">|</span>
-              <Link href="/suminoye" className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition">
-                🏠 ホーム
+              <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
+                <span>🏠</span>
+                <span>ホーム</span>
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">レース一覧</h1>

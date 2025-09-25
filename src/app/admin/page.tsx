@@ -58,9 +58,10 @@ export default function AdminDashboard() {
           <div className="flex items-center space-x-4 mb-2">
             <button
               onClick={() => router.back()}
-              className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 transition text-sm"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
             >
-              ← 戻る
+              <span>←</span>
+              <span>戻る</span>
             </button>
           </div>
           <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
