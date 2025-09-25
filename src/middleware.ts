@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 export function middleware(request: NextRequest) {
   // Admin routes protection
   if (request.nextUrl.pathname.startsWith('/admin')) {
+    // Skip authentication for login page
+    if (request.nextUrl.pathname === '/admin/login') {
+      return NextResponse.next()
+    }
+
     const adminToken = request.cookies.get('admin-token')?.value
     const validToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'
 

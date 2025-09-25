@@ -15,6 +15,9 @@ function RacesPageContent() {
   const [showOpenOnly, setShowOpenOnly] = useState(false)
   const [expandedRaces, setExpandedRaces] = useState<Set<string>>(new Set())
 
+  // 外部リンク表示フラグ
+  const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
+
   const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
   const grade = searchParams.get('grade') || 'normal'
 
@@ -151,7 +154,7 @@ function RacesPageContent() {
                   ? '実際のレースデータを使用しています。選手写真は権利を有するもののみ表示されます。'
                   : 'デモ用の仮想データを使用しています。選手写真は表示されません。'
                 }
-                選手の詳細情報は外部サイト（マクール）でご確認いただけます。
+                {enableExternalLinks && '選手の詳細情報は外部サイト（マクール）でご確認いただけます。'}
               </div>
             </div>
           </div>

@@ -46,6 +46,7 @@ export default function AdminDashboard() {
   const quickActions = [
     { name: '新しいレースを追加', href: '/admin/races', icon: '🏁' },
     { name: '選手を登録', href: '/admin/players', icon: '🏊‍♂️' },
+    { name: '選手CSVインポート', href: '/admin/import/players', icon: '📊' },
     { name: '結果を入力', href: '/admin/results', icon: '🏆' },
     { name: '写真をアップロード', href: '/admin/photos/upload', icon: '📸' },
   ]

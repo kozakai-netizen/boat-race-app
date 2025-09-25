@@ -28,6 +28,9 @@ interface EntryRowProps {
 }
 
 const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
+  // 外部リンク表示フラグ
+  const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
+
   // デフォルトの外部URL（マクール一覧）
   const defaultExternalUrl = 'https://sp.macour.jp/boatracer/'
   const externalUrl = entry.external_url || defaultExternalUrl
@@ -89,16 +92,18 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             <span className="text-xs text-gray-500 flex-shrink-0">
               {entry.lane}号艇
             </span>
-            <a
-              href={externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
-              className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition flex-shrink-0 flex items-center space-x-1"
-            >
-              <span>{entry.external_url ? '詳しく見る' : '選手情報（マクール）'}</span>
-              <span className="text-xs">↗</span>
-            </a>
+            {enableExternalLinks && (
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition flex-shrink-0 flex items-center space-x-1"
+              >
+                <span>{entry.external_url ? '詳しく見る' : '選手情報（マクール）'}</span>
+                <span className="text-xs">↗</span>
+              </a>
+            )}
           </div>
         </div>
       </div>
