@@ -95,8 +95,8 @@ function RacesPageContent() {
         showBackButton={true}
       />
 
-      {/* メインコンテンツ - デスクトップのみ左マージン、モバイルは上部マージン */}
-      <div className="md:ml-12 pt-16 md:pt-4 p-4">
+      {/* メインコンテンツ - モバイルは上部マージン */}
+      <div className="pt-16 md:pt-4 p-4">
         <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
