@@ -158,11 +158,11 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
           {/* Icons + Why Brief */}
           <div className="col-span-5 flex items-center space-x-3">
             {/* 固定位置アイコン - 加点要素として表示 */}
-            <div className="flex items-center space-x-1 w-20">
-              <span className={`text-lg transition-opacity ${race.icons.includes('🚀') ? 'opacity-100' : 'opacity-20'}`}>🚀</span>
-              <span className={`text-lg transition-opacity ${race.icons.includes('💨') ? 'opacity-100' : 'opacity-20'}`}>💨</span>
-              <span className={`text-lg transition-opacity ${race.icons.includes('🧱') ? 'opacity-100' : 'opacity-20'}`}>🧱</span>
-              <span className={`text-lg transition-opacity ${race.icons.includes('⚡') ? 'opacity-100' : 'opacity-20'}`}>⚡</span>
+            <div className="flex items-center w-24">
+              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('🚀') ? 'opacity-100' : 'opacity-20'}`}>🚀</span>
+              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('💨') ? 'opacity-100' : 'opacity-20'}`}>💨</span>
+              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('🧱') ? 'opacity-100' : 'opacity-20'}`}>🧱</span>
+              <span className={`text-lg transition-opacity w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100' : 'opacity-20'}`}>⚡</span>
             </div>
 
             {/* 根拠1行 - API側で計算済みの場合は表示、未取得の場合はプレースホルダー */}

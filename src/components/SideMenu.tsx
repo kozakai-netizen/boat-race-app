@@ -60,8 +60,8 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
 
   return (
     <>
-      {/* ハンバーガーメニューボタン - デスクトップのみ */}
-      <div className="hidden md:block fixed top-6 left-6 z-50">
+      {/* ハンバーガーメニューボタン */}
+      <div className="fixed top-6 left-6 z-50">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-12 h-12 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg flex flex-col items-center justify-center space-y-1.5 hover:shadow-xl transition-all duration-200 group"
@@ -73,7 +73,7 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       </div>
 
       {/* サイドメニューパネル */}
-      <div className={`hidden md:block fixed top-0 left-0 h-full w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-2xl z-40 transform transition-transform duration-300 ease-out ${
+      <div className={`fixed top-0 left-0 h-full w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-2xl z-40 transform transition-transform duration-300 ease-out ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         {/* ヘッダー */}
@@ -113,7 +113,7 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       {/* グレーオーバーレイ */}
       {isOpen && (
         <div
-          className="hidden md:block fixed inset-0 bg-gray-900/20 backdrop-blur-[1px] z-30"
+          className="fixed inset-0 bg-gray-900/20 backdrop-blur-[1px] z-30"
           onClick={() => setIsOpen(false)}
         />
       )}
