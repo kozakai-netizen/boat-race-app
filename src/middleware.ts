@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Admin routes protection - matcher already excludes /admin/login
-  const adminToken = request.cookies.get('admin-token')?.value
-  const validToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'
+  // Admin routes protection - TEMPORARILY DISABLED for development
+  // TODO: Re-enable authentication later
 
-  // If no token or invalid token, redirect to login
-  if (!adminToken || adminToken !== validToken) {
-    return NextResponse.redirect(new URL('/admin/login', request.url))
-  }
+  // const adminToken = request.cookies.get('admin-token')?.value
+  // const validToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'admin123'
+  //
+  // if (!adminToken || adminToken !== validToken) {
+  //   return NextResponse.redirect(new URL('/admin/login', request.url))
+  // }
 
   return NextResponse.next()
 }
