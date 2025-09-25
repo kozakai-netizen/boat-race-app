@@ -1,8 +1,12 @@
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { RaceListItem as RaceListItemType, Forecast } from '@/lib/types'
-import EntryRow from './EntryRow'
 import CompactForecast from './CompactForecast'
+
+const EntryRow = dynamic(() => import('./EntryRow'), {
+  loading: () => <div className="animate-pulse bg-gray-200 rounded h-12 mx-3" />
+})
 
 interface RaceListItemProps {
   race: RaceListItemType

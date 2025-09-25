@@ -2,18 +2,26 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { Forecast, Result } from '@/lib/types'
 import { parseRaceId, getVenueDisplayName, type RaceIdInfo } from '@/lib/raceId'
 import RaceHeader from '@/components/RaceHeader'
 import ForecastList from '@/components/ForecastList'
 import FixedFirstTabs from '@/components/FixedFirstTabs'
-import ShareButton from '@/components/ShareButton'
-import LegendModal, { useLegendModal } from '@/components/LegendModal'
+import { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import { useUrlSync } from '@/hooks/useUrlSync'
 import SideMenu from '@/components/SideMenu'
 import MobileHeader from '@/components/MobileHeader'
 import { RaceDetailSkeleton } from '@/components/ui/SkeletonLoader'
+
+const LegendModal = dynamic(() => import('@/components/LegendModal').then(mod => ({ default: mod.default })), {
+  loading: () => null
+})
+
+const ShareButton = dynamic(() => import('@/components/ShareButton'), {
+  loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+})
 
 interface RaceDetailProps {
   params: Promise<{ id: string }>
