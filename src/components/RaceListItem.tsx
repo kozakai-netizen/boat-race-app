@@ -103,7 +103,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
   const { closeTime, raceIsOpen } = computedValues
 
   return (
-    <div className="border-b border-gray-100">
+    <div className={`border-b border-gray-100 transition-all duration-200 ${isOpen ? 'shadow-md' : 'shadow-sm'}`}>
       {/* レースヘッダー */}
       <div
         className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${!raceIsOpen ? 'opacity-60' : ''}`}
@@ -195,8 +195,8 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
               >
                 詳細
               </Link>
-              <div className="text-xs text-gray-400">
-                {isOpen ? '▲' : '▼'}
+              <div className={`text-xs transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+                <span className="text-gray-400">▼</span>
               </div>
             </div>
           </div>
@@ -205,9 +205,12 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
       {/* 展開コンテンツ - 選手情報 */}
       {isOpen && (
-        <div className="px-4 pb-4 bg-gray-50">
-          {isLoading && (
-            <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-gray-50 border-t border-gray-200 animate-in slide-in-from-top-2 duration-300">
+          <div className="px-6 py-4 mx-4 bg-white rounded-lg shadow-sm border border-gray-100 my-3 ml-8 relative">
+            {/* 展開インジケーター */}
+            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-1 h-12 bg-blue-500 rounded-full"></div>
+            {isLoading && (
+              <div className="rounded-lg border overflow-hidden">
               {/* ヘッダー */}
               <div className="bg-gray-100 px-4 py-2 border-b">
                 <div className="flex items-center space-x-2 text-xs font-medium text-gray-600">
@@ -236,23 +239,23 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+              </div>
+            )}
 
-          {!isLoading && fetchError && (
-            <div className="bg-white rounded-lg border p-4 text-center text-red-500 text-sm">
-              {fetchError}
-              <button
-                onClick={fetchEntriesData}
-                className="ml-2 text-blue-600 hover:text-blue-800 underline"
-              >
-                再試行
-              </button>
-            </div>
-          )}
+            {!isLoading && fetchError && (
+              <div className="rounded-lg border p-4 text-center text-red-500 text-sm">
+                {fetchError}
+                <button
+                  onClick={fetchEntriesData}
+                  className="ml-2 text-blue-600 hover:text-blue-800 underline"
+                >
+                  再試行
+                </button>
+              </div>
+            )}
 
-          {!isLoading && !fetchError && entriesData?.entries && entriesData.entries.length > 0 && (
-            <div className="bg-white rounded-lg border overflow-hidden">
+            {!isLoading && !fetchError && entriesData?.entries && entriesData.entries.length > 0 && (
+              <div className="rounded-lg border overflow-hidden">
               {/* ヘッダー */}
               <div className="bg-gray-100 px-4 py-2 border-b">
                 <div className="flex items-center space-x-2 text-xs font-medium text-gray-600">
@@ -274,16 +277,17 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                       key={`${race.race_id}-${entry.lane}`}
                       entry={entry}
                     />
-                  ))}
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {!isLoading && !fetchError && (!entriesData?.entries || entriesData.entries.length === 0) && (
-            <div className="bg-white rounded-lg border p-4 text-center text-gray-500 text-sm">
-              選手情報が準備されていません
-            </div>
-          )}
+            {!isLoading && !fetchError && (!entriesData?.entries || entriesData.entries.length === 0) && (
+              <div className="rounded-lg border p-4 text-center text-gray-500 text-sm">
+                選手情報が準備されていません
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
