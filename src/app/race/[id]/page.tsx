@@ -13,6 +13,7 @@ import { useFeedbackModal } from '@/components/FeedbackForm'
 import { useUrlSync } from '@/hooks/useUrlSync'
 import SideMenu from '@/components/SideMenu'
 import MobileHeader from '@/components/MobileHeader'
+import { RaceDetailSkeleton } from '@/components/ui/SkeletonLoader'
 
 interface RaceDetailProps {
   params: Promise<{ id: string }>
@@ -128,12 +129,12 @@ export default function RaceDetail({ params }: RaceDetailProps) {
   }
 
 
-  if (!raceId) {
+  if (!raceId || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="text-gray-500">読み込み中...</div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+        <div className="pt-16 md:pt-4 p-4">
+          <div className="max-w-6xl mx-auto">
+            <RaceDetailSkeleton />
           </div>
         </div>
       </div>

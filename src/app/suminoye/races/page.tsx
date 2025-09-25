@@ -9,6 +9,7 @@ import SideMenu from '@/components/SideMenu'
 import MobileHeader from '@/components/MobileHeader'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
+import { RaceListSkeleton } from '@/components/ui/SkeletonLoader'
 
 function RacesPageContent() {
   const searchParams = useSearchParams()
@@ -182,9 +183,7 @@ function RacesPageContent() {
         </div>
 
         {loading && (
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="text-gray-500">読み込み中...</div>
-          </div>
+          <RaceListSkeleton />
         )}
 
         {racesData && !loading && (
@@ -300,7 +299,15 @@ function RacesPageContent() {
 
 export default function RacesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4"><div className="bg-white rounded-lg shadow-lg p-6 text-center"><div className="text-gray-500">読み込み中...</div></div></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+        <div className="pt-16 md:pt-4 p-4">
+          <div className="max-w-6xl mx-auto">
+            <RaceListSkeleton />
+          </div>
+        </div>
+      </div>
+    }>
       <RacesPageContent />
     </Suspense>
   )

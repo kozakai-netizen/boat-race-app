@@ -1,5 +1,6 @@
 import { memo, useMemo } from 'react'
 import Image from 'next/image'
+import { Num, Rate } from '@/components/ui/Num'
 
 interface EntryRowProps {
   entry: {
@@ -42,7 +43,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
   return (
     <>
       {/* デスクトップ: テーブル形式 */}
-      <div className="hidden sm:flex items-center space-x-2 p-2 hover:bg-surface-2 transition-colors min-w-max">
+      <div className="hidden sm:flex items-center space-x-2 p-2 hover:bg-surface-2 transition-colors min-w-max min-h-[44px]">
       {/* 枠番 */}
       <div className={`
         w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
@@ -99,17 +100,17 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
 
       {/* ST */}
       <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
-        <div className={`text-xs sm:text-sm font-mono ${entry.st_color}`}>
+        <Num size="sm" className={entry.st_color}>
           {entry.st_time.toFixed(2)}
-        </div>
+        </Num>
         <div className="text-xs text-ink-4">ST</div>
       </div>
 
       {/* 展示T */}
       <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
-        <div className={`text-xs sm:text-sm font-mono ${entry.exhibition_color}`}>
+        <Num size="sm" className={entry.exhibition_color}>
           {entry.exhibition_time.toFixed(2)}
-        </div>
+        </Num>
         <div className="text-xs text-ink-4">展示</div>
       </div>
 
@@ -136,23 +137,23 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
 
       {/* 2連率 */}
       <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
-        <div className="text-xs sm:text-sm font-medium text-ink-1">
+        <Rate size="sm">
           {entry.two_rate}%
-        </div>
+        </Rate>
         <div className="text-xs text-ink-4">2連</div>
       </div>
 
       {/* 3連率 */}
       <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
-        <div className="text-xs sm:text-sm font-medium text-ink-1">
+        <Rate size="sm">
           {entry.three_rate}%
-        </div>
+        </Rate>
         <div className="text-xs text-ink-4">3連</div>
       </div>
     </div>
 
       {/* モバイル: 極コンパクト1行レイアウト */}
-      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-md p-1 my-0.5 shadow-card">
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-md p-1 my-0.5 shadow-card min-h-[44px]">
         <div className="flex items-center justify-between">
           {/* 左側：枠番 + 選手名 + 級別 */}
           <div className="flex items-center space-x-1.5 flex-1 min-w-0">
@@ -184,16 +185,16 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
           <div className="flex items-center space-x-1 flex-shrink-0">
             {/* ST */}
             <div className="text-center min-w-[1.8rem]">
-              <div className={`text-xs font-mono leading-tight ${entry.st_color}`}>
+              <Num size="sm" align="center" className={`leading-tight ${entry.st_color}`}>
                 {entry.st_time.toFixed(2)}
-              </div>
+              </Num>
             </div>
 
             {/* 展示 */}
             <div className="text-center min-w-[1.8rem]">
-              <div className={`text-xs font-mono leading-tight ${entry.exhibition_color}`}>
+              <Num size="sm" align="center" className={`leading-tight ${entry.exhibition_color}`}>
                 {entry.exhibition_time.toFixed(2)}
-              </div>
+              </Num>
             </div>
 
             {/* 機力 */}
@@ -208,12 +209,12 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
 
             {/* 2連率・3連率（縦2行） */}
             <div className="text-center min-w-[1.8rem]">
-              <div className="text-xs font-medium text-ink-1 leading-tight">
+              <Rate size="sm" align="center" className="leading-tight text-ink-1">
                 {Math.round(entry.two_rate)}%
-              </div>
-              <div className="text-xs font-medium text-ink-2 leading-tight">
+              </Rate>
+              <Rate size="sm" align="center" className="leading-tight text-ink-2">
                 {Math.round(entry.three_rate)}%
-              </div>
+              </Rate>
             </div>
           </div>
         </div>

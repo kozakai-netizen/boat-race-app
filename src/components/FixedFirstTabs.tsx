@@ -18,7 +18,7 @@ export default function FixedFirstTabs({ selectedLane, onLaneSelect, loading }: 
         <button
           onClick={() => onLaneSelect(null)}
           disabled={loading}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+          className={`px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition flex items-center ${
             selectedLane === null
               ? 'bg-gray-800 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -33,7 +33,7 @@ export default function FixedFirstTabs({ selectedLane, onLaneSelect, loading }: 
             key={lane}
             onClick={() => onLaneSelect(lane)}
             disabled={loading}
-            className={`w-12 h-12 rounded-lg text-sm font-bold transition ${
+            className={`min-w-[44px] min-h-[44px] rounded-lg text-sm font-bold transition flex items-center justify-center ${
               selectedLane === lane
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

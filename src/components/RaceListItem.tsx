@@ -153,7 +153,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
       {/* レースヘッダー */}
       <div
         className={`
-          p-4 cursor-pointer transition-all duration-300
+          p-4 cursor-pointer transition-all duration-300 min-h-[44px] flex items-center
           ${isOpen
             ? 'bg-surface-2 border-l-4 border-l-brand shadow-card'
             : 'hover:bg-surface-2'
@@ -197,14 +197,12 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             </div>
           </div>
 
-          {/* アイコン表示 */}
-          <div className="flex items-center space-x-1">
-            {race.icons.slice(0, 3).map((icon, idx) => (
-              <span key={idx} className="text-base">{icon}</span>
-            ))}
-            {race.icons.length > 3 && (
-              <span className="text-xs text-ink-3">+{race.icons.length - 3}</span>
-            )}
+          {/* 固定位置アイコン - 加点要素として表示 */}
+          <div className="flex items-center w-24">
+            <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-20 grayscale'}`}>🚀</span>
+            <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-20 grayscale'}`}>💨</span>
+            <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-20 grayscale'}`}>🧱</span>
+            <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-20 grayscale'}`}>⚡</span>
           </div>
 
           {/* 根拠表示（簡潔版） */}
@@ -273,14 +271,12 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
             {/* 右側: アイコン + 詳細ボタン + 矢印 */}
             <div className="flex items-center space-x-2">
-              {/* アイコンサマリー */}
+              {/* 固定アイコン表示（モバイル） */}
               <div className="flex items-center">
-                {race.icons.slice(0, 2).map((icon, idx) => (
-                  <span key={idx} className="text-lg">{icon}</span>
-                ))}
-                {race.icons.length > 2 && (
-                  <span className="text-xs text-ink-3 ml-1">+{race.icons.length - 2}</span>
-                )}
+                <span className={`text-base transition-all duration-200 ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-30'}`}>🚀</span>
+                <span className={`text-base transition-all duration-200 ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-30'}`}>💨</span>
+                <span className={`text-base transition-all duration-200 ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-30'}`}>🧱</span>
+                <span className={`text-base transition-all duration-200 ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-30'}`}>⚡</span>
               </div>
 
               {/* 詳細ボタン */}

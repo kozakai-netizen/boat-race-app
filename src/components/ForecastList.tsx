@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { ForecastTriple } from '@/lib/types'
 import SortControls from './SortControls'
+import { Odds, EV, Probability } from '@/components/ui/Num'
 
 interface ForecastListProps {
   triples: ForecastTriple[]
@@ -200,16 +201,18 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
               <div className="text-right">
                 <div className="flex items-center space-x-2">
                   <span className={`text-xs px-2 py-1 rounded font-medium ${getProbabilityColor(triple.prob)}`}>
-                    {(triple.prob * 100).toFixed(1)}%
+                    <Probability>{(triple.prob * 100).toFixed(1)}%</Probability>
                   </span>
                   <span className={`text-sm px-2 py-1 rounded font-semibold ${getEvColor(triple.ev)}`}>
-                    EV {triple.ev.toFixed(2)}
+                    EV <EV>{triple.ev.toFixed(2)}</EV>
                   </span>
                 </div>
 
                 {triple.odds && (
                   <div className="text-xs text-gray-500 mt-1">
-                    オッズ {typeof triple.odds === 'number' ? triple.odds.toFixed(1) : triple.odds}倍
+                    オッズ <Odds className="text-gray-500">
+                      {typeof triple.odds === 'number' ? triple.odds.toFixed(1) : triple.odds}
+                    </Odds>倍
                   </div>
                 )}
               </div>
