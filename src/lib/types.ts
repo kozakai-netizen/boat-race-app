@@ -131,7 +131,6 @@ export const RaceListItemSchema = z.object({
     left_right_gap_max: z.number().nullable(),
     outer_inner_gap_min: z.number().nullable(),
   }).nullable(),
-  entries: z.array(SimpleRaceEntrySchema).optional(),
 })
 
 export const RacesResponseSchema = z.object({

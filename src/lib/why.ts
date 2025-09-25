@@ -22,19 +22,19 @@ export function getMotorBadge(entry: SimpleRaceEntry): MotorBadge {
     return {
       grade: '◎',
       color: 'bg-red-100 text-red-800 border-red-300',
-      tooltip: `絶好調エンジン (${twoRate}% ${entry.motor_description})`
+      tooltip: `絶好調エンジン (${twoRate.toFixed(1)}% ${entry.motor_description})`
     }
   } else if (twoRate >= 38 || condition === '○') {
     return {
       grade: '○',
       color: 'bg-blue-100 text-blue-800 border-blue-300',
-      tooltip: `好調エンジン (${twoRate}% ${entry.motor_description})`
+      tooltip: `好調エンジン (${twoRate.toFixed(1)}% ${entry.motor_description})`
     }
   } else {
     return {
       grade: '△',
       color: 'bg-gray-100 text-gray-700 border-gray-300',
-      tooltip: `普通エンジン (${twoRate}% ${entry.motor_description})`
+      tooltip: `普通エンジン (${twoRate.toFixed(1)}% ${entry.motor_description})`
     }
   }
 }

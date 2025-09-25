@@ -64,7 +64,7 @@ export const MOCK_RACE_DATA = {
 }
 
 // Generate mock races for current date
-// レース出場選手情報を生成
+/* レース出場選手情報を生成（未使用だがコメントアウト）
 function generateRaceEntries(raceId: string) {
   const shuffledPlayers = [...MOCK_PLAYERS].sort(() => 0.5 - Math.random()).slice(0, 6)
   const shuffledMotors = [...MOTOR_CONDITIONS].sort(() => 0.5 - Math.random()).slice(0, 6)
@@ -88,6 +88,7 @@ function generateRaceEntries(raceId: string) {
     }
   })
 }
+*/
 
 function generateTodayMockRaces() {
   const today = new Date().toISOString().split('T')[0]
@@ -98,20 +99,9 @@ function generateTodayMockRaces() {
     has_super: boolean
     icons: string[]
     exhibition_summary: {
-      left_right_gap_max: number
-      outer_inner_gap_min: number
+      left_right_gap_max: number | null
+      outer_inner_gap_min: number | null
     }
-    entries: Array<{
-      race_id: string
-      lane: number
-      player_name: string
-      player_grade: string
-      st_time: number
-      exhibition_time: number
-      motor_rate: number
-      motor_condition: string
-      motor_description: string
-    }>
   }> = []
 
   for (let raceNo = 1; raceNo <= 12; raceNo++) {
@@ -123,7 +113,6 @@ function generateTodayMockRaces() {
     baseTime.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0)
 
     const raceId = `suminoye-${today.replace(/-/g, '')}-${raceNo}R`
-    const entries = generateRaceEntries(raceId)
 
     races.push({
       race_id: raceId,
@@ -132,10 +121,9 @@ function generateTodayMockRaces() {
       has_super: Math.random() > 0.3, // 70% chance of having super picks
       icons: getRandomIcons(),
       exhibition_summary: {
-        left_right_gap_max: Math.max(...entries.map(e => Math.abs(e.exhibition_time - 6.85))),
-        outer_inner_gap_min: Math.min(...entries.map(e => e.st_time)) - 0.20
-      },
-      entries
+        left_right_gap_max: 0.08 + Math.random() * 0.12, // 0.08 ~ 0.20
+        outer_inner_gap_min: -0.25 + Math.random() * 0.15 // -0.25 ~ -0.10
+      }
     })
   }
 
