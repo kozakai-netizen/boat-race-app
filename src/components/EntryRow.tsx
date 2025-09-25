@@ -157,11 +157,11 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
     </div>
 
       {/* モバイル: コンパクトカード */}
-      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-2 mx-2 my-1 shadow-card">
-        <div className="flex items-center space-x-3">
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-1.5 mx-2 my-0.5 shadow-card">
+        <div className="flex items-center space-x-2">
           {/* 枠番 */}
           <div className={`
-            w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0
+            w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
             ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
               entry.lane === 2 ? 'bg-black text-white' :
               entry.lane === 3 ? 'bg-red-500' :
@@ -174,12 +174,12 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
 
           {/* 選手名 + 級別 */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2">
-              <h3 className="font-medium text-ink-1 truncate text-sm">
+            <div className="flex items-center space-x-1.5">
+              <h3 className="font-medium text-ink-1 truncate text-xs">
                 {entry.player_name}
               </h3>
               <span className={`
-                px-1.5 py-0.5 rounded text-xs font-medium border flex-shrink-0
+                px-1 py-0.5 rounded text-xs font-medium border flex-shrink-0
                 ${entry.grade_badge_color}
               `}>
                 {entry.player_grade}
@@ -188,9 +188,9 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
           </div>
 
           {/* データ行（横並び） */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
+          <div className="flex items-center space-x-1.5 flex-shrink-0">
             {/* ST */}
-            <div className="text-center">
+            <div className="text-center min-w-[2rem]">
               <div className={`text-xs font-mono ${entry.st_color}`}>
                 {entry.st_time.toFixed(2)}
               </div>
@@ -198,7 +198,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             </div>
 
             {/* 展示 */}
-            <div className="text-center">
+            <div className="text-center min-w-[2rem]">
               <div className={`text-xs font-mono ${entry.exhibition_color}`}>
                 {entry.exhibition_time.toFixed(2)}
               </div>
@@ -206,9 +206,9 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             </div>
 
             {/* 機力 */}
-            <div className="text-center">
+            <div className="text-center min-w-[1.5rem]">
               <span className={`
-                px-1 py-0.5 rounded text-xs font-bold border
+                px-0.5 py-0.5 rounded text-xs font-bold border
                 ${entry.motor_badge.color}
               `}>
                 {entry.motor_badge.grade}
@@ -217,7 +217,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             </div>
 
             {/* 2連率 */}
-            <div className="text-center">
+            <div className="text-center min-w-[1.5rem]">
               <div className="text-xs font-medium text-ink-1">
                 {Math.round(entry.two_rate)}%
               </div>
