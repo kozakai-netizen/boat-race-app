@@ -222,7 +222,6 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
               </span>
             )}
           </div>
-          </div>
 
           {/* 右側: アクション */}
           <div className="flex items-center space-x-3">
@@ -331,7 +330,6 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
         </div>
       </div>
 
-      {/* 展開コンテンツ - 選手情報 */}
       {isOpen && (
         <div className="bg-gradient-to-r from-brand-soft to-surface-2 border-t border-brand animate-in slide-in-from-top-2 duration-300">
           <div className="px-6 py-4 mx-4 bg-surface-1 rounded-lg shadow-hover border border-brand my-4 ml-8 relative">
