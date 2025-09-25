@@ -165,16 +165,16 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
               <span className={`text-lg transition-all duration-200 w-6 text-center ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-10 grayscale'}`}>⚡</span>
             </div>
 
-            {/* 根拠1行 - API側で計算済みの場合は表示、未取得の場合はプレースホルダー */}
+            {/* 根拠1行 - 常に表示 */}
             <div className="flex items-center space-x-2 flex-1 min-w-0">
               {entriesData?.why_brief ? (
                 <>
                   <div className="flex items-center space-x-1">
                     {entriesData.why_brief.icons.map((icon, idx) => (
-                      <span key={idx} className="text-sm">{icon}</span>
+                      <span key={idx} className="text-base">{icon}</span>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-900 font-bold truncate bg-yellow-50 px-2 py-1 rounded">
+                  <span className="text-sm text-gray-900 font-bold truncate bg-yellow-100 px-3 py-1.5 rounded-md border border-yellow-200">
                     {entriesData.why_brief.summary}
                   </span>
                 </>
@@ -182,13 +182,22 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 isOpen && isLoading ? (
                   <>
                     <div className="flex items-center space-x-1">
-                      <span className="text-sm">📊</span>
+                      <span className="text-base">📊</span>
                     </div>
-                    <span className="text-sm text-gray-500 font-medium truncate">
-                      分析中...
+                    <span className="text-sm text-blue-600 font-semibold truncate bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200">
+                      AI分析中...
                     </span>
                   </>
-                ) : null
+                ) : (
+                  <>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-base">🤖</span>
+                    </div>
+                    <span className="text-sm text-gray-600 font-medium truncate bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200">
+                      クリックで詳細分析を表示
+                    </span>
+                  </>
+                )
               )}
             </div>
           </div>
