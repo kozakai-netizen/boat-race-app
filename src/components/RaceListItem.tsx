@@ -1,4 +1,4 @@
-import { useState, useMemo, memo, useEffect } from 'react'
+import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { RaceListItem as RaceListItemType } from '@/lib/types'
 import EntryRow from './EntryRow'
@@ -40,6 +40,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
   const [isLoading, setIsLoading] = useState(false)
   const [entriesData, setEntriesData] = useState<RaceEntriesResponse | null>(null)
   const [fetchError, setFetchError] = useState<string | null>(null)
+  const raceItemRef = useRef<HTMLDivElement>(null)
 
   // 重い計算をuseMemoでキャッシュ
   const computedValues = useMemo(() => {
@@ -71,6 +72,19 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
       fetchEntriesData()
     }
   }, [isOpen, entriesData, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 展開時の自動スクロール
+  useEffect(() => {
+    if (isOpen && raceItemRef.current) {
+      // 少し遅延をかけて、展開アニメーションが始まってからスクロール
+      setTimeout(() => {
+        raceItemRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 150)
+    }
+  }, [isOpen])
 
   const fetchEntriesData = async () => {
     setIsLoading(true)
@@ -124,13 +138,15 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
   }
 
   return (
-    <div className={`
-      transition-all duration-300 relative
-      ${isOpen
-        ? 'border-2 border-blue-500 shadow-2xl bg-white rounded-lg m-2 z-10'
-        : 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
-      }
-    `}>
+    <div
+      ref={raceItemRef}
+      className={`
+        transition-all duration-300 relative
+        ${isOpen
+          ? 'border-2 border-blue-500 shadow-2xl bg-white rounded-lg m-2 z-10'
+          : 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
+        }
+      `}>
       {/* レースヘッダー */}
       <div
         className={`
@@ -212,6 +228,9 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 <>
                   <div className="flex items-center space-x-1">
                     <span className="text-base">🎯</span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full border border-amber-200 font-medium">
+                      推定
+                    </span>
                   </div>
                   <span className="text-sm text-gray-800 font-medium truncate bg-gray-100 px-3 py-1.5 rounded-md border border-gray-300">
                     {generateInitialReason(race.icons)}

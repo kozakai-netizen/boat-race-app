@@ -56,7 +56,15 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       <div className="fixed top-6 left-6 z-50">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-12 h-12 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg flex flex-col items-center justify-center space-y-1.5 hover:shadow-xl transition-all duration-200 group"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape' && isOpen) {
+              setIsOpen(false)
+            }
+          }}
+          aria-expanded={isOpen}
+          aria-controls="side-menu-panel"
+          aria-label={isOpen ? 'メニューを閉じる' : 'メニューを開く'}
+          className="w-12 h-12 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg flex flex-col items-center justify-center space-y-1.5 hover:shadow-xl transition-all duration-200 group focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           <span className={`block h-0.5 w-6 bg-gray-600 transition-all duration-200 ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
           <span className={`block h-0.5 w-6 bg-gray-600 transition-all duration-200 ${isOpen ? 'opacity-0' : ''}`}></span>
@@ -65,9 +73,20 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       </div>
 
       {/* サイドメニューパネル */}
-      <div className={`fixed top-0 left-0 h-full w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-2xl z-40 transform transition-transform duration-300 ease-out ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div
+        id="side-menu-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="サイドメニュー"
+        className={`fixed top-0 left-0 h-full w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-2xl z-40 transform transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            setIsOpen(false)
+          }
+        }}
+      >
         {/* ヘッダー */}
         <div className="px-6 py-8 border-b border-gray-100">
           <div className="flex items-center justify-between">
@@ -77,8 +96,9 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
                   router.push('/suminoye')
                   setIsOpen(false)
                 }}
-                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 hover:scale-105"
+                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-blue-300 focus:outline-none"
                 title="ホームに戻る"
+                aria-label="ホームに戻る"
               >
                 <span className="text-white text-lg">🚤</span>
               </button>
