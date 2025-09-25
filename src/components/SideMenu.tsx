@@ -88,13 +88,6 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
               </div>
             </div>
 
-            {/* 閉じるボタン */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors duration-200"
-            >
-              <span className="text-gray-600 text-lg">×</span>
-            </button>
           </div>
         </div>
 
