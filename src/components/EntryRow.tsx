@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import Image from 'next/image'
 
 interface EntryRowProps {
@@ -21,6 +21,7 @@ interface EntryRowProps {
     st_color: string
     exhibition_color: string
     two_rate: number
+    three_rate: number
     // 外部リンクと画像用
     photo_path?: string
     external_url?: string
@@ -28,12 +29,26 @@ interface EntryRowProps {
 }
 
 const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
-  // 外部リンク表示フラグ
-  const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
+  // 重い計算をuseMemoでキャッシュ
+  const memoizedValues = useMemo(() => {
+    const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
+    const defaultExternalUrl = 'https://sp.macour.jp/boatracer/'
+    const externalUrl = entry.external_url || defaultExternalUrl
 
-  // デフォルトの外部URL（マクール一覧）
-  const defaultExternalUrl = 'https://sp.macour.jp/boatracer/'
-  const externalUrl = entry.external_url || defaultExternalUrl
+    const laneColorClass =
+      entry.lane === 1 ? 'bg-white text-black border border-black' :
+      entry.lane === 2 ? 'bg-black text-white' :
+      entry.lane === 3 ? 'bg-red-500' :
+      entry.lane === 4 ? 'bg-blue-500' :
+      entry.lane === 5 ? 'bg-yellow-500 text-black' :
+      'bg-green-500'
+
+    return {
+      enableExternalLinks,
+      externalUrl,
+      laneColorClass
+    }
+  }, [entry.lane, entry.external_url])
 
   return (
     <>
@@ -42,12 +57,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       {/* 枠番 */}
       <div className={`
         w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
-        ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
-          entry.lane === 2 ? 'bg-black text-white' :
-          entry.lane === 3 ? 'bg-red-500' :
-          entry.lane === 4 ? 'bg-blue-500' :
-          entry.lane === 5 ? 'bg-yellow-500 text-black' :
-          'bg-green-500'}
+        ${memoizedValues.laneColorClass}
       `}>
         {entry.lane}
       </div>
@@ -94,9 +104,9 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             <span className="text-xs text-ink-3 flex-shrink-0">
               {entry.lane}号艇
             </span>
-            {enableExternalLinks && (
+            {memoizedValues.enableExternalLinks && (
               <a
-                href={externalUrl}
+                href={memoizedValues.externalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
@@ -154,6 +164,14 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
         </div>
         <div className="text-xs text-ink-4">2連</div>
       </div>
+
+      {/* 3連率 */}
+      <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
+        <div className="text-xs sm:text-sm font-medium text-ink-1">
+          {entry.three_rate}%
+        </div>
+        <div className="text-xs text-ink-4">3連</div>
+      </div>
     </div>
 
       {/* モバイル: 極コンパクト1行レイアウト */}
@@ -164,12 +182,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             {/* 枠番 */}
             <div className={`
               w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
-              ${entry.lane === 1 ? 'bg-white text-black border border-black' :
-                entry.lane === 2 ? 'bg-black text-white' :
-                entry.lane === 3 ? 'bg-red-500' :
-                entry.lane === 4 ? 'bg-blue-500' :
-                entry.lane === 5 ? 'bg-yellow-500 text-black' :
-                'bg-green-500'}
+              ${memoizedValues.laneColorClass}
             `}>
               {entry.lane}
             </div>
@@ -216,10 +229,13 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
               </span>
             </div>
 
-            {/* 2連率 */}
-            <div className="text-center min-w-[1.5rem]">
+            {/* 2連率・3連率（縦2行） */}
+            <div className="text-center min-w-[1.8rem]">
               <div className="text-xs font-medium text-ink-1 leading-tight">
                 {Math.round(entry.two_rate)}%
+              </div>
+              <div className="text-xs font-medium text-ink-2 leading-tight">
+                {Math.round(entry.three_rate)}%
               </div>
             </div>
           </div>

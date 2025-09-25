@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
       const stColor = getSTColor(entry.st_time)
       const exhibitionColor = getExhibitionColor(entry.exhibition_time)
       const twoRate = Math.round(entry.motor_rate * 0.8 + (entry.lane * 3) + 15)
+      const threeRate = Math.round(entry.motor_rate * 0.6 + (entry.lane * 2) + 8)
 
       return {
         ...entry,
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
         st_color: stColor,
         exhibition_color: exhibitionColor,
         two_rate: twoRate,
+        three_rate: threeRate,
         // 外部リンクと写真用フィールド追加
         photo_path: null, // 現在は写真なし
         external_url: null // 将来の個別ページURL用

@@ -91,9 +91,6 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
     setFetchError(null)
 
     try {
-      // 少し遅延を入れてスケルトンを見せる
-      await new Promise(resolve => setTimeout(resolve, 200))
-
       const response = await fetch(`/api/race-entries?raceId=${race.race_id}`)
 
       if (!response.ok) {
@@ -348,6 +345,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                   <span className="w-12 text-center">展示</span>
                   <span className="w-8 text-center">機力</span>
                   <span className="w-12 text-center">2連率</span>
+                  <span className="w-12 text-center">3連率</span>
                 </div>
               </div>
 
@@ -363,6 +361,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                     <div className="w-12 h-6 bg-surface-3 rounded"></div>
                     <div className="w-12 h-6 bg-surface-3 rounded"></div>
                     <div className="w-8 h-6 bg-surface-3 rounded"></div>
+                    <div className="w-12 h-6 bg-surface-3 rounded"></div>
                     <div className="w-12 h-6 bg-surface-3 rounded"></div>
                   </div>
                 ))}
@@ -395,6 +394,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                       <span className="w-12 text-center">展示</span>
                       <span className="w-8 text-center">機力</span>
                       <span className="w-12 text-center">2連率</span>
+                      <span className="w-12 text-center">3連率</span>
                     </div>
                   </div>
 
