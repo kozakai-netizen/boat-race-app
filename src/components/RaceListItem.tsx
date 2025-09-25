@@ -144,7 +144,9 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
         transition-all duration-300 relative
         ${isOpen
           ? 'border-2 border-blue-500 shadow-2xl bg-white rounded-lg m-2 z-10'
-          : 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
+          : raceIsOpen
+            ? 'border-b border-gray-100 shadow-sm bg-white hover:bg-gray-50 opacity-70'
+            : 'border-b border-gray-200 shadow-sm bg-gray-50 hover:bg-gray-100 opacity-85'
         }
       `}>
       {/* レースヘッダー */}
@@ -155,7 +157,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             ? 'bg-gray-100 border-l-4 border-l-blue-500 shadow-sm'
             : 'hover:bg-gray-50'
           }
-          ${!raceIsOpen ? 'opacity-60' : ''}
+          ${!raceIsOpen ? 'opacity-75' : ''}
         `}
         onClick={handleToggle}
       >
@@ -205,16 +207,27 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             {/* 根拠1行 - 常に表示 */}
             <div className="flex items-center space-x-2 flex-1 min-w-0">
               {entriesData?.why_brief ? (
-                <>
-                  <div className="flex items-center space-x-1">
-                    {entriesData.why_brief.icons.map((icon, idx) => (
-                      <span key={idx} className="text-base">{icon}</span>
-                    ))}
+                <div className="flex-1 min-w-0">
+                  {/* 詳細分析結果 */}
+                  <div className="flex items-center space-x-2 mb-1">
+                    <div className="flex items-center space-x-1">
+                      {entriesData.why_brief.icons.map((icon, idx) => (
+                        <span key={idx} className="text-base">{icon}</span>
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-900 font-bold truncate bg-yellow-100 px-3 py-1.5 rounded-md border border-yellow-200">
+                      {entriesData.why_brief.summary}
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-900 font-bold truncate bg-yellow-100 px-3 py-1.5 rounded-md border border-yellow-200">
-                    {entriesData.why_brief.summary}
-                  </span>
-                </>
+
+                  {/* 初期推定（下段） */}
+                  <div className="flex items-center space-x-1">
+                    <span className="text-base">🎯</span>
+                    <span className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-200">
+                      初期推定: {generateInitialReason(race.icons)}
+                    </span>
+                  </div>
+                </div>
               ) : isOpen && isLoading ? (
                 <>
                   <div className="flex items-center space-x-1">
