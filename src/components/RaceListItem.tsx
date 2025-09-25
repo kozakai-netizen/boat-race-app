@@ -102,6 +102,27 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
   const { closeTime, raceIsOpen } = computedValues
 
+  // 初期根拠情報を生成
+  const generateInitialReason = (icons: string[]) => {
+    if (icons.length === 0) return "通常レース"
+
+    const iconMap: { [key: string]: string } = {
+      '🚀': 'スピード',
+      '💨': 'パワー',
+      '🧱': '安定',
+      '⚡': 'テクニック'
+    }
+
+    const reasons = icons.map(icon => iconMap[icon]).filter(Boolean)
+    if (reasons.length === 0) return "特色レース"
+
+    if (reasons.length === 1) return `${reasons[0]}重視の狙い目`
+    if (reasons.length === 2) return `${reasons[0]}・${reasons[1]}の複合優位`
+    if (reasons.length >= 3) return `多角的優位（${reasons.length}要素）`
+
+    return "注目レース"
+  }
+
   return (
     <div className={`
       transition-all duration-300 relative
@@ -178,26 +199,24 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                     {entriesData.why_brief.summary}
                   </span>
                 </>
+              ) : isOpen && isLoading ? (
+                <>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-base">📊</span>
+                  </div>
+                  <span className="text-sm text-blue-600 font-semibold truncate bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200">
+                    AI詳細分析中...
+                  </span>
+                </>
               ) : (
-                isOpen && isLoading ? (
-                  <>
-                    <div className="flex items-center space-x-1">
-                      <span className="text-base">📊</span>
-                    </div>
-                    <span className="text-sm text-blue-600 font-semibold truncate bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200">
-                      AI分析中...
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center space-x-1">
-                      <span className="text-base">🤖</span>
-                    </div>
-                    <span className="text-sm text-gray-600 font-medium truncate bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200">
-                      クリックで詳細分析を表示
-                    </span>
-                  </>
-                )
+                <>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-base">🎯</span>
+                  </div>
+                  <span className="text-sm text-gray-800 font-medium truncate bg-gray-100 px-3 py-1.5 rounded-md border border-gray-300">
+                    {generateInitialReason(race.icons)}
+                  </span>
+                </>
               )}
             </div>
           </div>
