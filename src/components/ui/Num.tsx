@@ -43,16 +43,46 @@ export function Num({
 }
 
 // 専用コンポーネント
-export function Odds({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <Num align="right" weight="medium" className={`text-ink-1 ${className}`}>{children}</Num>
+export function Odds({
+  children,
+  className = '',
+  size = 'base',
+  align = 'right'
+}: {
+  children: ReactNode;
+  className?: string;
+  size?: 'sm' | 'base' | 'lg';
+  align?: 'right' | 'left' | 'center';
+}) {
+  return <Num align={align} size={size} weight="medium" className={`text-ink-1 ${className}`}>{children}</Num>
 }
 
-export function EV({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <Num align="right" weight="medium" className={`text-ink-2 ${className}`}>{children}</Num>
+export function EV({
+  children,
+  className = '',
+  size = 'base',
+  align = 'right'
+}: {
+  children: ReactNode;
+  className?: string;
+  size?: 'sm' | 'base' | 'lg';
+  align?: 'right' | 'left' | 'center';
+}) {
+  return <Num align={align} size={size} weight="medium" className={`text-ink-2 ${className}`}>{children}</Num>
 }
 
-export function Probability({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <Num align="right" weight="normal" className={`text-ink-3 ${className}`}>{children}</Num>
+export function Probability({
+  children,
+  className = '',
+  size = 'base',
+  align = 'right'
+}: {
+  children: ReactNode;
+  className?: string;
+  size?: 'sm' | 'base' | 'lg';
+  align?: 'right' | 'left' | 'center';
+}) {
+  return <Num align={align} size={size} weight="normal" className={`text-ink-3 ${className}`}>{children}</Num>
 }
 
 export function Rate({

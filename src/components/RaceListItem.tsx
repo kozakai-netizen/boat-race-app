@@ -1,8 +1,8 @@
 import { useState, useMemo, memo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { RaceListItem as RaceListItemType } from '@/lib/types'
+import { RaceListItem as RaceListItemType, Forecast } from '@/lib/types'
 import EntryRow from './EntryRow'
-import { Num } from '@/components/ui/Num'
+import CompactForecast from './CompactForecast'
 
 interface RaceListItemProps {
   race: RaceListItemType
@@ -44,6 +44,8 @@ interface RaceEntriesResponse {
 const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: RaceListItemProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [entriesData, setEntriesData] = useState<RaceEntriesResponse | null>(null)
+  const [forecastData, setForecastData] = useState<Forecast | null>(null)
+  const [forecastLoading, setForecastLoading] = useState(false)
   const [fetchError, setFetchError] = useState<string | null>(null)
   const raceItemRef = useRef<HTMLDivElement>(null)
 
@@ -70,6 +72,13 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
       raceIsOpen
     }
   }, [race.close_at])
+
+  // 予想データの取得（最初から）
+  useEffect(() => {
+    if (!forecastData && !forecastLoading) {
+      fetchForecastData()
+    }
+  }, [forecastData, forecastLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // エントリーデータの取得
   useEffect(() => {
@@ -109,6 +118,26 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
       setFetchError(error instanceof Error ? error.message : 'エラーが発生しました')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchForecastData = async () => {
+    setForecastLoading(true)
+
+    try {
+      const response = await fetch(`/api/forecast/${race.race_id}`)
+
+      if (!response.ok) {
+        throw new Error('予想データの取得に失敗しました')
+      }
+
+      const data = await response.json()
+      setForecastData(data)
+    } catch (error) {
+      console.error('Error fetching forecast:', error)
+      // 予想データのエラーは無視（メインのエラーには影響しない）
+    } finally {
+      setForecastLoading(false)
     }
   }
 
@@ -223,10 +252,20 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             )}
           </div>
 
-          {/* 右側: アクション */}
-          <div className="flex items-center space-x-3">
+          {/* 右側: AI予想 + アクション */}
+          <div className="flex items-center space-x-4">
+            {/* AI予想結果 */}
+            <div className="min-w-0 max-w-xs">
+              <div className="text-xs text-ink-2 font-medium mb-1">AI予想</div>
+              <CompactForecast
+                triples={forecastData?.triples || []}
+                loading={forecastLoading}
+                variant="desktop"
+              />
+            </div>
+
             {/* 展示サマリー */}
-            <div className="text-xs text-ink-3 text-right">
+            <div className="text-xs text-ink-3 text-right flex-shrink-0">
               {race.exhibition_summary?.left_right_gap_max && (
                 <div>左右差: {race.exhibition_summary.left_right_gap_max.toFixed(2)}s</div>
               )}
@@ -324,6 +363,16 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 </span>
               </>
             )}
+          </div>
+
+          {/* モバイル：AI予想結果 */}
+          <div className="mt-2 px-2">
+            <div className="text-xs text-ink-2 font-medium mb-1">AI予想</div>
+            <CompactForecast
+              triples={forecastData?.triples || []}
+              loading={forecastLoading}
+              variant="mobile"
+            />
           </div>
         </div>
       </div>
