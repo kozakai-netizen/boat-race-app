@@ -181,10 +181,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
           {/* 固定位置アイコン - 加点要素として表示 */}
           <div className="flex items-center space-x-1 mx-4">
-            <span className={`text-xl transition-all duration-200 ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-30 grayscale'}`}>🚀</span>
-            <span className={`text-xl transition-all duration-200 ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-30 grayscale'}`}>💨</span>
-            <span className={`text-xl transition-all duration-200 ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-30 grayscale'}`}>🧱</span>
-            <span className={`text-xl transition-all duration-200 ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-30 grayscale'}`}>⚡</span>
+            <span className={`text-xl transition-all duration-200 ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-60'}`}>🚀</span>
+            <span className={`text-xl transition-all duration-200 ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-60'}`}>💨</span>
+            <span className={`text-xl transition-all duration-200 ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-60'}`}>🧱</span>
+            <span className={`text-xl transition-all duration-200 ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-60'}`}>⚡</span>
           </div>
 
           {/* 根拠表示（簡潔版） - 常に表示 */}
@@ -198,7 +198,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 {entriesData.why_brief.summary}
               </span>
             ) : (
-              <span className="text-sm text-ink-2 bg-surface-2 px-2 py-1 rounded border border-ink-line truncate">
+              <span className="text-sm text-ink-1 font-medium bg-warning-soft px-2 py-1 rounded border border-warning truncate">
                 {generateInitialReason(race.icons)}
               </span>
             )}
@@ -265,10 +265,10 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             <div className="flex items-center space-x-2">
               {/* 固定アイコン表示（モバイル） */}
               <div className="flex items-center space-x-0.5">
-                <span className={`text-lg transition-all duration-200 ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-40'}`}>🚀</span>
-                <span className={`text-lg transition-all duration-200 ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-40'}`}>💨</span>
-                <span className={`text-lg transition-all duration-200 ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-40'}`}>🧱</span>
-                <span className={`text-lg transition-all duration-200 ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-40'}`}>⚡</span>
+                <span className={`text-lg transition-all duration-200 ${race.icons.includes('🚀') ? 'opacity-100 scale-110' : 'opacity-60'}`}>🚀</span>
+                <span className={`text-lg transition-all duration-200 ${race.icons.includes('💨') ? 'opacity-100 scale-110' : 'opacity-60'}`}>💨</span>
+                <span className={`text-lg transition-all duration-200 ${race.icons.includes('🧱') ? 'opacity-100 scale-110' : 'opacity-60'}`}>🧱</span>
+                <span className={`text-lg transition-all duration-200 ${race.icons.includes('⚡') ? 'opacity-100 scale-110' : 'opacity-60'}`}>⚡</span>
               </div>
 
               {/* 詳細ボタン */}
