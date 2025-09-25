@@ -222,3 +222,43 @@ export type Feedback = z.infer<typeof FeedbackSchema>
 export type AdminPlayer = z.infer<typeof AdminPlayerSchema>
 export type AdminPlayersResponse = z.infer<typeof AdminPlayersResponseSchema>
 export type PlayerSearchParams = z.infer<typeof PlayerSearchParamsSchema>
+
+// 結果管理用：拡張結果スキーマ
+export const AdminResultSchema = z.object({
+  id: z.string().uuid().optional(),
+  race_id: z.string().min(1).max(50),
+  triple: z.string().regex(/^[1-6]-[1-6]-[1-6]$/, "3連複は'1-3-2'形式で入力してください"),
+  payout: z.number().int().min(0).nullable(),
+  popularity: z.number().int().min(1).max(120).nullable(),
+  settled_at: z.string().datetime().nullable(),
+  hit_count: z.number().int().min(0).optional(),
+  total_forecasts: z.number().int().min(0).optional(),
+  created_at: z.string().datetime().optional(),
+  updated_at: z.string().datetime().optional(),
+})
+
+// レスポンス用
+export const AdminResultsResponseSchema = z.object({
+  results: z.array(AdminResultSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  hasMore: z.boolean(),
+})
+
+// 検索・フィルタ用
+export const ResultSearchParamsSchema = z.object({
+  q: z.string().optional(), // race_id検索
+  dateFrom: z.string().date().optional(), // 日付範囲（開始）
+  dateTo: z.string().date().optional(), // 日付範囲（終了）
+  hasResult: z.enum(['true', 'false', '']).optional(), // 結果入力済みフィルタ
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(50).default(20),
+  sortBy: z.enum(['race_id', 'settled_at', 'payout', 'popularity', 'updated_at']).default('updated_at'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+})
+
+// 結果管理用型定義
+export type AdminResult = z.infer<typeof AdminResultSchema>
+export type AdminResultsResponse = z.infer<typeof AdminResultsResponseSchema>
+export type ResultSearchParams = z.infer<typeof ResultSearchParamsSchema>

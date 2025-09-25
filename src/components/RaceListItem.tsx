@@ -103,16 +103,35 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
   const { closeTime, raceIsOpen } = computedValues
 
   return (
-    <div className={`border-b border-gray-100 transition-all duration-200 ${isOpen ? 'shadow-md' : 'shadow-sm'}`}>
+    <div className={`
+      border-b transition-all duration-300
+      ${isOpen
+        ? 'border-blue-200 shadow-lg bg-blue-50/30'
+        : 'border-gray-100 shadow-sm bg-white hover:bg-gray-50'
+      }
+    `}>
       {/* レースヘッダー */}
       <div
-        className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${!raceIsOpen ? 'opacity-60' : ''}`}
+        className={`
+          p-4 cursor-pointer transition-all duration-300
+          ${isOpen
+            ? 'bg-white border-l-4 border-l-blue-500'
+            : 'hover:bg-gray-50'
+          }
+          ${!raceIsOpen ? 'opacity-60' : ''}
+        `}
         onClick={handleToggle}
       >
         <div className="grid grid-cols-12 gap-4 items-center">
           {/* Race Number */}
           <div className="col-span-1">
-            <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center">
+            <div className={`
+              w-10 h-10 rounded-full font-bold text-sm flex items-center justify-center transition-all duration-300
+              ${isOpen
+                ? 'bg-blue-600 text-white shadow-lg scale-110'
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+              }
+            `}>
               {race.race_no}
             </div>
           </div>
@@ -205,10 +224,12 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
 
       {/* 展開コンテンツ - 選手情報 */}
       {isOpen && (
-        <div className="bg-gray-50 border-t border-gray-200 animate-in slide-in-from-top-2 duration-300">
-          <div className="px-6 py-4 mx-4 bg-white rounded-lg shadow-sm border border-gray-100 my-3 ml-8 relative">
-            {/* 展開インジケーター */}
-            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-1 h-12 bg-blue-500 rounded-full"></div>
+        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-t border-blue-200 animate-in slide-in-from-top-2 duration-300">
+          <div className="px-6 py-4 mx-4 bg-white rounded-lg shadow-md border border-blue-100 my-4 ml-8 relative">
+            {/* 展開インジケーター：より目立つように */}
+            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full shadow-md"></div>
+            {/* 角の装飾 */}
+            <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full opacity-20"></div>
             {isLoading && (
               <div className="rounded-lg border overflow-hidden">
               {/* ヘッダー */}
