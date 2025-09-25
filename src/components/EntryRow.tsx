@@ -156,12 +156,12 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       </div>
     </div>
 
-      {/* モバイル: カード形式 */}
-      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-4 mx-2 my-2 shadow-card">
-        {/* ヘッダー: 枠番 + 選手名 + 級別 */}
-        <div className="flex items-center space-x-3 mb-3">
+      {/* モバイル: コンパクトカード */}
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-2 mx-2 my-1 shadow-card">
+        <div className="flex items-center space-x-3">
+          {/* 枠番 */}
           <div className={`
-            w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0
+            w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0
             ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
               entry.lane === 2 ? 'bg-black text-white' :
               entry.lane === 3 ? 'bg-red-500' :
@@ -172,73 +172,59 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             {entry.lane}
           </div>
 
+          {/* 選手名 + 級別 */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
-              <h3 className="font-medium text-ink-1 truncate text-base">
+              <h3 className="font-medium text-ink-1 truncate text-sm">
                 {entry.player_name}
               </h3>
               <span className={`
-                px-2 py-1 rounded text-xs font-medium border flex-shrink-0
+                px-1.5 py-0.5 rounded text-xs font-medium border flex-shrink-0
                 ${entry.grade_badge_color}
               `}>
                 {entry.player_grade}
               </span>
             </div>
           </div>
+
+          {/* データ行（横並び） */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            {/* ST */}
+            <div className="text-center">
+              <div className={`text-xs font-mono ${entry.st_color}`}>
+                {entry.st_time.toFixed(2)}
+              </div>
+              <div className="text-xs text-ink-4">ST</div>
+            </div>
+
+            {/* 展示 */}
+            <div className="text-center">
+              <div className={`text-xs font-mono ${entry.exhibition_color}`}>
+                {entry.exhibition_time.toFixed(2)}
+              </div>
+              <div className="text-xs text-ink-4">展示</div>
+            </div>
+
+            {/* 機力 */}
+            <div className="text-center">
+              <span className={`
+                px-1 py-0.5 rounded text-xs font-bold border
+                ${entry.motor_badge.color}
+              `}>
+                {entry.motor_badge.grade}
+              </span>
+              <div className="text-xs text-ink-4">機力</div>
+            </div>
+
+            {/* 2連率 */}
+            <div className="text-center">
+              <div className="text-xs font-medium text-ink-1">
+                {Math.round(entry.two_rate)}%
+              </div>
+              <div className="text-xs text-ink-4">2連</div>
+            </div>
+          </div>
         </div>
-
-        {/* データグリッド: 4列レイアウト */}
-        <div className="grid grid-cols-4 gap-3 text-center">
-          {/* ST */}
-          <div>
-            <div className={`text-sm font-mono font-medium ${entry.st_color}`}>
-              {entry.st_time.toFixed(2)}
-            </div>
-            <div className="text-xs text-ink-4 mt-1">ST</div>
-          </div>
-
-          {/* 展示 */}
-          <div>
-            <div className={`text-sm font-mono font-medium ${entry.exhibition_color}`}>
-              {entry.exhibition_time.toFixed(2)}
-            </div>
-            <div className="text-xs text-ink-4 mt-1">展示</div>
-          </div>
-
-          {/* 機力 */}
-          <div>
-            <span className={`
-              px-1.5 py-0.5 rounded text-xs font-bold border
-              ${entry.motor_badge.color}
-            `}>
-              {entry.motor_badge.grade}
-            </span>
-            <div className="text-xs text-ink-4 mt-1">機力</div>
-          </div>
-
-          {/* 2連率 */}
-          <div>
-            <div className="text-sm font-medium text-ink-1">
-              {Math.round(entry.two_rate)}%
-            </div>
-            <div className="text-xs text-ink-4 mt-1">2連</div>
-          </div>
-        </div>
-
-        {/* 外部リンク */}
-        {enableExternalLinks && (
-          <div className="mt-3 pt-3 border-t border-ink-line text-center">
-            <a
-              href={externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-brand hover:opacity-90 hover:underline inline-flex items-center space-x-1"
-            >
-              <span>詳しく見る</span>
-              <span className="text-xs">↗</span>
-            </a>
-          </div>
-        )}
       </div>
     </>
   )
