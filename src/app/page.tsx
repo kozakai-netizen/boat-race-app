@@ -1,21 +1,8 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Home() {
-  const router = useRouter()
-
-  // 自動的に住之江ボートレースページにリダイレクト
-  useEffect(() => {
-    // 3秒後にリダイレクト
-    const timer = setTimeout(() => {
-      router.push('/suminoye')
-    }, 3000)
-
-    return () => clearTimeout(timer)
-  }, [router])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center justify-center p-4">
@@ -47,47 +34,59 @@ export default function Home() {
           </ul>
         </div>
 
-        {/* リダイレクト案内 */}
+        {/* アクション選択案内 */}
         <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full animate-spin mb-3">
-            ⏱️
+          <div className="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full mb-3">
+            🎯
           </div>
           <p className="text-gray-600 text-sm">
-            3秒後に自動的にメインページに移動します...
+            下のボタンからご利用になりたい機能を選択してください
           </p>
         </div>
 
-        {/* 手動リンク */}
-        <div className="space-y-3">
-          <Link
-            href="/suminoye"
-            className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition font-medium"
-          >
-            🚤 舟券王への道from住之江競艇を開く
-          </Link>
-
-          <div className="grid grid-cols-2 gap-3">
+        {/* アクション選択 */}
+        <div className="space-y-4">
+          {/* メイン選択肢 */}
+          <div className="grid grid-cols-1 gap-3">
             <Link
-              href="/suminoye/races"
-              className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition"
+              href="/suminoye"
+              className="block w-full bg-blue-600 text-white py-4 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-lg hover:shadow-xl"
             >
-              📋 レース一覧
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-xl">🚤</span>
+                <span>舟券王への道を始める</span>
+              </div>
             </Link>
+
             <Link
-              href="/suminoye/results"
-              className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition"
+              href="/login"
+              className="block w-full bg-orange-500 text-white py-4 px-4 rounded-lg hover:bg-orange-600 transition font-medium shadow-lg hover:shadow-xl"
             >
-              📊 結果確認
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-xl">🔐</span>
+                <span>ログイン選択画面</span>
+              </div>
             </Link>
           </div>
 
-          {/* ログイン選択画面へのリンク */}
-          <Link
-            href="/login"
-            className="block w-full bg-orange-100 text-orange-700 py-2 px-4 rounded-lg hover:bg-orange-200 transition text-sm border border-orange-200"
-          >
-            🔐 ログイン選択画面
-          </Link>
+          {/* サブ選択肢 */}
+          <div className="border-t pt-4">
+            <p className="text-xs text-gray-500 mb-3 text-center">ダイレクトアクセス</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/suminoye/races"
+                className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition text-center"
+              >
+                📋 レース一覧
+              </Link>
+              <Link
+                href="/suminoye/results"
+                className="block bg-gray-100 text-gray-700 py-2 px-3 rounded text-sm hover:bg-gray-200 transition text-center"
+              >
+                📊 結果確認
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* フッター */}
