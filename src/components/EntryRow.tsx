@@ -157,106 +157,88 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
     </div>
 
       {/* モバイル: カード形式 */}
-      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-3 m-1">
-        <div className="flex items-start space-x-3">
-          {/* 左側: 枠番 + 写真 */}
-          <div className="flex flex-col items-center space-y-2">
-            <div className={`
-              w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white
-              ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
-                entry.lane === 2 ? 'bg-black text-white' :
-                entry.lane === 3 ? 'bg-red-500' :
-                entry.lane === 4 ? 'bg-blue-500' :
-                entry.lane === 5 ? 'bg-yellow-500 text-black' :
-                'bg-green-500'}
-            `}>
-              {entry.lane}
-            </div>
-            {entry.photo_path ? (
-              <Image
-                src={entry.photo_path}
-                alt={`${entry.player_name}の写真`}
-                width={32}
-                height={32}
-                className="rounded-full object-cover"
-                loading="lazy"
-                priority={false}
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center">
-                <span className="text-xs text-ink-3 font-bold">
-                  {entry.player_name.charAt(0)}
-                </span>
-              </div>
-            )}
+      <div className="sm:hidden bg-surface-1 border border-ink-line rounded-lg p-4 mx-2 my-2 shadow-card">
+        {/* ヘッダー: 枠番 + 選手名 + 級別 */}
+        <div className="flex items-center space-x-3 mb-3">
+          <div className={`
+            w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0
+            ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
+              entry.lane === 2 ? 'bg-black text-white' :
+              entry.lane === 3 ? 'bg-red-500' :
+              entry.lane === 4 ? 'bg-blue-500' :
+              entry.lane === 5 ? 'bg-yellow-500 text-black' :
+              'bg-green-500'}
+          `}>
+            {entry.lane}
           </div>
 
-          {/* 右側: 選手情報 + データ */}
           <div className="flex-1 min-w-0">
-            {/* 選手名 + 級別 */}
-            <div className="flex items-center space-x-2 mb-2">
-              <h3 className="font-medium text-ink-1 truncate">
+            <div className="flex items-center space-x-2">
+              <h3 className="font-medium text-ink-1 truncate text-base">
                 {entry.player_name}
               </h3>
               <span className={`
-                px-1.5 py-0.5 rounded text-xs font-medium border flex-shrink-0
+                px-2 py-1 rounded text-xs font-medium border flex-shrink-0
                 ${entry.grade_badge_color}
               `}>
                 {entry.player_grade}
               </span>
             </div>
-
-            {/* データ行1: ST + 展示 */}
-            <div className="grid grid-cols-2 gap-4 mb-2">
-              <div className="text-center">
-                <div className={`text-sm font-mono ${entry.st_color}`}>
-                  {entry.st_time.toFixed(2)}
-                </div>
-                <div className="text-xs text-ink-4">ST</div>
-              </div>
-              <div className="text-center">
-                <div className={`text-sm font-mono ${entry.exhibition_color}`}>
-                  {entry.exhibition_time.toFixed(2)}
-                </div>
-                <div className="text-xs text-ink-4">展示</div>
-              </div>
-            </div>
-
-            {/* データ行2: 機力 + 2連率 */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <span className={`
-                  px-1.5 py-0.5 rounded text-xs font-bold border
-                  ${entry.motor_badge.color}
-                `}>
-                  {entry.motor_badge.grade}
-                </span>
-                <div className="text-xs text-ink-3 mt-1">({entry.motor_rate}%)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-medium text-ink-1">
-                  {entry.two_rate}%
-                </div>
-                <div className="text-xs text-ink-4">2連率</div>
-              </div>
-            </div>
-
-            {/* 外部リンク */}
-            {enableExternalLinks && (
-              <div className="mt-2 text-center">
-                <a
-                  href={externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-brand hover:opacity-90 hover:underline inline-flex items-center space-x-1"
-                >
-                  <span>詳しく見る</span>
-                  <span className="text-xs">↗</span>
-                </a>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* データグリッド: 4列レイアウト */}
+        <div className="grid grid-cols-4 gap-3 text-center">
+          {/* ST */}
+          <div>
+            <div className={`text-sm font-mono font-medium ${entry.st_color}`}>
+              {entry.st_time.toFixed(2)}
+            </div>
+            <div className="text-xs text-ink-4 mt-1">ST</div>
+          </div>
+
+          {/* 展示 */}
+          <div>
+            <div className={`text-sm font-mono font-medium ${entry.exhibition_color}`}>
+              {entry.exhibition_time.toFixed(2)}
+            </div>
+            <div className="text-xs text-ink-4 mt-1">展示</div>
+          </div>
+
+          {/* 機力 */}
+          <div>
+            <span className={`
+              px-1.5 py-0.5 rounded text-xs font-bold border
+              ${entry.motor_badge.color}
+            `}>
+              {entry.motor_badge.grade}
+            </span>
+            <div className="text-xs text-ink-4 mt-1">機力</div>
+          </div>
+
+          {/* 2連率 */}
+          <div>
+            <div className="text-sm font-medium text-ink-1">
+              {Math.round(entry.two_rate)}%
+            </div>
+            <div className="text-xs text-ink-4 mt-1">2連</div>
+          </div>
+        </div>
+
+        {/* 外部リンク */}
+        {enableExternalLinks && (
+          <div className="mt-3 pt-3 border-t border-ink-line text-center">
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-brand hover:opacity-90 hover:underline inline-flex items-center space-x-1"
+            >
+              <span>詳しく見る</span>
+              <span className="text-xs">↗</span>
+            </a>
+          </div>
+        )}
       </div>
     </>
   )
