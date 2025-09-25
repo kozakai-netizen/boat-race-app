@@ -341,26 +341,27 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
             {!isLoading && !fetchError && entriesData?.entries && entriesData.entries.length > 0 && (
               <div className="rounded-lg border overflow-hidden">
               {/* ヘッダー */}
-              <div className="bg-gray-100 px-4 py-2 border-b">
-                <div className="flex items-center space-x-2 text-xs font-medium text-gray-600">
-                  <span className="w-8">枠</span>
-                  <span className="flex-1">選手情報</span>
-                  <span className="w-12 text-center">ST</span>
-                  <span className="w-12 text-center">展示</span>
-                  <span className="w-8 text-center">機力</span>
-                  <span className="w-12 text-center">2連率</span>
+              <div className="bg-gray-100 px-2 sm:px-4 py-2 border-b overflow-x-auto">
+                <div className="flex items-center space-x-1 sm:space-x-2 text-xs font-medium text-gray-600 min-w-max">
+                  <span className="w-6 sm:w-8">枠</span>
+                  <span className="flex-1 min-w-20 sm:min-w-24">選手情報</span>
+                  <span className="w-8 sm:w-12 text-center">ST</span>
+                  <span className="w-8 sm:w-12 text-center">展示</span>
+                  <span className="w-6 sm:w-8 text-center">機力</span>
+                  <span className="w-8 sm:w-12 text-center">2連率</span>
                 </div>
               </div>
 
               {/* エントリー行 */}
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 overflow-x-auto">
                 {entriesData.entries
                   .sort((a, b) => a.lane - b.lane)
                   .map((entry) => (
-                    <EntryRow
-                      key={`${race.race_id}-${entry.lane}`}
-                      entry={entry}
-                    />
+                    <div key={`${race.race_id}-${entry.lane}`} className="min-w-max">
+                      <EntryRow
+                        entry={entry}
+                      />
+                    </div>
                     ))}
                 </div>
               </div>

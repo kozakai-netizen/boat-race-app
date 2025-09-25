@@ -36,10 +36,10 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
   const externalUrl = entry.external_url || defaultExternalUrl
 
   return (
-    <div className="flex items-center space-x-2 p-2 hover:bg-gray-50 transition-colors">
+    <div className="flex items-center space-x-1 sm:space-x-2 p-1 sm:p-2 hover:bg-gray-50 transition-colors min-w-max">
       {/* 枠番 */}
       <div className={`
-        w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
+        w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
         ${entry.lane === 1 ? 'bg-white text-black border-2 border-black' :
           entry.lane === 2 ? 'bg-black text-white' :
           entry.lane === 3 ? 'bg-red-500' :
@@ -63,7 +63,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             priority={false}
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center">
             <span className="text-xs text-gray-500 font-bold">
               {entry.player_name.charAt(0)}
             </span>
@@ -109,16 +109,16 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       </div>
 
       {/* ST */}
-      <div className="text-right min-w-[3rem] flex-shrink-0">
-        <div className={`text-sm font-mono ${entry.st_color}`}>
+      <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
+        <div className={`text-xs sm:text-sm font-mono ${entry.st_color}`}>
           {entry.st_time.toFixed(2)}
         </div>
         <div className="text-xs text-gray-400">ST</div>
       </div>
 
       {/* 展示T */}
-      <div className="text-right min-w-[3rem] flex-shrink-0">
-        <div className={`text-sm font-mono ${entry.exhibition_color}`}>
+      <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
+        <div className={`text-xs sm:text-sm font-mono ${entry.exhibition_color}`}>
           {entry.exhibition_time.toFixed(2)}
         </div>
         <div className="text-xs text-gray-400">展示</div>
@@ -146,8 +146,8 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       </div>
 
       {/* 2連率 */}
-      <div className="text-right min-w-[3rem] flex-shrink-0">
-        <div className="text-sm font-medium text-gray-900">
+      <div className="text-right min-w-[2rem] sm:min-w-[3rem] flex-shrink-0">
+        <div className="text-xs sm:text-sm font-medium text-gray-900">
           {entry.two_rate}%
         </div>
         <div className="text-xs text-gray-400">2連</div>
