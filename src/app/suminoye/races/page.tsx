@@ -22,9 +22,6 @@ function RacesPageContent() {
   const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
   const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal('/suminoye/races')
 
-  // 外部リンク表示フラグ
-  const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
-
   const date = searchParams.get('date') || new Date().toISOString().split('T')[0]
   const grade = searchParams.get('grade') || 'normal'
 

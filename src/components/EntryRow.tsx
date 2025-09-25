@@ -22,7 +22,7 @@ interface EntryRowProps {
     exhibition_color: string
     two_rate: number
     three_rate: number
-    // 外部リンクと画像用
+    // 外部リンクと画像用（データ取り込み用）
     photo_path?: string
     external_url?: string
   }
@@ -30,25 +30,14 @@ interface EntryRowProps {
 
 const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
   // 重い計算をuseMemoでキャッシュ
-  const memoizedValues = useMemo(() => {
-    const enableExternalLinks = process.env.NEXT_PUBLIC_ENABLE_EXTERNAL_LINKS === 'true'
-    const defaultExternalUrl = 'https://sp.macour.jp/boatracer/'
-    const externalUrl = entry.external_url || defaultExternalUrl
-
-    const laneColorClass =
-      entry.lane === 1 ? 'bg-white text-black border border-black' :
+  const laneColorClass = useMemo(() => {
+    return entry.lane === 1 ? 'bg-white text-black border border-black' :
       entry.lane === 2 ? 'bg-black text-white' :
       entry.lane === 3 ? 'bg-red-500' :
       entry.lane === 4 ? 'bg-blue-500' :
       entry.lane === 5 ? 'bg-yellow-500 text-black' :
       'bg-green-500'
-
-    return {
-      enableExternalLinks,
-      externalUrl,
-      laneColorClass
-    }
-  }, [entry.lane, entry.external_url])
+  }, [entry.lane])
 
   return (
     <>
@@ -57,7 +46,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
       {/* 枠番 */}
       <div className={`
         w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
-        ${memoizedValues.laneColorClass}
+        ${laneColorClass}
       `}>
         {entry.lane}
       </div>
@@ -99,23 +88,11 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             </span>
           </div>
 
-          {/* 下段：号艇 + 外部リンク */}
+          {/* 下段：号艇 */}
           <div className="flex items-center space-x-2">
             <span className="text-xs text-ink-3 flex-shrink-0">
               {entry.lane}号艇
             </span>
-            {memoizedValues.enableExternalLinks && (
-              <a
-                href={memoizedValues.externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${entry.player_name}の詳細情報（外部サイト）`}
-                className="text-xs text-brand hover:opacity-90 hover:underline transition flex-shrink-0 flex items-center space-x-1"
-              >
-                <span>{entry.external_url ? '詳しく見る' : '選手情報（マクール）'}</span>
-                <span className="text-xs">↗</span>
-              </a>
-            )}
           </div>
         </div>
       </div>
@@ -182,7 +159,7 @@ const EntryRow = memo(function EntryRow({ entry }: EntryRowProps) {
             {/* 枠番 */}
             <div className={`
               w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0
-              ${memoizedValues.laneColorClass}
+              ${laneColorClass}
             `}>
               {entry.lane}
             </div>
