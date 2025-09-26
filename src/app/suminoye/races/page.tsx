@@ -3,10 +3,10 @@
 import { useState, useEffect, Suspense, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { RacesResponse } from '@/lib/types'
+import { RacesResponse, Forecast } from '@/lib/types'
 import RaceListItem from '@/components/RaceListItem'
-import SideMenu from '@/components/SideMenu'
-import MobileHeader from '@/components/MobileHeader'
+import ImprovedRaceCard from '@/components/ImprovedRaceCard'
+import HamburgerMenu from '@/components/HamburgerMenu'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import { RaceListSkeleton } from '@/components/ui/SkeletonLoader'
@@ -16,6 +16,8 @@ function RacesPageContent() {
   const router = useRouter()
   const [racesData, setRacesData] = useState<RacesResponse | null>(null)
   const [loading, setLoading] = useState(false)
+  const [forecasts, setForecasts] = useState<Record<string, Forecast>>({})
+  const [forecastsLoading, setForecastsLoading] = useState(false)
   const [showSuperOnly, setShowSuperOnly] = useState(false)
   const [showOpenOnly, setShowOpenOnly] = useState(false)
   const [expandedRaces, setExpandedRaces] = useState<Set<string>>(new Set())
@@ -31,6 +33,13 @@ function RacesPageContent() {
   useEffect(() => {
     fetchRacesData()
   }, [date, grade]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch forecasts when races data is loaded
+  useEffect(() => {
+    if (racesData?.races?.length) {
+      fetchForecastsData()
+    }
+  }, [racesData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchRacesData = async () => {
     setLoading(true)
@@ -48,6 +57,39 @@ function RacesPageContent() {
       setRacesData(null)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchForecastsData = async () => {
+    if (!racesData?.races?.length) return
+
+    setForecastsLoading(true)
+
+    try {
+      // Use Promise.allSettled for better error handling and performance
+      const forecastPromises = racesData.races.map(async (race) => {
+        const response = await fetch(`/api/forecast/${race.race_id}`)
+        if (response.ok) {
+          const forecast = await response.json()
+          return { raceId: race.race_id, forecast }
+        }
+        return { raceId: race.race_id, forecast: null }
+      })
+
+      const results = await Promise.allSettled(forecastPromises)
+      const forecastMap: Record<string, Forecast> = {}
+
+      results.forEach((result) => {
+        if (result.status === 'fulfilled' && result.value?.forecast?.triples?.length > 0) {
+          forecastMap[result.value.raceId] = result.value.forecast
+        }
+      })
+
+      setForecasts(forecastMap)
+    } catch (error) {
+      console.error('Error fetching forecasts:', error)
+    } finally {
+      setForecastsLoading(false)
     }
   }
 
@@ -113,40 +155,21 @@ function RacesPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      {/* ARC風サイドメニュー - デスクトップのみ */}
-      <SideMenu
+      {/* ハンバーガーメニュー */}
+      <HamburgerMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={true}
+        pageTitle={`レース一覧 (${date})`}
       />
 
-      {/* モバイル用ヘッダー */}
-      <MobileHeader
-        onLegendClick={openLegend}
-        onFeedbackClick={openFeedback}
-        showBackButton={true}
-      />
-
-      {/* メインコンテンツ - モバイルは上部マージン */}
-      <div className="pt-16 md:pt-4 p-4">
+      {/* メインコンテンツ */}
+      <div className="pt-20 p-4">
         <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <div className="flex items-center space-x-2 md:hidden">
-                <button
-                  onClick={() => router.back()}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
-                >
-                  <span>←</span>
-                  <span>戻る</span>
-                </button>
-                <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
-                  <span>🏠</span>
-                  <span>ホーム</span>
-                </Link>
-              </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-800">レース一覧</h1>
                 <p className="text-gray-600 text-sm sm:text-base">
@@ -221,34 +244,34 @@ function RacesPageContent() {
         )}
 
         {racesData && !loading && (
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            {/* レース一覧ヘッダー */}
-            <div className="bg-gray-50 px-6 py-4 border-b">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  レース一覧 ({filteredRaces.length}R)
-                </h2>
-                <div className="text-sm text-gray-600">
-                  クリックで選手情報を表示
-                </div>
-              </div>
+          <div className="space-y-4">
+            {/* ヘッダー情報 */}
+            <div className="text-center py-2">
+              <h2 className="text-lg font-semibold text-ink-1">
+                レース一覧 ({filteredRaces.length}R)
+              </h2>
+              <p className="text-sm text-ink-3 mt-1">
+                本命・対抗・穴をデータ分析で予想
+              </p>
             </div>
 
-            {/* レース一覧 */}
-            <div>
+            {/* 新しいカードレイアウト */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {filteredRaces.map((race) => (
-                <RaceListItem
+                <ImprovedRaceCard
                   key={race.race_id}
                   race={race}
-                  isOpen={expandedRaces.has(race.race_id)}
-                  onToggle={() => toggleRaceExpansion(race.race_id)}
+                  forecast={forecasts[race.race_id]}
+                  isLoading={loading || forecastsLoading}
                 />
               ))}
             </div>
 
             {filteredRaces.length === 0 && (
-              <div className="p-6 text-center text-gray-500">
-                条件に合うレースが見つかりませんでした
+              <div className="text-center py-8 text-ink-3">
+                <div className="text-4xl mb-4">🏁</div>
+                <div className="text-lg font-medium">条件に合うレースが見つかりませんでした</div>
+                <p className="text-sm mt-2">フィルター条件を変更してお試しください</p>
               </div>
             )}
           </div>
@@ -301,7 +324,7 @@ function RacesPageContent() {
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-lg">📊</span>
-              <span>AI予想・分析</span>
+              <span>データ予想・分析</span>
             </div>
           </div>
           <div className="mt-3 pt-3 border-t border-gray-100">

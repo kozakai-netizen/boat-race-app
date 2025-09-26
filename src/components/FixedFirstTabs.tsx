@@ -10,8 +10,8 @@ export default function FixedFirstTabs({ selectedLane, onLaneSelect, loading }: 
   const lanes = [1, 2, 3, 4, 5, 6]
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">1着固定モード</h3>
+    <div className="bg-white rounded-lg shadow-lg p-3 mb-4">
+      <h3 className="text-base font-semibold text-gray-800 mb-3">1着固定モード</h3>
 
       <div className="flex flex-wrap gap-2">
         {/* 全表示ボタン */}
@@ -45,7 +45,7 @@ export default function FixedFirstTabs({ selectedLane, onLaneSelect, loading }: 
       </div>
 
       {/* 説明テキスト */}
-      <div className="mt-3 text-xs text-gray-500">
+      <div className="mt-2 text-xs text-gray-500">
         {selectedLane
           ? `${selectedLane}号艇を1着に固定した組み合わせを表示`
           : '全ての3連単組み合わせを期待値順で表示'
@@ -53,7 +53,7 @@ export default function FixedFirstTabs({ selectedLane, onLaneSelect, loading }: 
       </div>
 
       {loading && (
-        <div className="mt-3 text-sm text-blue-600 flex items-center">
+        <div className="mt-2 text-sm text-blue-600 flex items-center">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
           予想を再計算中...
         </div>

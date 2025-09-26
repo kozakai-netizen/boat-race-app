@@ -6,8 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { ResultsResponse } from '@/lib/types'
 import { HIT_ICONS } from '@/lib/constants'
 import ResultCard from '@/components/ResultCard'
-import SideMenu from '@/components/SideMenu'
-import MobileHeader from '@/components/MobileHeader'
+import HamburgerMenu from '@/components/HamburgerMenu'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 
@@ -48,42 +47,23 @@ function ResultsPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      {/* ARC風サイドメニュー - デスクトップのみ */}
-      <SideMenu
+      {/* ハンバーガーメニュー */}
+      <HamburgerMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={true}
+        pageTitle="レース結果"
       />
 
-      {/* モバイル用ヘッダー */}
-      <MobileHeader
-        onLegendClick={openLegend}
-        onFeedbackClick={openFeedback}
-        showBackButton={true}
-      />
-
-      {/* メインコンテンツ - モバイルは上部マージン */}
-      <div className="pt-16 md:pt-4 p-4">
+      {/* メインコンテンツ */}
+      <div className="pt-20 p-4">
         <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => router.back()}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1"
-              >
-                <span>←</span>
-                <span>戻る</span>
-              </button>
-              <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
-                <span>🏠</span>
-                <span>ホーム</span>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">レース結果</h1>
-                <p className="text-gray-600">{date} 舟券王への道from住之江競艇</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">レース結果</h1>
+              <p className="text-gray-600">{date} 舟券王への道from住之江競艇</p>
             </div>
 
             <button

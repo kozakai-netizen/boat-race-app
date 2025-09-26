@@ -1,17 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { importRaceDataFromCSV, importEntryDataFromCSV, importResultDataFromCSV, generateRaceDataTemplate, generateEntryDataTemplate, generateResultDataTemplate } from '@/lib/data-import'
+import { importRaceDataFromCSV, importEntryDataFromCSV, importResultDataFromCSV, importPlayerMasterFromCSV, generateRaceDataTemplate, generateEntryDataTemplate, generateResultDataTemplate, generatePlayerMasterTemplate } from '@/lib/data-import'
 
 interface DataImportModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-type ImportType = 'race' | 'entry' | 'result'
+type ImportType = 'race' | 'entry' | 'result' | 'player'
 
 export default function DataImportModal({ isOpen, onClose }: DataImportModalProps) {
-  const [activeTab, setActiveTab] = useState<ImportType>('race')
+  const [activeTab, setActiveTab] = useState<ImportType>('player')
   const [isImporting, setIsImporting] = useState(false)
   const [importResult, setImportResult] = useState<{
     success: boolean
@@ -35,6 +35,9 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
           break
         case 'result':
           result = await importResultDataFromCSV(file)
+          break
+        case 'player':
+          result = await importPlayerMasterFromCSV(file)
           break
         default:
           throw new Error('不明なインポートタイプです')
@@ -76,6 +79,10 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
         csvContent = generateResultDataTemplate()
         filename = 'result_data_template.csv'
         break
+      case 'player':
+        csvContent = generatePlayerMasterTemplate()
+        filename = 'player_master_template.csv'
+        break
     }
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
@@ -93,6 +100,7 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
   if (!isOpen) return null
 
   const tabs = [
+    { id: 'player' as ImportType, label: '選手マスタ', description: '選手基本情報の取り込み (Phase 1)' },
     { id: 'race' as ImportType, label: 'レースデータ', description: 'レース基本情報の取り込み' },
     { id: 'entry' as ImportType, label: '出走データ', description: '選手・出走情報の取り込み' },
     { id: 'result' as ImportType, label: '結果データ', description: 'レース結果・払戻の取り込み' }

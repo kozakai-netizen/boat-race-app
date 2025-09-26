@@ -7,12 +7,11 @@ import { Forecast, Result } from '@/lib/types'
 import { parseRaceId, getVenueDisplayName, type RaceIdInfo } from '@/lib/raceId'
 import RaceHeader from '@/components/RaceHeader'
 import ForecastList from '@/components/ForecastList'
-import FixedFirstTabs from '@/components/FixedFirstTabs'
+import RaceEntries from '@/components/RaceEntries'
+import HamburgerMenu from '@/components/HamburgerMenu'
 import { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
 import { useUrlSync } from '@/hooks/useUrlSync'
-import SideMenu from '@/components/SideMenu'
-import MobileHeader from '@/components/MobileHeader'
 import { RaceDetailSkeleton } from '@/components/ui/SkeletonLoader'
 
 const LegendModal = dynamic(() => import('@/components/LegendModal').then(mod => ({ default: mod.default })), {
@@ -64,27 +63,28 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     setError(null)
 
     try {
-      // Fetch forecast data
-      const forecastResponse = await fetch(`/api/forecast/${raceId}`)
-      if (!forecastResponse.ok) {
-        throw new Error('Failed to fetch forecast data')
-      }
-      const forecastData = await forecastResponse.json()
-      setForecast(forecastData)
+      const raceInfo = parseRaceId(raceId)
 
-      // Fetch result data (if exists)
-      try {
-        const raceInfo = parseRaceId(raceId)
-        const resultResponse = await fetch(`/api/results/suminoye?date=${raceInfo.date}`)
-        if (resultResponse.ok) {
-          const resultData = await resultResponse.json()
-          const matchingResult = resultData.results?.find((r: Result) => r.race_id === raceId)
-          if (matchingResult) {
-            setRaceResult(matchingResult)
-          }
+      // Parallel data fetching for better performance
+      const [forecastResult, resultResult] = await Promise.allSettled([
+        fetch(`/api/forecast/${raceId}`).then(res => res.ok ? res.json() : null),
+        fetch(`/api/results/suminoye?date=${raceInfo.date}`).then(res => res.ok ? res.json() : null)
+      ])
+
+      // Handle forecast data
+      if (forecastResult.status === 'fulfilled' && forecastResult.value) {
+        setForecast(forecastResult.value)
+      } else {
+        console.error('Failed to fetch forecast data')
+        setError('予想データの取得に失敗しました')
+      }
+
+      // Handle result data
+      if (resultResult.status === 'fulfilled' && resultResult.value) {
+        const matchingResult = resultResult.value.results?.find((r: Result) => r.race_id === raceId)
+        if (matchingResult) {
+          setRaceResult(matchingResult)
         }
-      } catch (resultErr) {
-        console.log('No result data available:', resultErr)
       }
 
       setLoading(false)
@@ -153,11 +153,11 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="text-red-500">{error}</div>
+          <div className="bg-surface-1 rounded-lg shadow-card p-6 text-center border border-ink-line">
+            <div className="text-error">{error}</div>
             <button
               onClick={fetchRaceData}
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="mt-4 bg-brand text-white px-4 py-2 rounded hover:bg-brand transition"
             >
               再試行
             </button>
@@ -171,30 +171,17 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      {/* ARC風サイドメニュー - デスクトップのみ */}
-      <SideMenu
+      {/* ハンバーガーメニュー */}
+      <HamburgerMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={true}
+        pageTitle={`${getVenueDisplayName(raceInfo.venue)} ${raceInfo.raceNo}`}
       />
 
-      {/* モバイル用ヘッダー */}
-      <MobileHeader
-        onLegendClick={openLegend}
-        onFeedbackClick={openFeedback}
-        showBackButton={true}
-      />
-
-      {/* メインコンテンツ - モバイルは上部マージン */}
-      <div className="pt-16 md:pt-4 p-4">
+      {/* メインコンテンツ */}
+      <div className="pt-20 p-4">
         <div className="max-w-6xl mx-auto">
-        {/* ナビゲーション */}
-        <div className="mb-4 flex items-center">
-          <Link href="/suminoye" className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1">
-            <span>🏠</span>
-            <span>ホーム</span>
-          </Link>
-        </div>
 
         {/* レースヘッダー */}
         <RaceHeader
@@ -203,45 +190,47 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           raceNo={raceInfo.raceNo}
           closeAt={generateMockCloseAt(raceInfo)}
           hasSuperPicks={forecast?.triples.some(t => t.super) || false}
-        />
-
-        {/* 1着固定タブ */}
-        <FixedFirstTabs
           selectedLane={fixedFirst}
           onLaneSelect={handleLaneSelect}
-          loading={fixedLoading}
+          fixedLoading={fixedLoading}
         />
 
-        {/* 予想リスト */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">
-              {fixedFirst ? `${fixedFirst}号艇 固定予想` : 'AI予想結果'}
-            </h2>
-            <div className="flex items-center space-x-2">
-              <ShareButton />
-              <button
-                onClick={fetchRaceData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
-              >
-                🔄 更新
-              </button>
+        {/* 予想結果と選手一覧 - 2カラムレイアウト */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* 予想リスト */}
+          <div className="bg-surface-1 rounded-lg shadow-card p-4 border border-ink-line">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-ink-1">
+                {fixedFirst ? `${fixedFirst}号艇 固定予想` : '予想結果'}
+              </h2>
+              <div className="flex items-center space-x-2">
+                <ShareButton />
+                <button
+                  onClick={fetchRaceData}
+                  className="px-3 py-1.5 bg-brand text-white rounded-lg hover:bg-brand transition text-sm"
+                >
+                  🔄 更新
+                </button>
+              </div>
             </div>
+
+            <ForecastList
+              triples={forecast?.triples || []}
+              loading={loading}
+              raceResult={raceResult && raceResult.win_triple ? {
+                triple: raceResult.win_triple,
+                payout: raceResult.payouts?.trifecta || null,
+                popularity: null
+              } : undefined}
+              urlSyncProps={{
+                getStateFromUrl,
+                updateUrl,
+              }}
+            />
           </div>
 
-          <ForecastList
-            triples={forecast?.triples || []}
-            loading={loading}
-            raceResult={raceResult && raceResult.win_triple ? {
-              triple: raceResult.win_triple,
-              payout: raceResult.payouts?.trifecta || null,
-              popularity: null
-            } : undefined}
-            urlSyncProps={{
-              getStateFromUrl,
-              updateUrl,
-            }}
-          />
+          {/* 選手一覧 */}
+          <RaceEntries raceId={raceId} />
         </div>
 
         {/* 凡例 */}

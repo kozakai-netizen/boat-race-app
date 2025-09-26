@@ -57,15 +57,6 @@ export default function Home() {
               </div>
             </Link>
 
-            <Link
-              href="/admin/login"
-              className="block w-full bg-orange-500 text-white py-4 px-4 rounded-lg hover:bg-orange-600 transition font-medium shadow-lg hover:shadow-xl"
-            >
-              <div className="flex items-center justify-center space-x-2">
-                <span className="text-xl">⚙️</span>
-                <span>管理画面</span>
-              </div>
-            </Link>
           </div>
 
           {/* サブ選択肢 */}
@@ -85,12 +76,6 @@ export default function Home() {
                 📊 結果確認
               </Link>
             </div>
-            <Link
-              href="/login"
-              className="block w-full bg-gray-50 text-gray-600 py-2 px-3 rounded text-xs hover:bg-gray-100 transition text-center border"
-            >
-              🔐 ログイン選択画面
-            </Link>
           </div>
         </div>
 

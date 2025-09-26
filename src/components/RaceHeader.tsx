@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 
 interface RaceHeaderProps {
   venue: string
@@ -13,6 +14,9 @@ interface RaceHeaderProps {
     condition?: string
   }
   hasSuperPicks: boolean
+  selectedLane?: number | null
+  onLaneSelect?: (lane: number | null) => void
+  fixedLoading?: boolean
 }
 
 export default function RaceHeader({
@@ -21,10 +25,14 @@ export default function RaceHeader({
   raceNo,
   closeAt,
   weather,
-  hasSuperPicks
+  hasSuperPicks,
+  selectedLane,
+  onLaneSelect,
+  fixedLoading
 }: RaceHeaderProps) {
   const [timeRemaining, setTimeRemaining] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isFixedModeExpanded, setIsFixedModeExpanded] = useState<boolean>(false)
 
   useEffect(() => {
     if (!closeAt) return
@@ -67,19 +75,19 @@ export default function RaceHeader({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+    <div className="bg-surface-1 rounded-lg shadow-card p-3 mb-4 border border-ink-line">
       {/* メイン情報行 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className="w-12 h-12 rounded-full bg-blue-600 text-white font-bold text-lg flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-brand text-white font-bold text-lg flex items-center justify-center">
               {raceNo.replace('R', '')}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">
+              <h1 className="text-xl font-bold text-ink-1">
                 {venue === 'suminoe' ? '住之江' : venue} {raceNo}
               </h1>
-              <p className="text-sm text-gray-600">{date}</p>
+              <p className="text-sm text-ink-3">{date}</p>
             </div>
           </div>
 
@@ -87,8 +95,8 @@ export default function RaceHeader({
           <div className="flex items-center space-x-2">
             <div className={`px-3 py-1 rounded-full text-xs font-medium ${
               isOpen
-                ? 'bg-green-100 text-green-700'
-                : 'bg-gray-100 text-gray-600'
+                ? 'bg-success-soft text-success'
+                : 'bg-surface-3 text-ink-3'
             }`}>
               {isOpen ? '発売中' : '締切済'}
             </div>
@@ -96,15 +104,15 @@ export default function RaceHeader({
             {closeAt && timeRemaining && (
               <div className={`px-3 py-1 rounded-full text-xs font-bold ${
                 isOpen
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-600'
+                  ? 'bg-brand-soft text-brand'
+                  : 'bg-surface-3 text-ink-3'
               }`}>
                 {timeRemaining}
               </div>
             )}
 
             {hasSuperPicks && (
-              <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-medium flex items-center">
+              <div className="bg-warning-soft text-warning px-3 py-1 rounded-full text-xs font-medium flex items-center">
                 ⭐ SUPER
               </div>
             )}
@@ -115,8 +123,8 @@ export default function RaceHeader({
         <div className="text-right">
           {closeAt && (
             <div className="text-sm">
-              <div className="text-gray-500">締切</div>
-              <div className="font-semibold text-gray-800">
+              <div className="text-ink-3">締切</div>
+              <div className="font-semibold text-ink-1">
                 {formatTime(closeAt)}
               </div>
             </div>
@@ -126,22 +134,158 @@ export default function RaceHeader({
 
       {/* 天候情報行 */}
       {weather && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
+        <div className="mt-3 pt-3 border-t border-ink-line">
           <div className="flex items-center space-x-6 text-sm">
             <div className="flex items-center space-x-1">
               <span className="text-lg">🌤️</span>
-              <span className="text-gray-600">{weather.condition || '晴れ'}</span>
+              <span className="text-ink-2">{weather.condition || '晴れ'}</span>
             </div>
 
             {weather.temp_c && (
               <div className="flex items-center space-x-1">
-                <span className="text-orange-600 font-medium">{weather.temp_c}°C</span>
+                <span className="text-warning font-medium">{weather.temp_c}°C</span>
               </div>
             )}
 
             {weather.wind_ms && (
               <div className="flex items-center space-x-1">
-                <span className="text-blue-600">💨 {weather.wind_ms}m/s</span>
+                <span className="text-brand">💨 {weather.wind_ms}m/s</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 1着固定モード - モバイル対応アコーディオン */}
+      {onLaneSelect && (
+        <div className="mt-3 pt-3 border-t border-ink-line">
+          {/* デスクトップ表示 */}
+          <div className="hidden sm:block">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-medium text-ink-2">1着固定モード</h4>
+              {fixedLoading && (
+                <div className="text-xs text-brand flex items-center">
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-brand mr-1"></div>
+                  計算中
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => onLaneSelect(null)}
+                disabled={fixedLoading}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition ${
+                  selectedLane === null
+                    ? 'bg-ink-1 text-surface-1'
+                    : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                } ${fixedLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                全表示
+              </button>
+
+              {[1, 2, 3, 4, 5, 6].map(lane => (
+                <button
+                  key={lane}
+                  onClick={() => onLaneSelect(lane)}
+                  disabled={fixedLoading}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition ${
+                    selectedLane === lane
+                      ? 'bg-brand text-white'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                  } ${fixedLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {lane}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-1.5 text-xs text-ink-3">
+              {selectedLane
+                ? `${selectedLane}号艇を1着に固定した組み合わせを表示`
+                : '全ての3連単組み合わせを期待値順で表示'
+              }
+            </div>
+          </div>
+
+          {/* モバイル表示 - アコーディオン */}
+          <div className="sm:hidden">
+            <button
+              onClick={() => setIsFixedModeExpanded(!isFixedModeExpanded)}
+              className="flex items-center justify-between w-full py-2"
+            >
+              <div className="flex items-center space-x-2">
+                <h4 className="text-sm font-medium text-ink-2">1着固定モード</h4>
+                {selectedLane && (
+                  <span className="px-2 py-0.5 bg-brand text-white rounded text-xs font-medium">
+                    {selectedLane}号艇
+                  </span>
+                )}
+                {fixedLoading && (
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-brand"></div>
+                )}
+              </div>
+              {isFixedModeExpanded ? (
+                <ChevronUpIcon className="h-4 w-4 text-ink-3" />
+              ) : (
+                <ChevronDownIcon className="h-4 w-4 text-ink-3" />
+              )}
+            </button>
+
+            {isFixedModeExpanded && (
+              <div className="pb-2">
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  <button
+                    onClick={() => onLaneSelect(null)}
+                    disabled={fixedLoading}
+                    className={`py-2 rounded text-xs font-medium transition ${
+                      selectedLane === null
+                        ? 'bg-ink-1 text-surface-1'
+                        : 'bg-surface-2 text-ink-2'
+                    } ${fixedLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    全表示
+                  </button>
+
+                  {[1, 2, 3].map(lane => (
+                    <button
+                      key={lane}
+                      onClick={() => onLaneSelect(lane)}
+                      disabled={fixedLoading}
+                      className={`py-2 rounded text-xs font-medium transition ${
+                        selectedLane === lane
+                          ? 'bg-brand text-white'
+                          : 'bg-surface-2 text-ink-2'
+                      } ${fixedLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {lane}号艇
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {[4, 5, 6].map(lane => (
+                    <button
+                      key={lane}
+                      onClick={() => onLaneSelect(lane)}
+                      disabled={fixedLoading}
+                      className={`py-2 rounded text-xs font-medium transition ${
+                        selectedLane === lane
+                          ? 'bg-brand text-white'
+                          : 'bg-surface-2 text-ink-2'
+                      } ${fixedLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {lane}号艇
+                    </button>
+                  ))}
+                </div>
+
+                <div className="text-xs text-ink-3">
+                  {selectedLane
+                    ? `${selectedLane}号艇を1着に固定`
+                    : '全組み合わせを期待値順で表示'
+                  }
+                </div>
               </div>
             )}
           </div>

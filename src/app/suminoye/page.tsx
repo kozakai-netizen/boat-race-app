@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { VenueResponse } from '@/lib/types'
 import LegendModal, { useLegendModal } from '@/components/LegendModal'
 import { useFeedbackModal } from '@/components/FeedbackForm'
-import SideMenu from '@/components/SideMenu'
-import MobileHeader from '@/components/MobileHeader'
+import HamburgerMenu from '@/components/HamburgerMenu'
 
 export default function SuminoyeHome() {
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -54,22 +53,16 @@ export default function SuminoyeHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-soft to-surface-2">
-      {/* ARC風サイドメニュー - デスクトップのみ */}
-      <SideMenu
+      {/* ハンバーガーメニュー */}
+      <HamburgerMenu
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
-        showBackButton={true}
+        showBackButton={false}
+        pageTitle="住之江競艇予想システム"
       />
 
-      {/* モバイル用ヘッダー */}
-      <MobileHeader
-        onLegendClick={openLegend}
-        onFeedbackClick={openFeedback}
-        showBackButton={true}
-      />
-
-      {/* メインコンテンツ - モバイルは上部マージン */}
-      <div className="pt-16 md:pt-4 p-4">
+      {/* メインコンテンツ */}
+      <div className="pt-20 p-4">
         <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-surface-1 rounded-xl shadow-hover p-6 mb-6 border border-ink-line">
@@ -179,7 +172,7 @@ export default function SuminoyeHome() {
                     <div>
                       <h3 className="text-xl font-semibold text-ink-1 mb-2">レース一覧</h3>
                       <p className="text-ink-3 text-sm">
-                        本日の全レース・出走情報・AI予想を確認
+                        本日の全レース・出走情報・予想を確認
                       </p>
                     </div>
                     <div className="text-3xl text-brand">→</div>
