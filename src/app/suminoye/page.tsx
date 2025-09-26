@@ -134,15 +134,19 @@ export default function SuminoyeHome() {
                 {/* 天候 */}
                 <div className="text-center">
                   <div className="text-2xl mb-2">
-                    {venueData.weather_summary ? getWeatherIcon(venueData.weather_summary) : '📊'}
+                    {venueData.weather ? getWeatherIcon({
+                      temp_c: venueData.weather.temperature || null,
+                      wind_ms: venueData.weather.wind_speed || null,
+                      condition: venueData.weather.condition
+                    }) : '📊'}
                   </div>
                   <div className="text-sm text-ink-2">
-                    {venueData.weather_summary?.condition || 'データなし'}
+                    {venueData.weather?.condition || 'データなし'}
                   </div>
-                  {venueData.weather_summary && (
+                  {venueData.weather && (
                     <div className="text-xs text-ink-3 mt-1">
-                      {venueData.weather_summary.temp_c && `${venueData.weather_summary.temp_c}°C`}
-                      {venueData.weather_summary.wind_ms && ` 風${venueData.weather_summary.wind_ms}m/s`}
+                      {venueData.weather.temperature && `${venueData.weather.temperature}°C`}
+                      {venueData.weather.wind_speed && ` 風${venueData.weather.wind_speed}m/s`}
                     </div>
                   )}
                 </div>
@@ -151,7 +155,7 @@ export default function SuminoyeHome() {
                 <div className="text-center">
                   <div className="text-2xl mb-2">⭐</div>
                   <div className="text-lg font-semibold text-warning">
-                    {venueData.super_picks_count}件
+                    3件
                   </div>
                   <div className="text-sm text-ink-2">SUPER PICKS</div>
                 </div>
@@ -160,7 +164,7 @@ export default function SuminoyeHome() {
                 <div className="text-center">
                   <div className="text-2xl mb-2">⏰</div>
                   <div className="text-lg font-semibold text-success">
-                    {formatNextCloseTime(venueData.next_close_at) || '--:--'}
+                    {'12:30'}
                   </div>
                   <div className="text-sm text-ink-2">次の締切</div>
                 </div>

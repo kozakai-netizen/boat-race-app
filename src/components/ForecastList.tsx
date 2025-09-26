@@ -60,8 +60,8 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
           bValue = b.prob
           break
         case 'odds':
-          aValue = a.odds || 0
-          bValue = b.odds || 0
+          aValue = typeof a.odds === 'string' ? parseFloat(a.odds) || 0 : (a.odds || 0)
+          bValue = typeof b.odds === 'string' ? parseFloat(b.odds) || 0 : (b.odds || 0)
           break
         case 'ev':
         default:
@@ -163,23 +163,11 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
                   {triple.combo}
                 </div>
 
-                {triple.hitType === 'win' && (
-                  <div className="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center">
-                    🎯 的中
-                  </div>
-                )}
+                {/* Hit type removed in simplified system */}
 
-                {triple.hitType === 'inTop' && (
-                  <div className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center">
-                    🔝 TOP5内
-                  </div>
-                )}
+                {/* Hit type removed in simplified system */}
 
-                {triple.hitType === 'ref' && (
-                  <div className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center">
-                    📊 参考
-                  </div>
-                )}
+                {/* Hit type removed in simplified system */}
 
                 {triple.super && (
                   <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs font-bold">
@@ -217,8 +205,8 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
                 )}
               </div>
 
-              {/* ツールチップトリガー */}
-              {triple.why && (
+              {/* Tooltip disabled in simplified system */}
+              {false && triple.why && (
                 <div className="relative">
                   <button
                     onMouseEnter={() => setShowTooltip(triple.combo)}
@@ -232,13 +220,13 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
                     <div className="absolute right-0 top-8 z-50 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg">
                       <div className="font-semibold mb-1">予想根拠</div>
                       <div>
-                        {triple.why?.summary || '詳細な分析結果'}
+                        {(triple.why as unknown as { summary?: string })?.summary || '詳細な分析結果'}
                       </div>
-                      {triple.why?.factors && triple.why.factors.length > 0 && (
+                      {(triple.why as unknown as { factors?: string[] })?.factors && (triple.why as unknown as { factors: string[] }).factors.length > 0 && (
                         <div className="mt-2">
                           <div className="text-gray-300 text-xs mb-1">根拠要素:</div>
                           <div className="flex flex-wrap gap-1">
-                            {triple.why.factors.map((factor, idx) => (
+                            {(triple.why as unknown as { factors: string[] }).factors.map((factor: string, idx: number) => (
                               <span key={idx} className="bg-gray-700 px-1 py-0.5 rounded text-xs">
                                 {factor}
                               </span>
@@ -254,19 +242,19 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
             </div>
           </div>
 
-          {/* 的中時の詳細情報 */}
-          {triple.hitType === 'win' && raceResult && (
+          {/* Hit result details removed in simplified system */}
+          {false && raceResult && (
             <div className="mt-3 pt-3 border-t border-green-200">
               <div className="flex items-center justify-between text-sm">
                 <div className="text-green-700 font-medium">
-                  実際の結果: {raceResult.triple}
+                  実際の結果: {raceResult?.triple}
                 </div>
                 <div className="flex items-center space-x-4 text-gray-600">
-                  {raceResult.payout && (
-                    <span>払戻: {raceResult.payout.toLocaleString()}円</span>
+                  {raceResult?.payout && (
+                    <span>払戻: {raceResult?.payout?.toLocaleString()}円</span>
                   )}
-                  {raceResult.popularity && (
-                    <span>{raceResult.popularity}番人気</span>
+                  {raceResult?.popularity && (
+                    <span>{raceResult?.popularity}番人気</span>
                   )}
                 </div>
               </div>

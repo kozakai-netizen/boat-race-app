@@ -232,10 +232,10 @@ export default function RaceDetail({ params }: RaceDetailProps) {
           <ForecastList
             triples={forecast?.triples || []}
             loading={loading}
-            raceResult={raceResult ? {
-              triple: raceResult.triple,
-              payout: raceResult.payout,
-              popularity: raceResult.popularity
+            raceResult={raceResult && raceResult.win_triple ? {
+              triple: raceResult.win_triple,
+              payout: raceResult.payouts?.trifecta || null,
+              popularity: null
             } : undefined}
             urlSyncProps={{
               getStateFromUrl,

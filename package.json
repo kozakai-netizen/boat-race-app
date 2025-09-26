@@ -6,17 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
-    "seed:test:suminoye": "tsx scripts/seed-test-race.ts"
+    "lint": "eslint"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "@supabase/supabase-js": "^2.57.4",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "swr": "^2.3.6",
-    "zod": "^4.1.11"
+    "swr": "^2.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -91,7 +91,6 @@ function generateMockEntries(raceId: string): SimpleRaceEntry[] {
     const descIndex = Math.floor(random() * motorDescriptions.length)
 
     entries.push({
-      race_id: raceId,
       lane,
       player_name: playerNames[nameIndex],
       player_grade: grades[gradeIndex],
@@ -99,7 +98,14 @@ function generateMockEntries(raceId: string): SimpleRaceEntry[] {
       exhibition_time: 6.70 + random() * 0.40, // 6.70 ~ 7.10
       motor_rate: 30 + random() * 25, // 30 ~ 55
       motor_condition: motorConditions[conditionIndex],
-      motor_description: motorDescriptions[descIndex]
+      motor_description: motorDescriptions[descIndex],
+      // These will be overridden in the processing step
+      motor_badge: { grade: '○', color: '', tooltip: '' },
+      grade_badge_color: '',
+      st_color: '',
+      exhibition_color: '',
+      two_rate: 0,
+      three_rate: 0
     })
   }
 

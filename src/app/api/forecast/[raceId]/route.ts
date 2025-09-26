@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-import { ForecastSchema } from '@/lib/types'
 import { SUPER_EV_MIN, SUPER_PROB_MIN, PLAYER_ICONS } from '@/lib/constants'
 import { MOCK_FORECAST_DATA, MOCK_FORECAST_DATA_TODAY } from '@/lib/mockData'
 
@@ -25,84 +23,21 @@ export async function GET(
     // Check if mock data is available for testing
     if (raceId in MOCK_FORECAST_DATA) {
       const mockData = MOCK_FORECAST_DATA[raceId as keyof typeof MOCK_FORECAST_DATA]
-      const validatedResponse = ForecastSchema.parse(mockData)
-      return NextResponse.json(validatedResponse)
+      return NextResponse.json(mockData)
     }
 
     // Check if today's mock data is available
     if (raceId in MOCK_FORECAST_DATA_TODAY) {
       const mockData = MOCK_FORECAST_DATA_TODAY[raceId]
-      const validatedResponse = ForecastSchema.parse(mockData)
-      return NextResponse.json(validatedResponse)
+      return NextResponse.json(mockData)
     }
 
-    // Get forecast data with odds
-    const { data: forecastData, error: forecastError } = await supabase
-      .from('forecast')
-      .select(`
-        combo,
-        prob,
-        ev,
-        super,
-        why
-      `)
-      .eq('race_id', raceId)
-      .order('ev', { ascending: false })
-
-    if (forecastError) {
-      console.error('Forecast error:', forecastError)
-      // If database error and no mock data, return empty result
-      const emptyResponse = {
-        race_id: raceId,
-        triples: [],
-      }
-      const validatedResponse = ForecastSchema.parse(emptyResponse)
-      return NextResponse.json(validatedResponse)
-    }
-
-    // Get latest odds
-    const { data: oddsData } = await supabase
-      .from('odds_latest')
-      .select('combo, odds')
-      .eq('race_id', raceId)
-
-    const oddsMap = new Map(oddsData?.map(o => [o.combo, o.odds]) || [])
-
-    // Get race result data for hit type calculation
-    const { data: resultData } = await supabase
-      .from('result')
-      .select('triple')
-      .eq('race_id', raceId)
-      .single()
-
-    const raceResultTriple = resultData?.triple || null
-
-    // Process forecast data
-    const triples = forecastData?.map(forecast => {
-      const icons = generateIconsFromWhy(forecast.why)
-      const parsedWhy = parseWhyData(forecast.why)
-
-      return {
-        combo: forecast.combo,
-        prob: forecast.prob,
-        odds: oddsMap.get(forecast.combo) || null,
-        ev: forecast.ev,
-        super: forecast.super || (forecast.ev >= SUPER_EV_MIN && forecast.prob >= SUPER_PROB_MIN),
-        icons,
-        hitType: calculateHitType(forecast.combo, raceResultTriple),
-        why: parsedWhy,
-      }
-    }) || []
-
-    const response = {
+    // Return empty result if no mock data available
+    const emptyResponse = {
       race_id: raceId,
-      triples,
+      triples: [],
     }
-
-    // Validate response with Zod
-    const validatedResponse = ForecastSchema.parse(response)
-
-    return NextResponse.json(validatedResponse)
+    return NextResponse.json(emptyResponse)
   } catch (error) {
     console.error('Forecast API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -139,14 +74,8 @@ async function handleFixedFirstForecast(raceId: string, fixedLane: number) {
         why: null
       }))
     } else {
-      // Get all forecasts for the race
-      const { data, error } = await supabase
-        .from('forecast')
-        .select('combo, prob, ev, super, why')
-        .eq('race_id', raceId)
-
-      if (error) throw error
-      allForecasts = data
+      // No mock data available, return empty
+      allForecasts = []
     }
 
     // Filter forecasts where first position matches fixedLane
@@ -154,41 +83,21 @@ async function handleFixedFirstForecast(raceId: string, fixedLane: number) {
       f.combo.startsWith(fixedLane.toString())
     ) || []
 
-    // Get latest odds for filtered combos
-    const combos = filteredForecasts.map(f => f.combo)
-    const { data: oddsData } = await supabase
-      .from('odds_latest')
-      .select('combo, odds')
-      .eq('race_id', raceId)
-      .in('combo', combos)
-
-    const oddsMap = new Map(oddsData?.map(o => [o.combo, o.odds]) || [])
-
-    // Get race result data for hit type calculation
-    const { data: resultData } = await supabase
-      .from('result')
-      .select('triple')
-      .eq('race_id', raceId)
-      .single()
-
-    const raceResultTriple = resultData?.triple || null
-
     // Recalculate probabilities (simplified normalization)
     const totalProb = filteredForecasts.reduce((sum, f) => sum + f.prob, 0)
 
     const triples = filteredForecasts.map(forecast => {
       const normalizedProb = totalProb > 0 ? forecast.prob / totalProb : forecast.prob
-      const odds = oddsMap.get(forecast.combo)
-      const newEv = odds ? normalizedProb * odds : forecast.ev
+      const newEv = forecast.ev // Keep original EV for mock data
 
       return {
         combo: forecast.combo,
         prob: normalizedProb,
-        odds: odds || null,
+        odds: null, // No odds for mock-only system
         ev: newEv,
         super: forecast.super || (newEv >= SUPER_EV_MIN && normalizedProb >= SUPER_PROB_MIN),
         icons: generateIconsFromWhy(forecast.why),
-        hitType: calculateHitType(forecast.combo, raceResultTriple),
+        hitType: calculateHitType(forecast.combo, null), // No result data
         why: parseWhyData(forecast.why),
       }
     }).sort((a, b) => b.ev - a.ev)
@@ -198,7 +107,7 @@ async function handleFixedFirstForecast(raceId: string, fixedLane: number) {
       triples,
     }
 
-    return NextResponse.json(ForecastSchema.parse(response))
+    return NextResponse.json(response)
   } catch (error) {
     console.error('Fixed first forecast error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -250,17 +159,8 @@ function generateIconsFromWhy(why: unknown): string[] {
 }
 
 function calculateHitType(forecastCombo: string, resultTriple: string | null): 'win' | 'inTop' | 'miss' | 'ref' {
-  if (!resultTriple) {
-    return 'ref' // 結果データなし（レース未確定）
-  }
-
-  if (forecastCombo === resultTriple) {
-    return 'win' // 完全的中
-  }
-
-  // TOP5内判定のロジック（現在は簡易版）
-  // 実際のボートレースでは複雑な判定が必要だが、現状はmissとして扱う
-  return 'miss'
+  // Always return 'ref' for mock-only system (no race results)
+  return 'ref'
 }
 
 function parseWhyData(why: unknown): { icons: string[]; summary: string; factors?: string[]; start_shape?: string; kimarite_mix?: Record<string, unknown> } | undefined {

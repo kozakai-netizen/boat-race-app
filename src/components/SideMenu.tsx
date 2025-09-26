@@ -2,14 +2,15 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import DataImportModal from '@/components/DataImportModal'
 import {
   ArrowLeftIcon,
   InformationCircleIcon,
   ChatBubbleLeftEllipsisIcon,
   Cog6ToothIcon,
-  HomeIcon
+  HomeIcon,
+  ArrowUpTrayIcon
 } from '@heroicons/react/24/outline'
 
 interface SideMenuProps {
@@ -20,14 +21,15 @@ interface SideMenuProps {
 
 export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButton = true }: SideMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isDataImportOpen, setIsDataImportOpen] = useState(false)
   const router = useRouter()
-  const { isAdmin } = useAuth()
 
   const iconComponents = {
     ArrowLeftIcon,
     InformationCircleIcon,
     ChatBubbleLeftEllipsisIcon,
-    Cog6ToothIcon
+    Cog6ToothIcon,
+    ArrowUpTrayIcon
   }
 
   const menuItems = [
@@ -48,21 +50,21 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
       }
     },
     {
+      icon: 'ArrowUpTrayIcon',
+      label: 'データ取り込み',
+      action: () => {
+        setIsDataImportOpen(true)
+        setIsOpen(false)
+      }
+    },
+    {
       icon: 'ChatBubbleLeftEllipsisIcon',
       label: 'フィードバック',
       action: () => {
         onFeedbackClick?.()
         setIsOpen(false)
       }
-    },
-    ...(isAdmin ? [{
-      icon: 'Cog6ToothIcon',
-      label: '管理画面',
-      action: () => {
-        router.push('/admin')
-        setIsOpen(false)
-      }
-    }] : [])
+    }
   ]
 
   return (
@@ -163,6 +165,12 @@ export default function SideMenu({ onLegendClick, onFeedbackClick, showBackButto
           onClick={() => setIsOpen(false)}
         />
       )}
+
+      {/* データ取り込みモーダル */}
+      <DataImportModal
+        isOpen={isDataImportOpen}
+        onClose={() => setIsDataImportOpen(false)}
+      />
     </>
   )
 }

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
 
 interface MobileHeaderProps {
   onLegendClick?: () => void
@@ -13,7 +12,6 @@ interface MobileHeaderProps {
 export default function MobileHeader({ onLegendClick, onFeedbackClick, showBackButton = true }: MobileHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const router = useRouter()
-  const { isAdmin } = useAuth()
 
   const menuItems = [
     ...(showBackButton ? [{
@@ -47,15 +45,7 @@ export default function MobileHeader({ onLegendClick, onFeedbackClick, showBackB
         onFeedbackClick?.()
         setIsMenuOpen(false)
       }
-    },
-    ...(isAdmin ? [{
-      icon: '⚙️',
-      label: '管理画面',
-      action: () => {
-        router.push('/admin')
-        setIsMenuOpen(false)
-      }
-    }] : [])
+    }
   ]
 
   return (
