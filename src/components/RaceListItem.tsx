@@ -156,7 +156,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 : 'bg-brand text-white hover:opacity-90'
               }
             `}>
-              {race.race_no}
+              {race.race_number}
             </div>
 
             {/* Close Time */}
@@ -251,7 +251,7 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
                 w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center
                 ${isOpen ? 'bg-brand text-white shadow-hover scale-110' : 'bg-brand text-white'}
               `}>
-                {race.race_no}
+                {race.race_number}
               </div>
               <div>
                 <div className="text-sm font-medium text-ink-1">{closeTime}</div>
