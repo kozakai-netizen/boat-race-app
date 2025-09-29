@@ -58,7 +58,7 @@ export default function SuminoyeHome() {
         onLegendClick={openLegend}
         onFeedbackClick={openFeedback}
         showBackButton={false}
-        pageTitle="住之江競艇予想システム"
+        pageTitle="舟券王への道標"
       />
 
       {/* メインコンテンツ */}
@@ -67,7 +67,7 @@ export default function SuminoyeHome() {
         {/* ヘッダー */}
         <div className="bg-surface-1 rounded-xl shadow-hover p-6 mb-6 border border-ink-line">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-ink-1 mb-2">住之江競艇予想システム</h1>
+            <h1 className="text-3xl font-bold text-ink-1 mb-2">舟券王への道標</h1>
             <p className="text-ink-3">AIによる競艇予想システム</p>
           </div>
 
@@ -119,51 +119,6 @@ export default function SuminoyeHome() {
 
         {venueData && !loading && (
           <>
-            {/* 天候・基本情報 */}
-            <div className="bg-surface-1 rounded-xl shadow-hover p-4 sm:p-6 mb-6 border border-ink-line">
-              <h2 className="text-lg font-semibold text-ink-1 mb-4">基本情報</h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                {/* 天候 */}
-                <div className="text-center">
-                  <div className="text-2xl mb-2">
-                    {venueData.weather ? getWeatherIcon({
-                      temp_c: venueData.weather.temperature || null,
-                      wind_ms: venueData.weather.wind_speed || null,
-                      condition: venueData.weather.condition
-                    }) : '📊'}
-                  </div>
-                  <div className="text-sm text-ink-2">
-                    {venueData.weather?.condition || 'データなし'}
-                  </div>
-                  {venueData.weather && (
-                    <div className="text-xs text-ink-3 mt-1">
-                      {venueData.weather.temperature && `${venueData.weather.temperature}°C`}
-                      {venueData.weather.wind_speed && ` 風${venueData.weather.wind_speed}m/s`}
-                    </div>
-                  )}
-                </div>
-
-                {/* SUPER PICKS */}
-                <div className="text-center">
-                  <div className="text-2xl mb-2">⭐</div>
-                  <div className="text-lg font-semibold text-warning">
-                    3件
-                  </div>
-                  <div className="text-sm text-ink-2">SUPER PICKS</div>
-                </div>
-
-                {/* 次の締切 */}
-                <div className="text-center">
-                  <div className="text-2xl mb-2">⏰</div>
-                  <div className="text-lg font-semibold text-success">
-                    {'12:30'}
-                  </div>
-                  <div className="text-sm text-ink-2">次の締切</div>
-                </div>
-              </div>
-            </div>
-
             {/* ナビゲーション */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href={`/suminoye/races?date=${selectedDate}&grade=${selectedGrade}`}>

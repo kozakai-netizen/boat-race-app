@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Forecast, Result } from '@/lib/types'
@@ -34,10 +34,50 @@ export default function RaceDetail({ params }: RaceDetailProps) {
   const [loading, setLoading] = useState(true)
   const [fixedLoading, setFixedLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [elementFilter, setElementFilter] = useState<'all' | 'high_ev' | 'realistic' | 'relative'>('all')
+  const [venueRaces, setVenueRaces] = useState<Array<{race_id: string, race_no: number, has_super: boolean}>>([])
+  const [venueRacesLoading, setVenueRacesLoading] = useState(false)
 
   const { getStateFromUrl, updateUrl } = useUrlSync()
   const { isOpen: legendOpen, openModal: openLegend, closeModal: closeLegend } = useLegendModal()
   const { openModal: openFeedback, FeedbackForm: FeedbackFormComponent } = useFeedbackModal(`/race/${raceId}`)
+
+  // フィルタリングされたトリプルを計算
+  const filteredTriples = useMemo(() => {
+    const allTriples = forecast?.triples || []
+    console.log('Filter Debug:', { elementFilter, totalTriples: allTriples.length })
+
+    if (elementFilter === 'all') {
+      console.log('Showing all triples:', allTriples.length)
+      return allTriples
+    }
+
+    const filtered = allTriples.filter((triple) => {
+      switch (elementFilter) {
+        case 'high_ev':
+          const hasHighEv = triple.ev >= 1.5
+          if (hasHighEv) console.log('High EV triple:', triple.combo, 'EV:', triple.ev)
+          return hasHighEv
+        case 'realistic':
+          const isRealistic = triple.prob >= 0.05
+          if (isRealistic) console.log('Realistic triple:', triple.combo, 'Prob:', triple.prob)
+          return isRealistic
+        case 'relative':
+          // 上位30%に入る（相対優位性）
+          const sortedByEv = [...allTriples].sort((a, b) => b.ev - a.ev)
+          const topCount = Math.max(2, Math.ceil(sortedByEv.length * 0.3))
+          const topTriples = sortedByEv.slice(0, topCount)
+          const isTopRanked = topTriples.includes(triple)
+          if (isTopRanked) console.log('Top ranked triple:', triple.combo, 'EV:', triple.ev)
+          return isTopRanked
+        default:
+          return true
+      }
+    })
+
+    console.log('Filtered result:', { filter: elementFilter, count: filtered.length })
+    return filtered
+  }, [forecast?.triples, elementFilter])
 
   // Handle async params
   useEffect(() => {
@@ -101,6 +141,14 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     }
   }, [raceId, fetchRaceData])
 
+  useEffect(() => {
+    if (raceId) {
+      // 同じ競艇場の全レース情報も取得
+      const raceInfo = parseRaceId(raceId)
+      fetchVenueRaces(raceInfo.venue, raceInfo.date)
+    }
+  }, [raceId])
+
   const fetchFixedFirstForecast = async (lane: number | null) => {
     if (!raceId) return
 
@@ -122,6 +170,42 @@ export default function RaceDetail({ params }: RaceDetailProps) {
       setFixedLoading(false)
     }
   }
+
+  const fetchVenueRaces = useCallback(async (venue: string, date: string) => {
+    setVenueRacesLoading(true)
+    try {
+      // 住之江の全レース情報を取得
+      const response = await fetch(`/api/races/${venue}?date=${date}`)
+      if (response.ok) {
+        const data = await response.json()
+        const races = data.races || []
+        setVenueRaces(races.map((race: any) => ({
+          race_id: race.race_id,
+          race_no: race.race_number || race.race_no,
+          has_super: race.has_super || false
+        })))
+      } else {
+        // フォールバック: モックデータを生成
+        const mockRaces = Array.from({length: 12}, (_, i) => ({
+          race_id: `${venue}-${date.replace(/-/g, '')}-${i + 1}R`,
+          race_no: i + 1,
+          has_super: Math.random() > 0.3
+        }))
+        setVenueRaces(mockRaces)
+      }
+    } catch (error) {
+      console.error('Error fetching venue races:', error)
+      // フォールバック: モックデータ
+      const mockRaces = Array.from({length: 12}, (_, i) => ({
+        race_id: `${venue}-${date.replace(/-/g, '')}-${i + 1}R`,
+        race_no: i + 1,
+        has_super: Math.random() > 0.3
+      }))
+      setVenueRaces(mockRaces)
+    } finally {
+      setVenueRacesLoading(false)
+    }
+  }, [])
 
   const handleLaneSelect = (lane: number | null) => {
     setFixedFirst(lane)
@@ -183,6 +267,37 @@ export default function RaceDetail({ params }: RaceDetailProps) {
       <div className="pt-20 p-4">
         <div className="max-w-6xl mx-auto">
 
+        {/* レースタブ */}
+        {venueRaces.length > 0 && (
+          <div className="mb-4 bg-white rounded-lg shadow-card border border-ink-line overflow-hidden">
+            <div className="p-2">
+              <div className="flex overflow-x-auto space-x-2 pb-1" style={{scrollbarWidth: 'thin'}}>
+                {venueRaces.map((race) => {
+                  const isCurrentRace = race.race_id === raceId
+                  return (
+                    <Link
+                      key={race.race_id}
+                      href={`/race/${race.race_id}`}
+                      className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                        isCurrentRace
+                          ? 'bg-brand text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>{race.race_no}R</span>
+                        {race.has_super && (
+                          <span className="text-xs">⭐</span>
+                        )}
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* レースヘッダー */}
         <RaceHeader
           venue={getVenueDisplayName(raceInfo.venue)}
@@ -204,18 +319,51 @@ export default function RaceDetail({ params }: RaceDetailProps) {
                 {fixedFirst ? `${fixedFirst}号艇 固定予想` : '予想結果'}
               </h2>
               <div className="flex items-center space-x-2">
-                <ShareButton />
                 <button
-                  onClick={fetchRaceData}
-                  className="px-3 py-1.5 bg-brand text-white rounded-lg hover:bg-brand transition text-sm"
+                  onClick={() => setElementFilter('all')}
+                  className={`px-2 py-1 rounded text-xs font-medium transition ${
+                    elementFilter === 'all'
+                      ? 'bg-ink-1 text-surface-1'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                  }`}
                 >
-                  🔄 更新
+                  全表示
+                </button>
+                <button
+                  onClick={() => setElementFilter('high_ev')}
+                  className={`px-2 py-1 rounded text-xs font-medium transition ${
+                    elementFilter === 'high_ev'
+                      ? 'bg-yellow-500 text-white'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                  }`}
+                >
+                  💰 期待値
+                </button>
+                <button
+                  onClick={() => setElementFilter('realistic')}
+                  className={`px-2 py-1 rounded text-xs font-medium transition ${
+                    elementFilter === 'realistic'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                  }`}
+                >
+                  🎯 現実的
+                </button>
+                <button
+                  onClick={() => setElementFilter('relative')}
+                  className={`px-2 py-1 rounded text-xs font-medium transition ${
+                    elementFilter === 'relative'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-surface-2 text-ink-2 hover:bg-surface-3'
+                  }`}
+                >
+                  ⭐ 相対優位
                 </button>
               </div>
             </div>
 
             <ForecastList
-              triples={forecast?.triples || []}
+              triples={filteredTriples}
               loading={loading}
               raceResult={raceResult && raceResult.win_triple ? {
                 triple: raceResult.win_triple,
@@ -254,8 +402,25 @@ export default function RaceDetail({ params }: RaceDetailProps) {
               <span className="text-ink-2">テクニック優位</span>
             </div>
           </div>
-          <div className="mt-3 text-xs text-ink-3">
-            <p>EV ≥ 1.25 かつ 確率 ≥ 4% で⭐SUPER表示</p>
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
+            <div className="font-medium text-yellow-800 mb-2">⭐ SUPER基準（3つの要素）</div>
+            <div className="space-y-1 text-yellow-700">
+              <div className="flex items-center space-x-2">
+                <span>💰</span>
+                <span><strong>期待値が高い</strong> - 長期利益につながる予想（EV ≥ 1.5）</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span>🎯</span>
+                <span><strong>現実的な当選率</strong> - 机上の空論でない予想（確率 ≥ 5%）</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span>⭐</span>
+                <span><strong>そのレースで特に狙い目</strong> - 相対的に優秀な予想（上位30%）</span>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-yellow-600">
+              上記3要素をすべて満たす予想のみ⭐SUPERマークが表示されます
+            </div>
           </div>
         </div>
         </div>

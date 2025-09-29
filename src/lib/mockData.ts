@@ -105,12 +105,10 @@ function generateTodayMockRaces() {
   }> = []
 
   for (let raceNo = 1; raceNo <= 12; raceNo++) {
-    const baseTime = new Date()
-    // Realistic Suminoe race times: 14:30, 15:00, 15:30, ..., 20:30
-    const startHour = 14
-    const intervalMinutes = 30
-    const totalMinutes = startHour * 60 + (raceNo - 1) * intervalMinutes
-    baseTime.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0)
+    const now = new Date()
+    // 現在時刻から30分間隔でレース時間を設定
+    // 最初のレースは現在時刻の10分後から開始
+    const baseTime = new Date(now.getTime() + (10 + (raceNo - 1) * 30) * 60 * 1000)
 
     const raceId = `suminoye-${today.replace(/-/g, '')}-${raceNo}R`
 
@@ -211,14 +209,33 @@ function generateRandomTriples() {
 
   const selected = combinations.sort(() => 0.5 - Math.random()).slice(0, 8)
 
-  return selected.map((combo, idx) => ({
-    combo,
-    prob: Math.random() * 0.12 + 0.02, // 2-14%
-    odds: Math.random() * 80 + 10, // 10-90倍
-    ev: Math.random() * 2 + 0.8, // 0.8-2.8
-    super: idx < 3, // Top 3 are super
-    icons: getRandomIcons()
-  })).sort((a, b) => b.ev - a.ev) // Sort by EV desc
+  const triples = selected.map((combo, idx) => {
+    const prob = Math.random() * 0.12 + 0.02 // 2-14%
+    const ev = Math.random() * 2 + 0.8 // 0.8-2.8
+    const odds = Math.random() * 80 + 10 // 10-90倍
+
+    return {
+      combo,
+      prob,
+      odds,
+      ev,
+      super: false, // 後で計算
+      icons: getRandomIcons()
+    }
+  }).sort((a, b) => b.ev - a.ev) // Sort by EV desc
+
+  // 改良版SUPER基準: 3つの条件を満たすもの
+  const topCount = Math.max(2, Math.ceil(triples.length * 0.3)) // 上位30%（最低2件）
+
+  triples.forEach((triple, index) => {
+    const hasHighEV = triple.ev >= 1.5 // 💰 期待値が高い
+    const hasRealisticChance = triple.prob >= 0.05 // 🎯 現実的な当選率
+    const isTopInRace = index < topCount // ⭐ そのレースで特に狙い目
+
+    triple.super = hasHighEV && hasRealisticChance && isTopInRace
+  })
+
+  return triples
 }
 
 export const MOCK_FORECAST_DATA_TODAY = generateTodayForecastData()

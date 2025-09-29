@@ -84,7 +84,7 @@ export default function LegendModal({ isOpen, onClose }: LegendModalProps) {
                 <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
                   ⭐ SUPER
                 </div>
-                <span className="text-gray-800">高期待値予想（EV ≥ 1.25 かつ 確率 ≥ 4%）</span>
+                <span className="text-gray-800">期待値・現実的確率・相対優位性の3要素を満たす予想</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">

@@ -143,7 +143,7 @@ export default function ImprovedRaceCard({ race, forecast, isLoading }: Improved
         <div className="flex justify-between items-center bg-surface-2 rounded-md px-3 py-2 mb-4">
           <div className="flex-1">
             <span className="text-sm font-medium text-ink-2">
-              {race.has_super ? 'スーパー戦略の狙い目' : 'バランス型の複合優位'}
+              {forecast?.triples?.some(triple => triple.super) ? 'スーパー戦略の狙い目' : 'バランス型の複合優位'}
             </span>
           </div>
           <div className="flex items-center space-x-2">

@@ -89,6 +89,8 @@ export interface RacesResponse {
   date: string
   venue: string
   total: number
+  status?: string
+  timestamp?: string
 }
 
 export interface VenueResponse {

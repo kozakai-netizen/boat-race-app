@@ -8,7 +8,7 @@ interface DataImportModalProps {
   onClose: () => void
 }
 
-type ImportType = 'race' | 'entry' | 'result' | 'player'
+type ImportType = 'race' | 'entry' | 'result' | 'player' | 'api'
 
 export default function DataImportModal({ isOpen, onClose }: DataImportModalProps) {
   const [activeTab, setActiveTab] = useState<ImportType>('player')
@@ -100,6 +100,7 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
   if (!isOpen) return null
 
   const tabs = [
+    { id: 'api' as ImportType, label: 'API取り込み', description: 'Boatrace Open APIから自動取得 (NEW!)' },
     { id: 'player' as ImportType, label: '選手マスタ', description: '選手基本情報の取り込み (Phase 1)' },
     { id: 'race' as ImportType, label: 'レースデータ', description: 'レース基本情報の取り込み' },
     { id: 'entry' as ImportType, label: '出走データ', description: '選手・出走情報の取り込み' },

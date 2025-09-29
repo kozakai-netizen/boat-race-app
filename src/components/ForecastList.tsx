@@ -159,6 +159,10 @@ export default function ForecastList({ triples, loading, raceResult, urlSyncProp
             {/* 左側：組み合わせとバッジ */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
+                {/* 順位表示 */}
+                <div className="bg-blue-100 text-blue-700 text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center">
+                  {idx + 1}
+                </div>
                 <div className="text-2xl font-mono font-bold text-gray-800">
                   {triple.combo}
                 </div>

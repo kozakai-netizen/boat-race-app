@@ -47,7 +47,7 @@ export type Database = {
           records_inserted: number
           records_updated: number
           error_details: string | null
-          metadata: any | null
+          metadata: Record<string, unknown> | null
           created_at: string
         }
         Insert: {
@@ -59,7 +59,7 @@ export type Database = {
           records_inserted?: number
           records_updated?: number
           error_details?: string | null
-          metadata?: any | null
+          metadata?: Record<string, unknown> | null
           created_at?: string
         }
         Update: {
@@ -71,7 +71,7 @@ export type Database = {
           records_inserted?: number
           records_updated?: number
           error_details?: string | null
-          metadata?: any | null
+          metadata?: Record<string, unknown> | null
           created_at?: string
         }
       }

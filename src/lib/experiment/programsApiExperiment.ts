@@ -25,7 +25,7 @@ export interface ExperimentDataPoint {
   timestamp: string
   stadiums: ProgramsApiEntry[]
   error?: string
-  rawResponse?: any
+  rawResponse?: unknown
 }
 
 export interface ExperimentSummary {

@@ -72,7 +72,7 @@ export interface RacerStats {
 export interface ProgramsApiError {
   code: 'API_ERROR' | 'NETWORK_ERROR' | 'PARSE_ERROR' | 'RATE_LIMIT'
   message: string
-  details?: any
+  details?: unknown
   timestamp: string
 }
 

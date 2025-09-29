@@ -9,7 +9,9 @@ import {
   InformationCircleIcon,
   ArrowUpTrayIcon,
   ChatBubbleLeftIcon,
-  ChevronLeftIcon
+  ChevronLeftIcon,
+  ChartBarIcon,
+  BeakerIcon
 } from '@heroicons/react/24/outline'
 
 interface HamburgerMenuProps {
@@ -91,8 +93,8 @@ const Sidebar = ({
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-ink-line">
               <div className="flex flex-col">
-                <span className="font-bold text-lg text-ink-1">競艇予想システム</span>
-                <span className="text-xs text-ink-3">住之江専用</span>
+                <span className="font-bold text-lg text-ink-1">舟券王への道標</span>
+                <span className="text-xs text-ink-3">競艇予想システム</span>
               </div>
               <button
                 onClick={onClose}
@@ -118,18 +120,31 @@ const Sidebar = ({
               <NavItem
                 icon={<HomeIcon className="w-6 h-6" />}
                 label="ホーム"
-                href="/suminoye"
+                href="/"
+                onClick={onClose}
+              />
+              <NavItem
+                icon={<ChartBarIcon className="w-6 h-6" />}
+                label="結果・成績"
+                href="/unified"
+                onClick={onClose}
+              />
+              <NavItem
+                icon={<ArrowUpTrayIcon className="w-6 h-6" />}
+                label="データ管理"
+                href="/admin/import"
+                onClick={onClose}
+              />
+              <NavItem
+                icon={<BeakerIcon className="w-6 h-6" />}
+                label="実証実験"
+                href="/admin/experiment"
                 onClick={onClose}
               />
               <NavItem
                 icon={<InformationCircleIcon className="w-6 h-6" />}
                 label="凡例"
                 onClick={() => handleItemClick(onLegendClick)}
-              />
-              <NavItem
-                icon={<ArrowUpTrayIcon className="w-6 h-6" />}
-                label="データ取り込み"
-                onClick={() => handleItemClick(onDataImportClick)}
               />
               <NavItem
                 icon={<ChatBubbleLeftIcon className="w-6 h-6" />}

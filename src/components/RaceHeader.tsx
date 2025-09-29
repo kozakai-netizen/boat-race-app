@@ -76,8 +76,8 @@ export default function RaceHeader({
 
   return (
     <div className="bg-surface-1 rounded-lg shadow-card p-3 mb-4 border border-ink-line">
-      {/* メイン情報行 */}
-      <div className="flex items-center justify-between">
+      {/* デスクトップ表示 */}
+      <div className="hidden sm:flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <div className="w-12 h-12 rounded-full bg-brand text-white font-bold text-lg flex items-center justify-center">
@@ -85,7 +85,7 @@ export default function RaceHeader({
             </div>
             <div>
               <h1 className="text-xl font-bold text-ink-1">
-                {venue === 'suminoe' ? '住之江' : venue} {raceNo}
+                {venue} {raceNo}
               </h1>
               <p className="text-sm text-ink-3">{date}</p>
             </div>
@@ -127,6 +127,60 @@ export default function RaceHeader({
               <div className="font-semibold text-ink-1">
                 {formatTime(closeAt)}
               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* モバイル表示 */}
+      <div className="sm:hidden">
+        {/* 1行目: レース情報と締切時間 */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 rounded-full bg-brand text-white font-bold text-sm flex items-center justify-center">
+              {raceNo.replace('R', '')}
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-ink-1">
+                {venue} {raceNo}
+              </h1>
+              <p className="text-xs text-ink-3">{date}</p>
+            </div>
+          </div>
+
+          {closeAt && (
+            <div className="text-right">
+              <div className="text-xs text-ink-3">締切</div>
+              <div className="text-sm font-semibold text-ink-1">
+                {formatTime(closeAt)}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 2行目: バッジ群 */}
+        <div className="flex items-center space-x-2 flex-wrap gap-1">
+          <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+            isOpen
+              ? 'bg-success-soft text-success'
+              : 'bg-surface-3 text-ink-3'
+          }`}>
+            {isOpen ? '発売中' : '締切済'}
+          </div>
+
+          {closeAt && timeRemaining && (
+            <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+              isOpen
+                ? 'bg-brand-soft text-brand'
+                : 'bg-surface-3 text-ink-3'
+            }`}>
+              {timeRemaining}
+            </div>
+          )}
+
+          {hasSuperPicks && (
+            <div className="bg-warning-soft text-warning px-2 py-1 rounded-full text-xs font-medium flex items-center">
+              ⭐ SUPER
             </div>
           )}
         </div>
@@ -206,6 +260,7 @@ export default function RaceHeader({
                 : '全ての3連単組み合わせを期待値順で表示'
               }
             </div>
+
           </div>
 
           {/* モバイル表示 - アコーディオン */}
@@ -286,6 +341,7 @@ export default function RaceHeader({
                     : '全組み合わせを期待値順で表示'
                   }
                 </div>
+
               </div>
             )}
           </div>

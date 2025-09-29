@@ -15,11 +15,20 @@ export async function GET(request: NextRequest) {
     // Return mock data for current date
     const today = new Date().toISOString().split('T')[0]
     if (date === today) {
+      // Transform mock data to match expected interface
+      const transformedRaces = MOCK_RACES_TODAY.map(race => ({
+        ...race,
+        race_number: race.race_no,
+        venue: 'suminoe',
+        date,
+        title: `${race.race_no}R`
+      }))
+
       return NextResponse.json({
         venue: 'suminoe',
         date,
         grade: grade as 'normal' | 'major',
-        races: MOCK_RACES_TODAY,
+        races: transformedRaces,
       })
     }
 
