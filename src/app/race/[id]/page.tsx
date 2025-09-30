@@ -107,15 +107,34 @@ export default function RaceDetail({ params }: RaceDetailProps) {
 
       // Parallel data fetching for better performance
       const [forecastResult, resultResult] = await Promise.allSettled([
-        fetch(`/api/forecast/${raceId}`).then(res => res.ok ? res.json() : null),
+        fetch(`/api/prediction/${raceId}`).then(res => res.ok ? res.json() : null),
         fetch(`/api/results/suminoye?date=${raceInfo.date}`).then(res => res.ok ? res.json() : null)
       ])
 
       // Handle forecast data
-      if (forecastResult.status === 'fulfilled' && forecastResult.value) {
-        setForecast(forecastResult.value)
+      if (forecastResult.status === 'fulfilled' && forecastResult.value && forecastResult.value.success) {
+        // Convert /api/prediction response to Forecast format
+        const predictionData = forecastResult.value.prediction
+        const adaptedForecast: Forecast = {
+          triples: predictionData.topCombinations.map((combo: any) => ({
+            combo: combo.triple,
+            odds: null,
+            ev: combo.expectedValue || 1.0,
+            prob: combo.probability,
+            super: combo.expectedValue >= 1.5 && combo.probability >= 0.04,
+            icons: ['🎯'], // デフォルトアイコン
+            why: null
+          })),
+          updated_at: forecastResult.value.timestamp,
+          summary: {
+            total_combinations: predictionData.topCombinations.length,
+            avg_ev: predictionData.topCombinations.reduce((sum: number, c: any) => sum + (c.expectedValue || 1.0), 0) / predictionData.topCombinations.length,
+            confidence: 0.75 // デフォルト値
+          }
+        }
+        setForecast(adaptedForecast)
       } else {
-        console.error('Failed to fetch forecast data')
+        console.error('Failed to fetch prediction data')
         setError('予想データの取得に失敗しました')
       }
 
@@ -155,14 +174,40 @@ export default function RaceDetail({ params }: RaceDetailProps) {
     setFixedLoading(true)
 
     try {
-      const url = lane
-        ? `/api/forecast/${raceId}?fixFirst=${lane}`
-        : `/api/forecast/${raceId}`
-
-      const response = await fetch(url)
+      // 現在はfixFirst機能を実装していないため、通常の予想を取得
+      const response = await fetch(`/api/prediction/${raceId}`)
       if (response.ok) {
-        const data = await response.json()
-        setForecast(data)
+        const predictionResult = await response.json()
+        if (predictionResult.success) {
+          const predictionData = predictionResult.prediction
+          let filteredCombinations = predictionData.topCombinations
+
+          // lane指定があれば、クライアント側でフィルタリング
+          if (lane) {
+            filteredCombinations = predictionData.topCombinations.filter((combo: any) =>
+              combo.triple.startsWith(lane.toString())
+            )
+          }
+
+          const adaptedForecast: Forecast = {
+            triples: filteredCombinations.map((combo: any) => ({
+              combo: combo.triple,
+              odds: null,
+              ev: combo.expectedValue || 1.0,
+              prob: combo.probability,
+              super: combo.expectedValue >= 1.5 && combo.probability >= 0.04,
+              icons: ['🎯'],
+              why: null
+            })),
+            updated_at: predictionResult.timestamp,
+            summary: {
+              total_combinations: filteredCombinations.length,
+              avg_ev: filteredCombinations.reduce((sum: number, c: any) => sum + (c.expectedValue || 1.0), 0) / filteredCombinations.length,
+              confidence: 0.75
+            }
+          }
+          setForecast(adaptedForecast)
+        }
       }
     } catch (err) {
       console.error('Error fetching fixed first forecast:', err)

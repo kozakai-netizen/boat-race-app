@@ -68,10 +68,30 @@ function RacesPageContent() {
     try {
       // Use Promise.allSettled for better error handling and performance
       const forecastPromises = racesData.races.map(async (race) => {
-        const response = await fetch(`/api/forecast/${race.race_id}`)
+        const response = await fetch(`/api/prediction/${race.race_id}`)
         if (response.ok) {
-          const forecast = await response.json()
-          return { raceId: race.race_id, forecast }
+          const predictionResult = await response.json()
+          if (predictionResult.success) {
+            const predictionData = predictionResult.prediction
+            const adaptedForecast: Forecast = {
+              triples: predictionData.topCombinations.map((combo: any) => ({
+                combo: combo.triple,
+                odds: null,
+                ev: combo.expectedValue || 1.0,
+                prob: combo.probability,
+                super: combo.expectedValue >= 1.5 && combo.probability >= 0.04,
+                icons: ['🎯'],
+                why: null
+              })),
+              updated_at: predictionResult.timestamp,
+              summary: {
+                total_combinations: predictionData.topCombinations.length,
+                avg_ev: predictionData.topCombinations.reduce((sum: number, c: any) => sum + (c.expectedValue || 1.0), 0) / predictionData.topCombinations.length,
+                confidence: 0.75
+              }
+            }
+            return { raceId: race.race_id, forecast: adaptedForecast }
+          }
         }
         return { raceId: race.race_id, forecast: null }
       })

@@ -1,80 +1,109 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePrediction } from '@/lib/prediction/predictionEngine'
-import { enhanceRacerEntry } from '@/lib/prediction/racerDataEnhancer'
+import { fetchRaceEntriesForPrediction, parseRaceId } from '@/lib/api/programsApi'
 
 /**
- * レース予想API
+ * レース予想API（Programs API リアルタイム統合版）
  * GET /api/prediction/[raceId]
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { raceId: string } }
+  { params }: { params: Promise<{ raceId: string }> }
 ) {
   try {
-    const raceId = params.raceId
-    console.log(`🔮 [Prediction API] Generating prediction for race: ${raceId}`)
+    // Next.js 15対応：paramsをawait
+    const { raceId } = await params
+    console.log(`🔮 [Prediction API v2] Generating real-time prediction for race: ${raceId}`)
 
-    // レースIDから会場と日付を解析
-    const parts = raceId.split('-')
-    if (parts.length !== 5) {
+    // raceIDフォーマット検証
+    const parsedRace = parseRaceId(raceId)
+    if (!parsedRace) {
       return NextResponse.json(
-        { error: 'Invalid raceId format. Expected: YYYY-MM-DD-VV-RR' },
+        {
+          success: false,
+          error: 'Invalid raceId format',
+          expected: 'YYYY-MM-DD-VV-RR (e.g., 2025-09-30-12-01)',
+          received: raceId
+        },
         { status: 400 }
       )
     }
 
-    const date = `${parts[0]}-${parts[1]}-${parts[2]}`
-    const venueId = parseInt(parts[3])
-    const raceNo = parseInt(parts[4])
+    const { date, venueId, raceNo } = parsedRace
+    console.log(`📅 [Prediction API] Target: ${date}, Venue: ${venueId}, Race: ${raceNo}`)
 
-    // 選手データを取得（race-entriesエンドポイントを使用）
-    const entriesResponse = await fetch(
-      `${request.nextUrl.origin}/api/race-entries?raceId=${raceId}`
-    )
+    // Programs APIからリアルタイムデータ取得
+    let racerEntries
+    try {
+      racerEntries = await fetchRaceEntriesForPrediction(raceId)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
-    if (!entriesResponse.ok) {
-      console.error(`❌ [Prediction API] Failed to fetch entries for ${raceId}`)
-      return NextResponse.json(
-        { error: 'Failed to fetch race entries' },
-        { status: 500 }
-      )
+      // 開催なしの場合
+      if (errorMessage.includes('No race data available')) {
+        return NextResponse.json({
+          success: false,
+          error: 'no_race_scheduled',
+          message: `${date}の会場${venueId}では${raceNo}Rの開催がありません`,
+          date,
+          venueId,
+          raceNo
+        }, { status: 404 })
+      }
+
+      // API取得失敗の場合
+      console.error(`❌ [Prediction API] Programs API error:`, errorMessage)
+      return NextResponse.json({
+        success: false,
+        error: 'programs_api_error',
+        message: 'Programs APIからのデータ取得に失敗しました',
+        details: errorMessage
+      }, { status: 502 })
     }
 
-    const entriesData = await entriesResponse.json()
-    const entries = entriesData.entries
-
-    if (!entries || entries.length === 0) {
-      console.error(`❌ [Prediction API] No entries found for ${raceId}`)
-      return NextResponse.json(
-        { error: 'No race entries found' },
-        { status: 404 }
-      )
+    // 選手データ検証
+    if (!racerEntries || racerEntries.length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'no_racers_found',
+        message: '有効な選手データが見つかりませんでした',
+        raceId
+      }, { status: 404 })
     }
 
-    // エントリーデータを拡張データで強化
-    const racerEntries = entries.map((entry: any, index: number) =>
-      enhanceRacerEntry(entry, venueId, index + 1) // 展示順位は仮で1-6
-    )
+    if (racerEntries.length < 6) {
+      console.warn(`⚠️ [Prediction API] Only ${racerEntries.length} racers found for ${raceId}`)
+    }
 
     // 予想生成
+    console.log(`🎯 [Prediction API] Generating prediction with ${racerEntries.length} racers`)
     const prediction = generatePrediction(racerEntries, venueId)
 
-    console.log(`✅ [Prediction API] Generated prediction for ${raceId}`)
+    console.log(`✅ [Prediction API] Successfully generated real-time prediction for ${raceId}`)
 
     return NextResponse.json({
       success: true,
       raceId,
       prediction,
-      timestamp: new Date().toISOString()
+      dataSource: 'programs_api_realtime',
+      racersCount: racerEntries.length,
+      generatedAt: new Date().toISOString(),
+      metadata: {
+        date,
+        venueId,
+        raceNo
+      }
     })
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    console.error(`❌ [Prediction API] Error:`, errorMessage)
+    console.error(`❌ [Prediction API] Unexpected error:`, errorMessage, error)
 
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    )
+    return NextResponse.json({
+      success: false,
+      error: 'internal_server_error',
+      message: '予想生成中に予期しないエラーが発生しました',
+      details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+    }, { status: 500 })
   }
 }

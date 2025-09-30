@@ -110,7 +110,7 @@ function generateTodayMockRaces() {
     // 最初のレースは現在時刻の10分後から開始
     const baseTime = new Date(now.getTime() + (10 + (raceNo - 1) * 30) * 60 * 1000)
 
-    const raceId = `suminoye-${today.replace(/-/g, '')}-${raceNo}R`
+    const raceId = `${today}-12-${raceNo.toString().padStart(2, '0')}`
 
     races.push({
       race_id: raceId,

@@ -77,16 +77,36 @@ const RaceListItem = memo(function RaceListItem({ race, isOpen, onToggle }: Race
     setForecastLoading(true)
 
     try {
-      const response = await fetch(`/api/forecast/${race.race_id}`)
+      const response = await fetch(`/api/prediction/${race.race_id}`)
 
       if (!response.ok) {
         throw new Error('予想データの取得に失敗しました')
       }
 
-      const data = await response.json()
-      setForecastData(data)
+      const predictionResult = await response.json()
+      if (predictionResult.success) {
+        const predictionData = predictionResult.prediction
+        const adaptedForecast: Forecast = {
+          triples: predictionData.topCombinations.map((combo: any) => ({
+            combo: combo.triple,
+            odds: null,
+            ev: combo.expectedValue || 1.0,
+            prob: combo.probability,
+            super: combo.expectedValue >= 1.5 && combo.probability >= 0.04,
+            icons: ['🎯'],
+            why: null
+          })),
+          updated_at: predictionResult.timestamp,
+          summary: {
+            total_combinations: predictionData.topCombinations.length,
+            avg_ev: predictionData.topCombinations.reduce((sum: number, c: any) => sum + (c.expectedValue || 1.0), 0) / predictionData.topCombinations.length,
+            confidence: 0.75
+          }
+        }
+        setForecastData(adaptedForecast)
+      }
     } catch (error) {
-      console.error('Error fetching forecast:', error)
+      console.error('Error fetching prediction:', error)
       // 予想データのエラーは無視（メインのエラーには影響しない）
     } finally {
       setForecastLoading(false)

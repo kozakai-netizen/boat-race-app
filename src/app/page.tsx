@@ -1,50 +1,76 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import HamburgerMenu from '@/components/HamburgerMenu'
 
+interface VenueStatus {
+  id: number
+  name: string
+  region: string
+  status: string
+  dataStatus: string
+  races: number
+  nextRace: { race: number; time: string } | null
+  isCompleted: boolean
+  grade: string
+  raceTitle: string
+  day: string | null
+  hasWomen: boolean
+}
+
 export default function Home() {
   const today = new Date().toISOString().split('T')[0]
+  const [venues, setVenues] = useState<VenueStatus[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // 現在対応済みの競艇場（6場）- 詳細情報付き
-  const venues = [
-    {
-      id: 12, name: '住之江', status: '開催中', dataStatus: 'connected', races: 12, region: '関西',
-      grade: 'G1', raceTitle: 'グランプリ', day: '2日目',
-      nextRace: { race: 1, time: '10:30' }, hasWomen: true, isCompleted: false
-    },
-    {
-      id: 2, name: '戸田', status: '開催中', dataStatus: 'connected', races: 12, region: '関東',
-      grade: 'G3', raceTitle: '記念競走', day: '最終日',
-      nextRace: { race: 5, time: '15:20' }, hasWomen: false, isCompleted: false
-    },
-    {
-      id: 11, name: 'びわこ', status: '未開催', dataStatus: 'connected', races: 0, region: '関西',
-      grade: '一般', raceTitle: '一般競走', day: null,
-      nextRace: null, hasWomen: false, isCompleted: true
-    },
-    {
-      id: 13, name: '尼崎', status: '未開催', dataStatus: 'connected', races: 0, region: '関西',
-      grade: 'G2', raceTitle: '周年記念', day: null,
-      nextRace: null, hasWomen: true, isCompleted: true
-    },
-    {
-      id: 1, name: '桐生', status: '未開催', dataStatus: 'connected', races: 0, region: '関東',
-      grade: '一般', raceTitle: '一般競走', day: null,
-      nextRace: null, hasWomen: false, isCompleted: true
-    },
-    {
-      id: 22, name: '福岡', status: '未開催', dataStatus: 'connected', races: 0, region: '九州',
-      grade: 'G3', raceTitle: '企業杯', day: null,
-      nextRace: null, hasWomen: true, isCompleted: true
-    },
-  ]
+  // リアルタイム開催状況を取得
+  useEffect(() => {
+    const fetchVenueStatus = async () => {
+      try {
+        setLoading(true)
+        console.log('🔄 Fetching venue status...')
+
+        const response = await fetch('/api/venues-status')
+        const data = await response.json()
+
+        if (data.success) {
+          setVenues(data.venues)
+          console.log(`✅ Loaded ${data.venues.length} venues`)
+        } else {
+          throw new Error(data.error || 'Failed to fetch venue status')
+        }
+      } catch (err) {
+        console.error('❌ Error fetching venue status:', err)
+        setError(err instanceof Error ? err.message : 'Unknown error')
+
+        // エラー時はモックデータでフォールバック
+        setVenues([
+          { id: 12, name: '住之江', region: '関西', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: 'G1', raceTitle: 'グランプリ', day: null, hasWomen: true },
+          { id: 2, name: '戸田', region: '関東', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: 'G3', raceTitle: '記念競走', day: null, hasWomen: false },
+          { id: 11, name: 'びわこ', region: '関西', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: '一般', raceTitle: '一般競走', day: null, hasWomen: false },
+          { id: 13, name: '尼崎', region: '関西', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: 'G2', raceTitle: '周年記念', day: null, hasWomen: true },
+          { id: 1, name: '桐生', region: '関東', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: '一般', raceTitle: '一般競走', day: null, hasWomen: false },
+          { id: 22, name: '福岡', region: '九州', status: 'データなし', dataStatus: 'disconnected', races: 0, nextRace: null, isCompleted: false, grade: 'G3', raceTitle: '企業杯', day: null, hasWomen: true }
+        ])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchVenueStatus()
+
+    // 5分ごとに更新
+    const interval = setInterval(fetchVenueStatus, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case '開催中': return 'bg-green-100 text-green-800 border-green-300'
       case '未開催': return 'bg-blue-100 text-blue-800 border-blue-300'
+      case '開催終了': return 'bg-red-100 text-red-800 border-red-300'
       case 'データなし': return 'bg-gray-100 text-gray-800 border-gray-300'
       default: return 'bg-gray-100 text-gray-800 border-gray-300'
     }
@@ -89,9 +115,38 @@ export default function Home() {
             <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
               🚤 本日の開催競艇場
               <span className="ml-auto text-sm font-normal text-gray-500">
-{venues.filter(v => v.dataStatus === 'connected').length}場データ連携済み・{venues.filter(v => v.status === '開催中').length}場開催中
+                {loading ? (
+                  '取得中...'
+                ) : (
+                  <>
+                    {venues.filter(v => v.dataStatus === 'connected').length}場データ連携済み・{venues.filter(v => v.status === '開催中').length}場開催中
+                    {error && (
+                      <span className="text-red-500 ml-2">⚠️</span>
+                    )}
+                  </>
+                )}
               </span>
             </h2>
+
+            {/* ローディング状態 */}
+            {loading && (
+              <div className="text-center py-8">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <p className="mt-2 text-gray-600">開催状況を確認中...</p>
+              </div>
+            )}
+
+            {/* エラー状態 */}
+            {error && !loading && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center">
+                  <span className="text-yellow-500 mr-2">⚠️</span>
+                  <p className="text-yellow-800">
+                    リアルタイムデータの取得に失敗しました。モックデータで表示しています。
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {venues.map((venue) => (
@@ -150,9 +205,13 @@ export default function Home() {
                     </div>
                   )}
 
-                  {venue.dataStatus === 'connected' && venue.status === '未開催' && (
+                  {venue.dataStatus === 'connected' && (venue.status === '未開催' || venue.status === '開催終了') && (
                     <div className="text-sm">
-                      {venue.isCompleted ? (
+                      {venue.status === '開催終了' ? (
+                        <div className="text-red-600 font-medium">
+                          開催終了 →
+                        </div>
+                      ) : venue.isCompleted ? (
                         <div className="text-red-600 font-medium">
                           開催終了 →
                         </div>

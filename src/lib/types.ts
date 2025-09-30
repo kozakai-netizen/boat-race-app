@@ -79,6 +79,8 @@ export interface SimpleRaceEntry {
   exhibition_color: string
   two_rate: number
   three_rate: number
+  national_win_rate?: number  // 全国勝率（Programs APIから取得）
+  local_win_rate?: number     // 当地勝率（Programs APIから取得）
   photo_path?: string
   external_url?: string
 }

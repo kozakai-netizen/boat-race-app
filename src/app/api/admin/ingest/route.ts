@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     let savedResults = 0
 
     for (const program of suminoyePrograms) {
-      const raceId = `suminoye-${dateParam}-${program.race}R`
+      const raceId = `${dateParam}-12-${program.race.toString().padStart(2, '0')}`
 
       // レース基本情報の保存
       const { error: raceError } = await supabase
