@@ -52,7 +52,7 @@ export default function AdminImportPage() {
     setBatchError('')
     setBatchResults([])
 
-    const venues = [2, 12, 13] // 戸田、住之江、尼崎
+    const venues = [1, 2, 11, 12, 13, 22] // 桐生、戸田、びわこ、住之江、尼崎、福岡
     const targetDate = date || undefined
 
     try {
@@ -233,12 +233,12 @@ export default function AdminImportPage() {
                       : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >
-                  {batchLoading ? '🔄 一括取得中...' : '⚡ 3場一括取得'}
+                  {batchLoading ? '🔄 一括取得中...' : '⚡ 6場一括取得'}
                 </button>
               </div>
 
               <div className="mt-2 text-xs text-gray-600">
-                <strong>3場一括取得:</strong> 戸田・住之江・尼崎のデータを順次取得します（約3分）
+                <strong>6場一括取得:</strong> 桐生・戸田・びわこ・住之江・尼崎・福岡のデータを順次取得します（約6分）
               </div>
             </div>
 
@@ -307,7 +307,7 @@ export default function AdminImportPage() {
             {/* 一括取得結果表示 */}
             {batchResults.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-800">⚡ 3場一括取得結果</h3>
+                <h3 className="text-lg font-semibold text-gray-800">⚡ 6場一括取得結果</h3>
                 {batchResults.map((result, index) => (
                   <div
                     key={result.venue}
@@ -358,7 +358,7 @@ export default function AdminImportPage() {
               <h3 className="font-medium text-blue-800 mb-2">💡 使用方法</h3>
               <ul className="text-blue-700 text-sm space-y-1">
                 <li>• <strong>単一会場取得:</strong> 選択した競艇場のデータを取得</li>
-                <li>• <strong>3場一括取得:</strong> 戸田・住之江・尼崎のデータを順次取得（約3分）</li>
+                <li>• <strong>6場一括取得:</strong> 桐生・戸田・びわこ・住之江・尼崎・福岡のデータを順次取得（約6分）</li>
                 <li>• 取得したデータはresultテーブルに自動保存されます</li>
                 <li>• 既存データがある場合は上書き更新されます</li>
                 <li>• 日付を指定しない場合は前日のデータを取得します</li>

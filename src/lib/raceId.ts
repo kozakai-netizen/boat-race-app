@@ -65,6 +65,7 @@ export function formatRaceId(info: RaceIdInfo): string {
 export function getVenueDisplayName(venue: string): string {
   switch (venue) {
     case 'suminoye':
+    case 'sumimoye':
     case 'suminoe':
       return '住之江'
     default:

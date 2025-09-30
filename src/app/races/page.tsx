@@ -39,12 +39,10 @@ function RacesPageContent() {
     const venues: Record<number, string> = {
       1: '桐生',
       2: '戸田',
-      9: '津',
       11: 'びわこ',
       12: '住之江',
       13: '尼崎',
-      22: '福岡',
-      24: '大村'
+      22: '福岡'
     }
     return venues[venueId] || `競艇場${venueId}`
   }
@@ -302,26 +300,6 @@ function RacesPageContent() {
             )}
           </div>
 
-          {/* 競艇場選択 */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              🏟️ 競艇場選択
-            </label>
-            <select
-              value={selectedVenue}
-              onChange={(e) => setSelectedVenue(parseInt(e.target.value))}
-              className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            >
-              <option value={1}>桐生 (#1)</option>
-              <option value={2}>戸田 (#2)</option>
-              <option value={9}>津 (#9)</option>
-              <option value={11}>びわこ (#11)</option>
-              <option value={12}>住之江 (#12)</option>
-              <option value={13}>尼崎 (#13)</option>
-              <option value={22}>福岡 (#22)</option>
-              <option value={24}>大村 (#24)</option>
-            </select>
-          </div>
 
           {/* フィルター */}
           <div className="flex flex-wrap gap-4 mb-4">
@@ -377,9 +355,9 @@ function RacesPageContent() {
                   }
                 </div>
                 <p className="text-sm mt-2">
-                  {selectedVenue === 12 ?
+                  {[1, 2, 11, 12, 13, 22].includes(selectedVenue) ?
                     'フィルター条件を変更してお試しください' :
-                    '住之江は利用可能です。近日中に他の競艇場も対応予定です。'
+                    '対応済み競艇場：桐生・戸田・びわこ・住之江・尼崎・福岡。他の競艇場を選択してください。'
                   }
                 </p>
               </div>
@@ -448,9 +426,9 @@ function RacesPageContent() {
         <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
           <h3 className="text-sm font-medium text-gray-800 mb-2">📈 対応状況</h3>
           <div className="text-xs text-gray-600 space-y-1">
-            <p>• <strong>住之江</strong>: リアルデータ対応済み ✅</p>
-            <p>• <strong>戸田・尼崎</strong>: 準備中（近日対応予定）⏳</p>
-            <p>• 今後段階的に8場→24場まで拡張予定です</p>
+            <p>• <strong>6場対応済み</strong>: 桐生・戸田・びわこ・住之江・尼崎・福岡 ✅</p>
+            <p>• <strong>手動データ取得</strong>: 6場一括取得機能運用中 ⚡</p>
+            <p>• 今後段階的に24場全対応を目指します</p>
           </div>
         </div>
 
