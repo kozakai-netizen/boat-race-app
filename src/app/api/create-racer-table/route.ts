@@ -27,7 +27,7 @@ export async function POST() {
         win_rate DECIMAL(5,2),
         quinella_rate DECIMAL(5,2),
         trio_rate DECIMAL(5,2),
-        avg_st DECIMAL(4,2),
+        average_st DECIMAL(4,3),
         data_source TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -62,7 +62,7 @@ export async function POST() {
         win_rate: 'DECIMAL(5,2)',
         quinella_rate: 'DECIMAL(5,2)',
         trio_rate: 'DECIMAL(5,2)',
-        avg_st: 'DECIMAL(4,2)',
+        average_st: 'DECIMAL(4,3)',
         data_source: 'TEXT',
         created_at: 'TIMESTAMPTZ',
         updated_at: 'TIMESTAMPTZ'

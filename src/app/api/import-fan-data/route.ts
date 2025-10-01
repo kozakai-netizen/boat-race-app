@@ -51,7 +51,7 @@ export async function POST() {
         win_rate: racer.win_rate,
         quinella_rate: racer.quinella_rate,
         trio_rate: racer.trio_rate,
-        avg_st: racer.avg_st,
+        average_st: racer.avg_st,
         data_source: 'fan2410',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
