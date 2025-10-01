@@ -24,6 +24,7 @@ export default function Home() {
   const [venues, setVenues] = useState<VenueStatus[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [displayDate, setDisplayDate] = useState<string>(today)
 
   // リアルタイム開催状況を取得
   useEffect(() => {
@@ -37,7 +38,8 @@ export default function Home() {
 
         if (data.success) {
           setVenues(data.venues)
-          console.log(`✅ Loaded ${data.venues.length} venues`)
+          setDisplayDate(data.date || today)
+          console.log(`✅ Loaded ${data.venues.length} venues for ${data.date}`)
         } else {
           throw new Error(data.error || 'Failed to fetch venue status')
         }
@@ -106,8 +108,8 @@ export default function Home() {
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-4">舟券王への道標</h1>
-            <p className="text-gray-600 mb-2">本日の競艇場を選択してください</p>
-            <p className="text-sm text-gray-500">{today}</p>
+            <p className="text-gray-600 mb-2">競艇場を選択してください</p>
+            <p className="text-sm text-gray-500">{displayDate}</p>
           </div>
 
           {/* 競艇場一覧 */}

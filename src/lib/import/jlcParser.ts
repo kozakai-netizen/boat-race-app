@@ -39,37 +39,39 @@ export function parsePeriodFromFilename(filename: string): { year: number; half:
 
 /**
  * 固定長テキスト行から選手データを抽出
+ * fan2504形式: 2538高　橋　　二　朗ﾀｶﾊｼ ｼﾞﾛｳ      東京B1S24042617616353AB...
  */
 export function parseJLCLine(line: string, periodYear: number, periodHalf: string): JLCRacerData | null {
   try {
     // 最低限の長さチェック
-    if (line.length < 100) return null
+    if (line.length < 40) return null
 
     // 選手登録番号（先頭4文字）
     const racerNumber = parseInt(line.substring(0, 4))
     if (isNaN(racerNumber)) return null
 
-    // 選手名（漢字）- 位置4-14付近（文字化け対応）
-    let racerName = line.substring(4, 14).trim()
-    racerName = racerName.replace(/[^\u4e00-\u9faf\u3040-\u309f\u30a0-\u30ff]/g, '') // 日本語のみ抽出
+    // 選手名（漢字）- 位置4-16
+    let racerName = line.substring(4, 16).trim()
+    // 全角スペースを除去し、日本語文字のみ抽出
+    racerName = racerName.replace(/[　\s]/g, '').replace(/[^\u4e00-\u9faf\u3040-\u309f]/g, '')
 
-    // カタカナ名 - 位置14-30付近
-    let racerNameKana = line.substring(14, 30).trim()
-    racerNameKana = racerNameKana.replace(/[^\u30a0-\u30ff]/g, '') // カタカナのみ抽出
+    // カタカナ名 - 位置16-28
+    let racerNameKana = line.substring(16, 28).trim()
 
-    // 支部名 - 位置30-40付近
-    let branch = line.substring(30, 40).trim()
+    // 支部名 - 位置28-31
+    let branch = line.substring(28, 31).trim()
     branch = branch.replace(/[^\u4e00-\u9faf]/g, '') // 漢字のみ抽出
 
-    // 級別 - 位置40-50付近でA1,A2,B1,B2を探す
-    const gradeMatch = line.substring(40, 60).match(/(A1|A2|B1|B2)/)
-    const grade = gradeMatch ? gradeMatch[1] : 'B1'
+    // 級別 - 位置31-32
+    let grade = line.substring(31, 32).trim()
+    if (!['A1', 'A2', 'B1', 'B2'].includes(grade)) {
+      // 他の位置で級別を探す
+      const gradeMatch = line.substring(31, 50).match(/(A1|A2|B1|B2)/)
+      grade = gradeMatch ? gradeMatch[1] : 'B1'
+    }
 
-    // 基本的な成績データ（位置は概算、実際のデータで調整が必要）
-    // const nationalWinRate = parseFloat(line.substring(70, 74)) / 100
-    // const localWinRate = parseFloat(line.substring(74, 78)) / 100
-    // const racesCount = parseInt(line.substring(78, 82))
-    // const winsCount = parseInt(line.substring(82, 86))
+    // 性別 - 位置32-33
+    const gender = line.substring(32, 33).trim()
 
     return {
       racerNumber,
@@ -79,10 +81,6 @@ export function parseJLCLine(line: string, periodYear: number, periodHalf: strin
       grade,
       periodYear,
       periodHalf,
-      // nationalWinRate: isNaN(nationalWinRate) ? undefined : nationalWinRate,
-      // localWinRate: isNaN(localWinRate) ? undefined : localWinRate,
-      // racesCount: isNaN(racesCount) ? undefined : racesCount,
-      // winsCount: isNaN(winsCount) ? undefined : winsCount,
     }
 
   } catch (error) {
