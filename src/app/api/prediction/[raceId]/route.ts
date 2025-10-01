@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePrediction } from '@/lib/prediction/predictionEngine'
-import { fetchRaceEntriesForPrediction, parseRaceId } from '@/lib/api/programsApi'
+import { fetchRaceEntriesFromRacerData } from '@/lib/racerData/racerDataAdapter'
 
 /**
- * レース予想API（Programs API リアルタイム統合版）
+ * レース予想API（racer_data統合版）
  * GET /api/prediction/[raceId]
  */
 export async function GET(
@@ -13,11 +13,11 @@ export async function GET(
   try {
     // Next.js 15対応：paramsをawait
     const { raceId } = await params
-    console.log(`🔮 [Prediction API v2] Generating real-time prediction for race: ${raceId}`)
+    console.log(`🔮 [Prediction API v3] Generating prediction for race: ${raceId}`)
 
     // raceIDフォーマット検証
-    const parsedRace = parseRaceId(raceId)
-    if (!parsedRace) {
+    const raceIdPattern = /^\d{4}-\d{2}-\d{2}-\d{1,2}-\d{1,2}$/
+    if (!raceIdPattern.test(raceId)) {
       return NextResponse.json(
         {
           success: false,
@@ -29,34 +29,36 @@ export async function GET(
       )
     }
 
-    const { date, venueId, raceNo } = parsedRace
+    // raceIdから基本情報を抽出
+    const parts = raceId.split('-')
+    const date = `${parts[0]}-${parts[1]}-${parts[2]}`
+    const venueId = parseInt(parts[3])
+    const raceNo = parseInt(parts[4])
+
     console.log(`📅 [Prediction API] Target: ${date}, Venue: ${venueId}, Race: ${raceNo}`)
 
-    // Programs APIからリアルタイムデータ取得
+    // racer_dataテーブルから選手データを取得
+    console.log(`🔮 [Prediction API] ===== RACER DATA FETCH DEBUG =====`)
+    console.log(`🔮 [Prediction API] About to call fetchRaceEntriesFromRacerData()`)
+    console.log(`🔮 [Prediction API] Expected data source: racer_data table (fan2410 imported data)`)
+
     let racerEntries
     try {
-      racerEntries = await fetchRaceEntriesForPrediction(raceId)
+      racerEntries = await fetchRaceEntriesFromRacerData(raceId)
+      console.log(`🔮 [Prediction API] ✅ Successfully received racer data`)
+      console.log(`🔮 [Prediction API] Received ${racerEntries.length} racer entries`)
+      console.log(`🔮 [Prediction API] Racer names received:`)
+      racerEntries.forEach((entry, index) => {
+        console.log(`🔮 [Prediction API]   ${index + 1}: ${entry.player_name} (Grade: ${entry.player_grade})`)
+      })
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
-      // 開催なしの場合
-      if (errorMessage.includes('No race data available')) {
-        return NextResponse.json({
-          success: false,
-          error: 'no_race_scheduled',
-          message: `${date}の会場${venueId}では${raceNo}Rの開催がありません`,
-          date,
-          venueId,
-          raceNo
-        }, { status: 404 })
-      }
-
-      // API取得失敗の場合
-      console.error(`❌ [Prediction API] Programs API error:`, errorMessage)
+      console.error(`❌ [Prediction API] RacerData fetch error:`, errorMessage)
       return NextResponse.json({
         success: false,
-        error: 'programs_api_error',
-        message: 'Programs APIからのデータ取得に失敗しました',
+        error: 'racer_data_fetch_error',
+        message: 'racer_dataテーブルからのデータ取得に失敗しました',
         details: errorMessage
       }, { status: 502 })
     }
@@ -67,31 +69,59 @@ export async function GET(
         success: false,
         error: 'no_racers_found',
         message: '有効な選手データが見つかりませんでした',
-        raceId
+        raceId,
+        available_racers: 0
       }, { status: 404 })
     }
 
     if (racerEntries.length < 6) {
-      console.warn(`⚠️ [Prediction API] Only ${racerEntries.length} racers found for ${raceId}`)
+      console.warn(`⚠️ [Prediction API] Only ${racerEntries.length} racers available for ${raceId}`)
     }
 
     // 予想生成
     console.log(`🎯 [Prediction API] Generating prediction with ${racerEntries.length} racers`)
     const prediction = generatePrediction(racerEntries, venueId)
 
-    console.log(`✅ [Prediction API] Successfully generated real-time prediction for ${raceId}`)
+    console.log(`✅ [Prediction API] Successfully generated prediction for ${raceId}`)
+
+    // 使用された選手情報を含むレスポンス
+    console.log(`🔮 [Prediction API] ===== FINAL DATA VERIFICATION =====`)
+    console.log(`🔮 [Prediction API] Data source confirmed: racer_data table`)
+    console.log(`🔮 [Prediction API] Original fan2410.lzh → racer_data → prediction`)
+
+    const racerSummary = racerEntries.map(entry => ({
+      lane: entry.lane,
+      name: entry.player_name,
+      grade: entry.player_grade,
+      st_time: entry.st_time,
+      win_rate: entry.national_win_rate
+    }))
+
+    console.log(`🔮 [Prediction API] Final racer summary for response:`)
+    racerSummary.forEach((racer) => {
+      console.log(`🔮 [Prediction API]   Lane ${racer.lane}: ${racer.name} (${racer.grade})`)
+    })
+    console.log(`🔮 [Prediction API] ===== RACER DATA FETCH DEBUG END =====`)
 
     return NextResponse.json({
       success: true,
       raceId,
       prediction,
-      dataSource: 'programs_api_realtime',
+      dataSource: 'racer_data_table',
       racersCount: racerEntries.length,
       generatedAt: new Date().toISOString(),
       metadata: {
         date,
         venueId,
-        raceNo
+        raceNo,
+        data_integration: 'v3_racer_data_direct',
+        total_available_racers: 1616 // fan2410データ全体
+      },
+      racers_used: racerSummary,
+      system_info: {
+        selection_method: 'deterministic_weighted_by_grade',
+        data_source: 'fan2410_2024_후期',
+        prediction_engine: 'v2'
       }
     })
 

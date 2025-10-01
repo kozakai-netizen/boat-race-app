@@ -9,6 +9,7 @@ import {
 } from '@/lib/why'
 import { SimpleRaceEntry } from '@/lib/types'
 import type { NormalizedRacerEntry } from '@/types/programs'
+import { fetchRaceEntriesFromRacerData } from '@/lib/racerData/racerDataAdapter'
 
 const DATA_MODE = process.env.NEXT_PUBLIC_DATA_MODE || 'mock'
 
@@ -78,73 +79,59 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Programs APIのリアルデータを取得
+ * racer_dataテーブルから実際の選手データを取得
  */
 async function fetchRealEntries(raceId: string): Promise<SimpleRaceEntry[]> {
   try {
-    const supabase = createClient()
+    console.log(`🏁 [race-entries API] Using racer_data for ${raceId}`)
 
-    // race_idから情報を解析
-    const parts = raceId.split('-')
-    if (parts.length < 4) {
-      console.warn(`[API] Invalid race ID format: ${raceId}`)
-      return []
-    }
-
-    const [year, month, day, venueStr, raceNoStr] = parts
-    const raceDate = `${year}-${month}-${day}`
-    const venueId = parseInt(venueStr, 10)
-    const raceNo = parseInt(raceNoStr, 10)
-
-    // データベースから選手エントリー取得
-    const { data: racerEntries, error } = await supabase
-      .from('racer_entries')
-      .select('*')
-      .eq('race_date', raceDate)
-      .eq('venue_id', venueId)
-      .eq('race_no', raceNo)
-      .order('pit')
-
-    if (error) {
-      console.error(`[API] Database error for ${raceId}:`, error)
-      return []
-    }
+    // racerDataAdapterを使用してracer_dataから選手を取得
+    const racerEntries = await fetchRaceEntriesFromRacerData(raceId)
 
     if (!racerEntries || racerEntries.length === 0) {
+      console.log(`🏁 [race-entries API] No racer_data found for ${raceId}`)
       return []
     }
 
-    // Programs APIデータをSimpleRaceEntry形式に変換
-    const entries: SimpleRaceEntry[] = racerEntries.map((entry: NormalizedRacerEntry) => {
-      // リアルデータでは一部値を推定（完全データは将来実装）
-      const grades = ['A1', 'A2', 'B1', 'B2']
-      const gradeIndex = entry.racer_registration_number % grades.length
+    console.log(`🏁 [race-entries API] Found ${racerEntries.length} racers from racer_data`)
+
+    // RacerEntry形式をSimpleRaceEntry形式に変換
+    const entries: SimpleRaceEntry[] = racerEntries.map((entry) => {
+      // モーター状態を推定
+      const motorRate = entry.motor_rate || 35
+      const motorCondition = motorRate >= 45 ? '◎' : motorRate >= 35 ? '○' : '△'
+      const motorDescription = motorRate >= 45 ? '好調' : motorRate >= 35 ? '普通' : '整備'
 
       return {
-        lane: entry.pit,
-        player_name: entry.racer_name || `選手${entry.racer_registration_number}`,
-        player_grade: grades[gradeIndex],
-        st_time: 0.14 + (entry.pit * 0.01) + (Math.random() * 0.04), // 推定ST
-        exhibition_time: 6.70 + (entry.pit * 0.02) + (Math.random() * 0.20), // 推定展示
-        motor_rate: 35 + (entry.pit * 2) + (Math.random() * 15), // 推定モーター率
-        motor_condition: entry.pit <= 2 ? '◎' : entry.pit <= 4 ? '○' : '△', // 推定
-        motor_description: entry.pit <= 2 ? '好調' : entry.pit <= 4 ? '普通' : '整備',
+        lane: entry.lane,
+        player_name: entry.player_name,
+        player_grade: entry.player_grade,
+        st_time: entry.st_time,
+        exhibition_time: entry.exhibition_time,
+        motor_rate: motorRate,
+        motor_condition: motorCondition,
+        motor_description: motorDescription,
         // 後で上書きされる初期値
         motor_badge: { grade: '○', color: '', tooltip: '' },
         grade_badge_color: '',
         st_color: '',
         exhibition_color: '',
-        two_rate: 50 + (entry.pit * 2) + (Math.random() * 10), // 推定2連率
-        three_rate: 30 + (entry.pit * 3) + (Math.random() * 15), // 推定3連率
-        national_win_rate: 5.0 + (Math.random() * 1.5), // 推定勝率
-        local_win_rate: 4.5 + (Math.random() * 2.0) // 推定当地勝率
+        two_rate: entry.two_rate,
+        three_rate: entry.three_rate,
+        national_win_rate: entry.national_win_rate,
+        local_win_rate: entry.local_win_rate
       }
+    })
+
+    console.log(`🏁 [race-entries API] Converted to ${entries.length} SimpleRaceEntry format`)
+    entries.forEach((entry, index) => {
+      console.log(`🏁 [race-entries API]   Lane ${entry.lane}: ${entry.player_name} (${entry.player_grade})`)
     })
 
     return entries
 
   } catch (error) {
-    console.error(`[API] Error fetching real entries for ${raceId}:`, error)
+    console.error(`❌ [race-entries API] Error fetching from racer_data for ${raceId}:`, error)
     return []
   }
 }
